@@ -1,4 +1,4 @@
-import { db } from "@/lib/server/db";
+import { get, run } from "@/lib/server/db";
 import { hashPassword, jsonError, signToken } from "@/lib/server/auth";
 
 export const runtime = "nodejs";
@@ -19,15 +19,16 @@ export async function POST(request: Request) {
   }
 
   const normalized = email.toLowerCase();
-  const existing = db.prepare("SELECT id FROM users WHERE email = ?").get(normalized);
+  const existing = await get("SELECT id FROM users WHERE email = ?", [normalized]);
   if (existing) {
     return jsonError("Cette adresse e-mail est déjà enregistrée", 409);
   }
 
-  const info = db
-    .prepare("INSERT INTO users (email, password_hash) VALUES (?, ?)")
-    .run(normalized, hashPassword(password));
+  const info = await run("INSERT INTO users (email, password_hash) VALUES (?, ?)", [
+    normalized,
+    hashPassword(password),
+  ]);
 
-  const user = { id: Number(info.lastInsertRowid), email: normalized };
+  const user = { id: info.lastInsertRowid, email: normalized };
   return Response.json({ token: signToken(user), user }, { status: 201 });
 }

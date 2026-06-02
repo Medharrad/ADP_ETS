@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 export async function GET(request: Request) {
   const auth = getAuthUser(request);
   if (!auth) return unauthorized();
-  return Response.json({ cycles: listRecentCycles(auth.id) });
+  return Response.json({ cycles: await listRecentCycles(auth.id) });
 }
 
 export async function POST(request: Request) {
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
   };
 
   const classId = Number(body.class_id);
-  if (!classId || !getClassOwned(auth.id, classId)) {
+  if (!classId || !(await getClassOwned(auth.id, classId))) {
     return jsonError("Classe introuvable", 404);
   }
   if (!Array.isArray(body.axes) || body.axes.length === 0) {
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     return jsonError("Paramètres du cycle incomplets", 400);
   }
 
-  const cycle = createCycle(
+  const cycle = await createCycle(
     classId,
     body.diagnostic_id ?? null,
     body.axes.map(Number),

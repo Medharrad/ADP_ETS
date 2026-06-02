@@ -1,6 +1,6 @@
 import { getAuthUser, jsonError, unauthorized } from "@/lib/server/auth";
 import { encryptSecret } from "@/lib/server/crypto";
-import { db } from "@/lib/server/db";
+import { run } from "@/lib/server/db";
 
 export const runtime = "nodejs";
 
@@ -15,10 +15,10 @@ export async function POST(request: Request) {
   }
 
   try {
-    db.prepare("UPDATE users SET anthropic_key_enc = ? WHERE id = ?").run(
+    await run("UPDATE users SET anthropic_key_enc = ? WHERE id = ?", [
       encryptSecret(apiKey.trim()),
       auth.id,
-    );
+    ]);
   } catch {
     return jsonError("Chiffrement indisponible (APP_ENCRYPTION_KEY manquante)", 500);
   }
@@ -28,6 +28,6 @@ export async function POST(request: Request) {
 export async function DELETE(request: Request) {
   const auth = getAuthUser(request);
   if (!auth) return unauthorized();
-  db.prepare("UPDATE users SET anthropic_key_enc = NULL WHERE id = ?").run(auth.id);
+  await run("UPDATE users SET anthropic_key_enc = NULL WHERE id = ?", [auth.id]);
   return Response.json({ ok: true, hasApiKey: false });
 }

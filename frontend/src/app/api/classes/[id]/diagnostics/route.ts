@@ -17,12 +17,12 @@ export async function GET(request: Request, ctx: Ctx) {
   const { id } = await ctx.params;
   const classId = Number(id);
 
-  if (!getClassOwned(auth.id, classId)) return jsonError("Classe introuvable", 404);
+  if (!(await getClassOwned(auth.id, classId))) return jsonError("Classe introuvable", 404);
 
-  const diagnostics = listDiagnostics(classId).map((d) => ({
-    ...d,
-    scores: getScores(d.id),
-  }));
+  const diags = await listDiagnostics(classId);
+  const diagnostics = await Promise.all(
+    diags.map(async (d) => ({ ...d, scores: await getScores(d.id) })),
+  );
   return Response.json({ diagnostics });
 }
 
@@ -32,7 +32,7 @@ export async function POST(request: Request, ctx: Ctx) {
   const { id } = await ctx.params;
   const classId = Number(id);
 
-  if (!getClassOwned(auth.id, classId)) return jsonError("Classe introuvable", 404);
+  if (!(await getClassOwned(auth.id, classId))) return jsonError("Classe introuvable", 404);
 
   const body = (await request.json().catch(() => ({}))) as {
     label?: string;
@@ -53,11 +53,14 @@ export async function POST(request: Request, ctx: Ctx) {
   }
   if (students.length === 0) return jsonError("Aucun élève valide à enregistrer", 400);
 
-  const diag = createDiagnostic(
+  const diag = await createDiagnostic(
     classId,
     body.label?.trim() || null,
     body.date?.trim() || null,
     students,
   );
-  return Response.json({ diagnostic: { ...diag, scores: getScores(diag.id) } }, { status: 201 });
+  return Response.json(
+    { diagnostic: { ...diag, scores: await getScores(diag.id) } },
+    { status: 201 },
+  );
 }

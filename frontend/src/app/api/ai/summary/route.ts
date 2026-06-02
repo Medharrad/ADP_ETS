@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   const auth = getAuthUser(request);
   if (!auth) return unauthorized();
 
-  const key = getUserApiKey(auth.id);
+  const key = await getUserApiKey(auth.id);
   if (!key) return jsonError("Ajoutez votre clé API Anthropic dans les paramètres.", 400);
 
   const body = (await request.json().catch(() => null)) as SummaryInput | null;

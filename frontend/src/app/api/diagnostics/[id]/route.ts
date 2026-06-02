@@ -11,8 +11,8 @@ export async function GET(request: Request, ctx: Ctx) {
   const { id } = await ctx.params;
   const diagId = Number(id);
 
-  const diag = getDiagnosticOwned(auth.id, diagId);
+  const diag = await getDiagnosticOwned(auth.id, diagId);
   if (!diag) return jsonError("Diagnostic introuvable", 404);
 
-  return Response.json({ diagnostic: { ...diag, scores: getScores(diag.id) } });
+  return Response.json({ diagnostic: { ...diag, scores: await getScores(diag.id) } });
 }

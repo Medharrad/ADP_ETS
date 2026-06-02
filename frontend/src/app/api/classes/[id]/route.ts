@@ -19,19 +19,19 @@ export async function GET(request: Request, ctx: Ctx) {
   const { id } = await ctx.params;
   const classId = Number(id);
 
-  const klass = getClassOwned(auth.id, classId);
+  const klass = await getClassOwned(auth.id, classId);
   if (!klass) return jsonError("Classe introuvable", 404);
 
-  const diagnostics = listDiagnostics(classId).map((d) => ({
-    ...d,
-    scores: getScores(d.id),
-  }));
+  const diags = await listDiagnostics(classId);
+  const diagnostics = await Promise.all(
+    diags.map(async (d) => ({ ...d, scores: await getScores(d.id) })),
+  );
 
   return Response.json({
     class: klass,
-    students: getStudents(classId),
+    students: await getStudents(classId),
     diagnostics,
-    cycles: listCycles(classId),
+    cycles: await listCycles(classId),
   });
 }
 
@@ -41,7 +41,7 @@ export async function PATCH(request: Request, ctx: Ctx) {
   const { id } = await ctx.params;
   const classId = Number(id);
 
-  if (!getClassOwned(auth.id, classId)) return jsonError("Classe introuvable", 404);
+  if (!(await getClassOwned(auth.id, classId))) return jsonError("Classe introuvable", 404);
 
   const { nom, niveau } = (await request.json().catch(() => ({}))) as {
     nom?: string;
@@ -49,7 +49,7 @@ export async function PATCH(request: Request, ctx: Ctx) {
   };
   if (!nom || !nom.trim()) return jsonError("Le nom de la classe est requis", 400);
 
-  const updated = updateClass(auth.id, classId, nom.trim(), niveau?.trim() || null);
+  const updated = await updateClass(auth.id, classId, nom.trim(), niveau?.trim() || null);
   return Response.json({ class: updated });
 }
 
@@ -59,7 +59,7 @@ export async function DELETE(request: Request, ctx: Ctx) {
   const { id } = await ctx.params;
   const classId = Number(id);
 
-  if (!getClassOwned(auth.id, classId)) return jsonError("Classe introuvable", 404);
-  deleteClass(auth.id, classId);
+  if (!(await getClassOwned(auth.id, classId))) return jsonError("Classe introuvable", 404);
+  await deleteClass(auth.id, classId);
   return Response.json({ ok: true });
 }

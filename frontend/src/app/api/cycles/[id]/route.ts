@@ -10,7 +10,7 @@ export async function GET(request: Request, ctx: Ctx) {
   if (!auth) return unauthorized();
   const { id } = await ctx.params;
 
-  const cycle = getCycleOwned(auth.id, Number(id));
+  const cycle = await getCycleOwned(auth.id, Number(id));
   if (!cycle) return jsonError("Cycle introuvable", 404);
   return Response.json({ cycle });
 }
@@ -20,13 +20,13 @@ export async function PATCH(request: Request, ctx: Ctx) {
   if (!auth) return unauthorized();
   const { id } = await ctx.params;
 
-  const cycle = getCycleOwned(auth.id, Number(id));
+  const cycle = await getCycleOwned(auth.id, Number(id));
   if (!cycle) return jsonError("Cycle introuvable", 404);
 
   const { plan } = (await request.json().catch(() => ({}))) as { plan?: unknown };
   if (!plan) return jsonError("Plan requis", 400);
 
-  return Response.json({ cycle: updateCyclePlan(cycle.id, plan) });
+  return Response.json({ cycle: await updateCyclePlan(cycle.id, plan) });
 }
 
 export async function DELETE(request: Request, ctx: Ctx) {
@@ -34,8 +34,8 @@ export async function DELETE(request: Request, ctx: Ctx) {
   if (!auth) return unauthorized();
   const { id } = await ctx.params;
 
-  const cycle = getCycleOwned(auth.id, Number(id));
+  const cycle = await getCycleOwned(auth.id, Number(id));
   if (!cycle) return jsonError("Cycle introuvable", 404);
-  deleteCycle(cycle.id);
+  await deleteCycle(cycle.id);
   return Response.json({ ok: true });
 }

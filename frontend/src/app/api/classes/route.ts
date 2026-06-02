@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 export async function GET(request: Request) {
   const auth = getAuthUser(request);
   if (!auth) return unauthorized();
-  return Response.json({ classes: listClasses(auth.id) });
+  return Response.json({ classes: await listClasses(auth.id) });
 }
 
 export async function POST(request: Request) {
@@ -19,6 +19,6 @@ export async function POST(request: Request) {
   };
   if (!nom || !nom.trim()) return jsonError("Le nom de la classe est requis", 400);
 
-  const created = createClass(auth.id, nom.trim(), niveau?.trim() || null);
+  const created = await createClass(auth.id, nom.trim(), niveau?.trim() || null);
   return Response.json({ class: created }, { status: 201 });
 }

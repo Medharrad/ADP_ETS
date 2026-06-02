@@ -1,11 +1,10 @@
 import "server-only";
 
-import { db } from "./db";
+import { get, getDb, query, run } from "./db";
 
 // =============================================================================
-// Data-access layer. Every function that reads/writes class-scoped data takes a
-// userId and enforces ownership, so route handlers never touch another teacher's
-// rows. Returns plain objects ready to serialize.
+// Data-access layer (async, libSQL). Every class-scoped function takes a userId
+// and enforces ownership so route handlers never touch another teacher's rows.
 // =============================================================================
 
 export interface ClassRow {
@@ -52,75 +51,94 @@ export interface CycleRow {
 // -- classes ------------------------------------------------------------------
 
 export function listClasses(userId: number) {
-  return db
-    .prepare(
-      `SELECT c.id, c.nom, c.niveau, c.created_at,
-              (SELECT COUNT(*) FROM students s WHERE s.class_id = c.id) AS students,
-              (SELECT COUNT(*) FROM diagnostics d WHERE d.class_id = c.id) AS diagnostics,
-              (SELECT COUNT(*) FROM cycles cy WHERE cy.class_id = c.id) AS cycles,
-              (SELECT MAX(d.date) FROM diagnostics d WHERE d.class_id = c.id) AS last_diagnostic
-       FROM classes c
-       WHERE c.user_id = ?
-       ORDER BY c.created_at DESC`,
-    )
-    .all(userId);
+  return query(
+    `SELECT c.id, c.nom, c.niveau, c.created_at,
+            (SELECT COUNT(*) FROM students s WHERE s.class_id = c.id) AS students,
+            (SELECT COUNT(*) FROM diagnostics d WHERE d.class_id = c.id) AS diagnostics,
+            (SELECT COUNT(*) FROM cycles cy WHERE cy.class_id = c.id) AS cycles,
+            (SELECT MAX(d.date) FROM diagnostics d WHERE d.class_id = c.id) AS last_diagnostic
+     FROM classes c
+     WHERE c.user_id = ?
+     ORDER BY c.created_at DESC`,
+    [userId],
+  );
 }
 
-export function getClassOwned(userId: number, classId: number): ClassRow | undefined {
-  return db
-    .prepare("SELECT * FROM classes WHERE id = ? AND user_id = ?")
-    .get(classId, userId) as ClassRow | undefined;
+export function getClassOwned(userId: number, classId: number) {
+  return get<ClassRow>("SELECT * FROM classes WHERE id = ? AND user_id = ?", [classId, userId]);
 }
 
-export function createClass(userId: number, nom: string, niveau: string | null) {
-  const info = db
-    .prepare("INSERT INTO classes (user_id, nom, niveau) VALUES (?, ?, ?)")
-    .run(userId, nom, niveau);
-  return getClassOwned(userId, Number(info.lastInsertRowid))!;
+export async function createClass(userId: number, nom: string, niveau: string | null) {
+  const info = await run("INSERT INTO classes (user_id, nom, niveau) VALUES (?, ?, ?)", [
+    userId,
+    nom,
+    niveau,
+  ]);
+  return (await getClassOwned(userId, info.lastInsertRowid))!;
 }
 
-export function updateClass(
+export async function updateClass(
   userId: number,
   classId: number,
   nom: string,
   niveau: string | null,
 ) {
-  db.prepare("UPDATE classes SET nom = ?, niveau = ? WHERE id = ? AND user_id = ?").run(
+  await run("UPDATE classes SET nom = ?, niveau = ? WHERE id = ? AND user_id = ?", [
     nom,
     niveau,
     classId,
     userId,
-  );
+  ]);
   return getClassOwned(userId, classId);
 }
 
-export function deleteClass(userId: number, classId: number) {
-  db.prepare("DELETE FROM classes WHERE id = ? AND user_id = ?").run(classId, userId);
+/** Delete a class and all dependent rows (explicit cascade — FK enforcement is
+ *  not guaranteed on remote libSQL). Runs as one write transaction. */
+export async function deleteClass(userId: number, classId: number) {
+  const db = await getDb();
+  const tx = await db.transaction("write");
+  try {
+    await tx.execute({
+      sql: "DELETE FROM scores WHERE diagnostic_id IN (SELECT id FROM diagnostics WHERE class_id = ?)",
+      args: [classId],
+    });
+    await tx.execute({ sql: "DELETE FROM cycles WHERE class_id = ?", args: [classId] });
+    await tx.execute({ sql: "DELETE FROM diagnostics WHERE class_id = ?", args: [classId] });
+    await tx.execute({ sql: "DELETE FROM students WHERE class_id = ?", args: [classId] });
+    await tx.execute({
+      sql: "DELETE FROM classes WHERE id = ? AND user_id = ?",
+      args: [classId, userId],
+    });
+    await tx.commit();
+  } catch (e) {
+    await tx.rollback();
+    throw e;
+  }
 }
 
-export function getStudents(classId: number): StudentRow[] {
-  return db
-    .prepare("SELECT id, prenom, ordre FROM students WHERE class_id = ? ORDER BY ordre, id")
-    .all(classId) as StudentRow[];
+export function getStudents(classId: number) {
+  return query<StudentRow>(
+    "SELECT id, prenom, ordre FROM students WHERE class_id = ? ORDER BY ordre, id",
+    [classId],
+  );
 }
 
 // -- diagnostics --------------------------------------------------------------
 
-export function listDiagnostics(classId: number): DiagnosticRow[] {
-  return db
-    .prepare("SELECT * FROM diagnostics WHERE class_id = ? ORDER BY date, id")
-    .all(classId) as DiagnosticRow[];
+export function listDiagnostics(classId: number) {
+  return query<DiagnosticRow>("SELECT * FROM diagnostics WHERE class_id = ? ORDER BY date, id", [
+    classId,
+  ]);
 }
 
-export function getScores(diagnosticId: number): ScoreRow[] {
-  return db
-    .prepare(
-      `SELECT sc.student_id, st.prenom, sc.obs1, sc.obs2, sc.obs3
-       FROM scores sc JOIN students st ON st.id = sc.student_id
-       WHERE sc.diagnostic_id = ?
-       ORDER BY st.ordre, st.id`,
-    )
-    .all(diagnosticId) as ScoreRow[];
+export function getScores(diagnosticId: number) {
+  return query<ScoreRow>(
+    `SELECT sc.student_id, st.prenom, sc.obs1, sc.obs2, sc.obs3
+     FROM scores sc JOIN students st ON st.id = sc.student_id
+     WHERE sc.diagnostic_id = ?
+     ORDER BY st.ordre, st.id`,
+    [diagnosticId],
+  );
 }
 
 export interface DiagnosticInput {
@@ -130,112 +148,113 @@ export interface DiagnosticInput {
 
 /**
  * Create a diagnostic for a class. Students are reused by prénom (created if
- * missing), so a re-evaluation links new scores to the same roster.
+ * missing), so a re-evaluation links new scores to the same roster. Atomic.
  */
-export function createDiagnostic(
+export async function createDiagnostic(
   classId: number,
   label: string | null,
   date: string | null,
   students: DiagnosticInput[],
-): DiagnosticRow {
-  const findStudent = db.prepare(
-    "SELECT id FROM students WHERE class_id = ? AND prenom = ?",
-  );
-  const insStudent = db.prepare(
-    "INSERT INTO students (class_id, prenom, ordre) VALUES (?, ?, ?)",
-  );
-  const insScore = db.prepare(
-    "INSERT INTO scores (diagnostic_id, student_id, obs1, obs2, obs3) VALUES (?, ?, ?, ?, ?)",
-  );
-
-  db.exec("BEGIN");
+): Promise<DiagnosticRow> {
+  const db = await getDb();
+  const tx = await db.transaction("write");
   try {
-    const info = db
-      .prepare("INSERT INTO diagnostics (class_id, label, date) VALUES (?, ?, ?)")
-      .run(classId, label, date);
-    const diagId = Number(info.lastInsertRowid);
-
-    students.forEach((s, i) => {
-      const existing = findStudent.get(classId, s.prenom) as { id: number } | undefined;
-      const studentId = existing
-        ? existing.id
-        : Number(insStudent.run(classId, s.prenom, i).lastInsertRowid);
-      insScore.run(diagId, studentId, s.vs[0], s.vs[1], s.vs[2]);
+    const diag = await tx.execute({
+      sql: "INSERT INTO diagnostics (class_id, label, date) VALUES (?, ?, ?)",
+      args: [classId, label, date],
     });
+    const diagId = Number(diag.lastInsertRowid);
 
-    db.exec("COMMIT");
-    return db.prepare("SELECT * FROM diagnostics WHERE id = ?").get(diagId) as DiagnosticRow;
+    for (let i = 0; i < students.length; i++) {
+      const s = students[i];
+      const existing = await tx.execute({
+        sql: "SELECT id FROM students WHERE class_id = ? AND prenom = ?",
+        args: [classId, s.prenom],
+      });
+      let studentId: number;
+      if (existing.rows.length) {
+        studentId = Number((existing.rows[0] as unknown as { id: number }).id);
+      } else {
+        const ins = await tx.execute({
+          sql: "INSERT INTO students (class_id, prenom, ordre) VALUES (?, ?, ?)",
+          args: [classId, s.prenom, i],
+        });
+        studentId = Number(ins.lastInsertRowid);
+      }
+      await tx.execute({
+        sql: "INSERT INTO scores (diagnostic_id, student_id, obs1, obs2, obs3) VALUES (?, ?, ?, ?, ?)",
+        args: [diagId, studentId, s.vs[0], s.vs[1], s.vs[2]],
+      });
+    }
+
+    await tx.commit();
+    return (await get<DiagnosticRow>("SELECT * FROM diagnostics WHERE id = ?", [diagId]))!;
   } catch (e) {
-    db.exec("ROLLBACK");
+    await tx.rollback();
     throw e;
   }
 }
 
-/** Fetch a diagnostic only if it belongs to the user. */
-export function getDiagnosticOwned(userId: number, diagId: number): DiagnosticRow | undefined {
-  return db
-    .prepare(
-      `SELECT d.* FROM diagnostics d
-       JOIN classes c ON c.id = d.class_id
-       WHERE d.id = ? AND c.user_id = ?`,
-    )
-    .get(diagId, userId) as DiagnosticRow | undefined;
+export function getDiagnosticOwned(userId: number, diagId: number) {
+  return get<DiagnosticRow>(
+    `SELECT d.* FROM diagnostics d
+     JOIN classes c ON c.id = d.class_id
+     WHERE d.id = ? AND c.user_id = ?`,
+    [diagId, userId],
+  );
 }
 
 // -- cycles -------------------------------------------------------------------
 
-export function createCycle(
+export async function createCycle(
   classId: number,
   diagnosticId: number | null,
   axes: number[],
   nSeances: number,
   plan: unknown,
-): CycleRow {
-  const info = db
-    .prepare(
-      "INSERT INTO cycles (class_id, diagnostic_id, axes_json, n_seances, plan_json) VALUES (?, ?, ?, ?, ?)",
-    )
-    .run(classId, diagnosticId, JSON.stringify(axes), nSeances, JSON.stringify(plan));
-  return db.prepare("SELECT * FROM cycles WHERE id = ?").get(Number(info.lastInsertRowid)) as CycleRow;
+): Promise<CycleRow> {
+  const info = await run(
+    "INSERT INTO cycles (class_id, diagnostic_id, axes_json, n_seances, plan_json) VALUES (?, ?, ?, ?, ?)",
+    [classId, diagnosticId, JSON.stringify(axes), nSeances, JSON.stringify(plan)],
+  );
+  return (await get<CycleRow>("SELECT * FROM cycles WHERE id = ?", [info.lastInsertRowid]))!;
 }
 
-export function listCycles(classId: number): CycleRow[] {
-  return db
-    .prepare("SELECT * FROM cycles WHERE class_id = ? ORDER BY created_at DESC")
-    .all(classId) as CycleRow[];
+export function listCycles(classId: number) {
+  return query<CycleRow>("SELECT * FROM cycles WHERE class_id = ? ORDER BY created_at DESC", [
+    classId,
+  ]);
 }
 
 export function listRecentCycles(userId: number, limit = 6) {
-  return db
-    .prepare(
-      `SELECT cy.id, cy.class_id, cy.n_seances, cy.edited, cy.created_at, cy.axes_json,
-              c.nom AS class_nom, c.niveau AS class_niveau
-       FROM cycles cy JOIN classes c ON c.id = cy.class_id
-       WHERE c.user_id = ?
-       ORDER BY cy.created_at DESC
-       LIMIT ?`,
-    )
-    .all(userId, limit);
+  return query(
+    `SELECT cy.id, cy.class_id, cy.n_seances, cy.edited, cy.created_at, cy.axes_json,
+            c.nom AS class_nom, c.niveau AS class_niveau
+     FROM cycles cy JOIN classes c ON c.id = cy.class_id
+     WHERE c.user_id = ?
+     ORDER BY cy.created_at DESC
+     LIMIT ?`,
+    [userId, limit],
+  );
 }
 
-export function getCycleOwned(userId: number, cycleId: number): CycleRow | undefined {
-  return db
-    .prepare(
-      `SELECT cy.* FROM cycles cy
-       JOIN classes c ON c.id = cy.class_id
-       WHERE cy.id = ? AND c.user_id = ?`,
-    )
-    .get(cycleId, userId) as CycleRow | undefined;
+export function getCycleOwned(userId: number, cycleId: number) {
+  return get<CycleRow>(
+    `SELECT cy.* FROM cycles cy
+     JOIN classes c ON c.id = cy.class_id
+     WHERE cy.id = ? AND c.user_id = ?`,
+    [cycleId, userId],
+  );
 }
 
-export function updateCyclePlan(cycleId: number, plan: unknown) {
-  db.prepare("UPDATE cycles SET plan_json = ?, edited = 1 WHERE id = ?").run(
+export async function updateCyclePlan(cycleId: number, plan: unknown) {
+  await run("UPDATE cycles SET plan_json = ?, edited = 1 WHERE id = ?", [
     JSON.stringify(plan),
     cycleId,
-  );
-  return db.prepare("SELECT * FROM cycles WHERE id = ?").get(cycleId) as CycleRow;
+  ]);
+  return get<CycleRow>("SELECT * FROM cycles WHERE id = ?", [cycleId]);
 }
 
 export function deleteCycle(cycleId: number) {
-  db.prepare("DELETE FROM cycles WHERE id = ?").run(cycleId);
+  return run("DELETE FROM cycles WHERE id = ?", [cycleId]);
 }

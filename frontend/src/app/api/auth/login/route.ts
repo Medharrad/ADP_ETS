@@ -1,4 +1,4 @@
-import { db } from "@/lib/server/db";
+import { get } from "@/lib/server/db";
 import { jsonError, signToken, verifyPassword } from "@/lib/server/auth";
 
 export const runtime = "nodejs";
@@ -19,9 +19,10 @@ export async function POST(request: Request) {
     return jsonError("E-mail et mot de passe requis", 400);
   }
 
-  const row = db
-    .prepare("SELECT id, email, password_hash FROM users WHERE email = ?")
-    .get(email.toLowerCase()) as UserRow | undefined;
+  const row = await get<UserRow>(
+    "SELECT id, email, password_hash FROM users WHERE email = ?",
+    [email.toLowerCase()],
+  );
 
   if (!row || !verifyPassword(password, row.password_hash)) {
     return jsonError("E-mail ou mot de passe invalide", 401);

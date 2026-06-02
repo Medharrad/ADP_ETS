@@ -2,7 +2,7 @@ import "server-only";
 
 import Anthropic from "@anthropic-ai/sdk";
 
-import { db } from "./db";
+import { get } from "./db";
 import { decryptSecret } from "./crypto";
 
 // =============================================================================
@@ -24,10 +24,11 @@ export class AiError extends Error {
 }
 
 /** Read + decrypt a teacher's stored API key. Returns null when none set. */
-export function getUserApiKey(userId: number): string | null {
-  const row = db
-    .prepare("SELECT anthropic_key_enc FROM users WHERE id = ?")
-    .get(userId) as { anthropic_key_enc: string | null } | undefined;
+export async function getUserApiKey(userId: number): Promise<string | null> {
+  const row = await get<{ anthropic_key_enc: string | null }>(
+    "SELECT anthropic_key_enc FROM users WHERE id = ?",
+    [userId],
+  );
   if (!row?.anthropic_key_enc) return null;
   try {
     return decryptSecret(row.anthropic_key_enc);

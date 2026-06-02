@@ -40,17 +40,17 @@ export async function POST(request: Request) {
   const auth = getAuthUser(request);
   if (!auth) return unauthorized();
 
-  if ((listClasses(auth.id) as unknown[]).length > 0) {
+  if (((await listClasses(auth.id)) as unknown[]).length > 0) {
     return Response.json({ created: false, reason: "Vous avez déjà des classes." });
   }
 
-  const klass = createClass(auth.id, "3ème B — Démo", "3ème");
+  const klass = await createClass(auth.id, "3ème B — Démo", "3ème");
 
   const toStudents = (rows: typeof ROSTER_S1) =>
     rows.map(([prenom, a, b, c]) => ({ prenom, vs: [a, b, c] as [number, number, number] }));
 
-  createDiagnostic(klass.id, "S1", "2026-03-10", toStudents(ROSTER_S1));
-  const diagS3 = createDiagnostic(klass.id, "S3", "2026-04-21", toStudents(ROSTER_S3));
+  await createDiagnostic(klass.id, "S1", "2026-03-10", toStudents(ROSTER_S1));
+  const diagS3 = await createDiagnostic(klass.id, "S3", "2026-04-21", toStudents(ROSTER_S3));
 
   // Build a real cycle from the latest diagnostic.
   const analysis = analyser(toStudents(ROSTER_S3));
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
     .slice(0, 3)
     .map((s) => s.axe.id);
   const plan = genPlan(topAxes, 8, analysis);
-  createCycle(klass.id, diagS3.id, topAxes, 8, plan);
+  await createCycle(klass.id, diagS3.id, topAxes, 8, plan);
 
   return Response.json({ created: true, classId: klass.id });
 }
