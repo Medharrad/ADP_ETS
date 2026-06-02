@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
-  ArrowUpRight,
   CalendarRange,
   ClipboardCheck,
   GraduationCap,
@@ -15,7 +14,9 @@ import {
 } from "lucide-react";
 
 import { AppHeader } from "@/components/app-header";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { useRequireAuth } from "@/lib/use-require-auth";
+import { useRevalidate } from "@/lib/use-revalidate";
 import { useI18n } from "@/lib/i18n";
 import {
   createClass,
@@ -39,6 +40,8 @@ export default function DashboardPage() {
   const [nom, setNom] = useState("");
   const [niveau, setNiveau] = useState(NIVEAUX[1]);
   const [creating, setCreating] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<ClassSummary | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const refresh = useCallback(() => {
     return Promise.all([listClasses(), listRecentCycles()])
@@ -53,6 +56,10 @@ export default function DashboardPage() {
   useEffect(() => {
     if (ready) refresh();
   }, [ready, refresh]);
+
+  // Re-fetch when returning to the dashboard (e.g. after running a diagnostic
+  // on another page), so class stats stay current.
+  useRevalidate(refresh, ready);
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
@@ -83,14 +90,18 @@ export default function DashboardPage() {
     }
   }
 
-  async function handleDelete(c: ClassSummary) {
-    if (!window.confirm(`Supprimer la classe « ${c.nom} » et toutes ses données ?`)) return;
+  async function confirmDelete() {
+    if (!deleteTarget) return;
+    setDeleting(true);
     try {
-      await deleteClass(c.id);
+      await deleteClass(deleteTarget.id);
       toast.success("Classe supprimée");
+      setDeleteTarget(null);
       refresh();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Échec de la suppression");
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -157,18 +168,20 @@ export default function DashboardPage() {
                         <Pill>{c.diagnostics} diagnostic(s)</Pill>
                         <Pill>{c.cycles} cycle(s)</Pill>
                       </div>
-                      <div className="mt-3 flex items-center justify-between text-xs text-[#64748B]">
-                        <span>
-                          {t("dash.lastDiag")} : {c.last_diagnostic ?? "—"}
-                        </span>
-                        <ArrowUpRight className="h-4 w-4 text-[#2563EB] opacity-0 transition group-hover:opacity-100" />
+                      <div className="mt-3 pe-9 text-xs text-[#64748B]">
+                        {t("dash.lastDiag")} : {c.last_diagnostic ?? "—"}
                       </div>
                     </Link>
                     <button
                       type="button"
-                      onClick={() => handleDelete(c)}
-                      className="absolute end-3 top-3 hidden rounded-lg p-1.5 text-[#94A3B8] transition hover:bg-[#FEF2F2] hover:text-[#DC2626] group-hover:block"
-                      aria-label="Supprimer la classe"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setDeleteTarget(c);
+                      }}
+                      className="absolute bottom-2.5 end-2.5 grid h-8 w-8 place-items-center rounded-lg text-[#94A3B8] opacity-70 transition hover:bg-[#FEF2F2] hover:text-[#DC2626] hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-[#DC2626]/30"
+                      aria-label={`Supprimer la classe ${c.nom}`}
+                      title="Supprimer la classe"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -244,6 +257,23 @@ export default function DashboardPage() {
           </aside>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        danger
+        title="Supprimer la classe ?"
+        message={
+          <>
+            La classe <strong className="text-[#0C1E3C]">{deleteTarget?.nom}</strong> et toutes
+            ses données (élèves, diagnostics, cycles) seront définitivement supprimées. Cette
+            action est irréversible.
+          </>
+        }
+        confirmLabel="Supprimer"
+        loading={deleting}
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </main>
   );
 }

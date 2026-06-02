@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { AppHeader } from "@/components/app-header";
 import { useRequireAuth } from "@/lib/use-require-auth";
+import { useRevalidate } from "@/lib/use-revalidate";
 import { analyser } from "@/lib/calc";
 import { OBS } from "@/lib/referentiel";
 import { getClass, type ClassDetail, type Diagnostic } from "@/lib/api";
@@ -44,6 +45,8 @@ export default function ClassDetailPage() {
   useEffect(() => {
     if (ready) refresh();
   }, [ready, refresh]);
+
+  useRevalidate(refresh, ready);
 
   const sortedDiagnostics = useMemo(
     () =>

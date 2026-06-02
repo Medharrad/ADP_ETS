@@ -15,7 +15,6 @@ import { AX, AXES_RANGE, OBS, SA, SEANCES, SH, type Niveau } from "@/lib/referen
 import {
   analyser,
   codeFor,
-  codeToScore,
   distribute,
   genPlan,
   rankAxes,
@@ -24,6 +23,7 @@ import {
   type StudentInput,
 } from "@/lib/calc";
 import { aiEnrich, aiJustify, aiSummary } from "@/lib/api";
+import { CsvImport } from "./CsvImport";
 
 // -- helpers ------------------------------------------------------------------
 
@@ -140,13 +140,9 @@ export function OutilWizard({
   const [cycleSaved, setCycleSaved] = useState(false);
   const [analysis, setAnalysis] = useState<ClassAnalysis | null>(null);
   const [s1error, setS1error] = useState<string | null>(null);
-  const [csvStatus, setCsvStatus] = useState<{ kind: "ali" | "ale"; msg: string } | null>(null);
-  const [dgo, setDgo] = useState(false);
 
   const [axsel, setAxsel] = useState<number[]>([]);
   const [nseances, setNseances] = useState<number>(SEANCES.default);
-
-  const fileRef = useRef<HTMLInputElement>(null);
 
   // Set today's date on the client to avoid SSR/CSR hydration mismatch.
   useEffect(() => {
@@ -305,9 +301,17 @@ export function OutilWizard({
     if (!plan || !onSaveCycle) return;
     setSavingCycle(true);
     try {
+      // A cycle is derived from the diagnostic — never persist one without it.
+      // If the teacher skipped "Enregistrer le diagnostic", save it first so the
+      // class roster + scores are stored alongside the cycle.
+      const savedDiagNow = !!(analysis && onSaveDiagnostic && !diagSaved);
+      if (savedDiagNow) {
+        await onSaveDiagnostic!(analysis!.results.map((r) => ({ prenom: r.prenom, vs: r.vs })));
+        setDiagSaved(true);
+      }
       await onSaveCycle({ axes: axsel, nseances, plan });
       setCycleSaved(true);
-      toast.success("Cycle enregistré");
+      toast.success(savedDiagNow ? "Diagnostic et cycle enregistrés" : "Cycle enregistré");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Échec de l'enregistrement");
     } finally {
@@ -316,79 +320,18 @@ export function OutilWizard({
   }
 
   // -- CSV import -------------------------------------------------------------
-  function importCsv(file: File) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const txt = String(e.target?.result ?? "");
-      const lines = txt.split(/\r?\n/);
-      let hi = -1;
-      let hl: string | null = null;
-      for (let i = 0; i < lines.length; i++) {
-        if (lines[i].indexOf("Nom_Eleve") > -1 || lines[i].indexOf("Prenom") > -1) {
-          hi = i;
-          hl = lines[i];
-          break;
-        }
-      }
-      if (hi === -1 || !hl) {
-        setCsvStatus({ kind: "ale", msg: 'En-tête "Nom_Eleve" introuvable.' });
-        return;
-      }
-      const sep = hl.indexOf(";") > -1 ? ";" : ",";
-      const hdrs = hl.split(sep).map((h) => h.trim().replace(/^"|"$/g, ""));
-      const fc = (pats: string[]) => {
-        for (const p of pats)
-          for (let h = 0; h < hdrs.length; h++)
-            if (hdrs[h].toUpperCase().indexOf(p.toUpperCase()) > -1) return h;
-        return -1;
-      };
-      const nc = fc(["Nom_Eleve", "Prenom", "NOM", "PRENOM"]);
-      let c1 = fc(["OBS01", "OBS1_D", "OBS01_D"]);
-      let c2 = fc(["OBS02", "OBS2_D", "OBS02_D"]);
-      let c3 = fc(["OBS03", "OBS3_D", "OBS03_D"]);
-      if (c1 === -1) c1 = fc(["OBS1"]);
-      if (c2 === -1) c2 = fc(["OBS2"]);
-      if (c3 === -1) c3 = fc(["OBS3"]);
-
-      const imported: Row[] = [];
-      let added = 0;
-      let ignored = 0;
-      for (let li = hi + 1; li < lines.length; li++) {
-        const l = lines[li].trim();
-        if (!l || l.indexOf("BILAN_CLASSE") > -1) {
-          if (l) ignored++;
-          continue;
-        }
-        const cols = l.split(sep).map((c) => c.trim().replace(/^"|"$/g, ""));
-        if (cols.length < 2) {
-          ignored++;
-          continue;
-        }
-        const prenom = nc > -1 ? cols[nc] : cols[0];
-        if (!prenom) {
-          ignored++;
-          continue;
-        }
-        const get = (ci: number): string => {
-          if (ci === -1) return "";
-          const s = codeToScore(cols[ci] ?? "");
-          return s === null ? "" : String(s);
-        };
-        imported.push({
-          id: nextId(),
-          prenom,
-          vs: [get(c1), get(c2), get(c3)],
-          errs: [false, false, false],
-        });
-        added++;
-      }
-      setRows((rs) => [...rs, ...imported]);
-      setCsvStatus({
-        kind: "ali",
-        msg: `${added} élève${added > 1 ? "s" : ""} importé${added > 1 ? "s" : ""} — ${ignored} ligne${ignored > 1 ? "s" : ""} ignorée${ignored > 1 ? "s" : ""}`,
-      });
-    };
-    reader.readAsText(file, "UTF-8");
+  /** Apply a CSV-parsed roster: drop empty placeholder rows, append imported. */
+  function applyCsvImport(students: { prenom: string; vs: [string, string, string] }[]) {
+    setRows((rs) => {
+      const kept = rs.filter((r) => r.prenom.trim() || r.vs.some((v) => v.trim()));
+      const imported: Row[] = students.map((s) => ({
+        id: nextId(),
+        prenom: s.prenom,
+        vs: s.vs,
+        errs: [false, false, false],
+      }));
+      return [...kept, ...imported];
+    });
   }
 
   // -- CSV export -------------------------------------------------------------
@@ -496,11 +439,7 @@ export function OutilWizard({
             runAnalyse={runAnalyse}
             analysis={analysis}
             s1error={s1error}
-            csvStatus={csvStatus}
-            dgo={dgo}
-            setDgo={setDgo}
-            fileRef={fileRef}
-            importCsv={importCsv}
+            applyCsvImport={applyCsvImport}
             exportCsv={exportCsv}
             goStep={goStep}
             canSave={!!onSaveDiagnostic}
@@ -563,11 +502,7 @@ function Step1(props: {
   runAnalyse: () => void;
   analysis: ClassAnalysis | null;
   s1error: string | null;
-  csvStatus: { kind: "ali" | "ale"; msg: string } | null;
-  dgo: boolean;
-  setDgo: (v: boolean) => void;
-  fileRef: React.RefObject<HTMLInputElement | null>;
-  importCsv: (f: File) => void;
+  applyCsvImport: (students: { prenom: string; vs: [string, string, string] }[]) => void;
   exportCsv: () => void;
   goStep: (n: number) => void;
   canSave: boolean;
@@ -664,42 +599,8 @@ function Step1(props: {
         </div>
 
         {/* CSV import */}
-        <div style={{ marginTop: 14, paddingTop: 10, borderTop: "1px solid var(--bd)" }}>
-          <h3>Import CSV terrain (format ADP 2026)</h3>
-          <div
-            className={cx("dz", props.dgo && "dgo")}
-            onClick={() => props.fileRef.current?.click()}
-            onDragOver={(e) => {
-              e.preventDefault();
-              props.setDgo(true);
-            }}
-            onDragLeave={() => props.setDgo(false)}
-            onDrop={(e) => {
-              e.preventDefault();
-              props.setDgo(false);
-              if (e.dataTransfer.files[0]) props.importCsv(e.dataTransfer.files[0]);
-            }}
-          >
-            <div className={cx("di")}>📄</div>
-            <p>Glisser-déposer le CSV ici ou cliquer</p>
-            <p style={{ fontSize: ".64rem", marginTop: 2, color: "#999" }}>
-              OBS01_Degre / OBS02_Degre / OBS03_Degre (A/B/C) ou OBS1/OBS2/OBS3 (0-10) — Codes
-              métier PT− PT~ PT+ / GM− GM~ GM+ / CL− CL~ CL+
-            </p>
-          </div>
-          <input
-            ref={props.fileRef}
-            type="file"
-            accept=".csv,.txt"
-            style={{ display: "none" }}
-            onChange={(e) => {
-              if (e.target.files?.[0]) props.importCsv(e.target.files[0]);
-              e.target.value = "";
-            }}
-          />
-          {props.csvStatus && (
-            <div className={cx("al", props.csvStatus.kind)}>{props.csvStatus.msg}</div>
-          )}
+        <div style={{ marginTop: 14, paddingTop: 12, borderTop: "1px solid var(--bd)" }}>
+          <CsvImport onImport={props.applyCsvImport} />
         </div>
 
         {props.s1error && <div className={cx("al ale")}>{props.s1error}</div>}
