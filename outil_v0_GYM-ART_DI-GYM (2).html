@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Outil ADP 2026 — Gymnastiqu Artistique — DI-GYM</title>
+<style>
+:root{--ink:#0D1E35;--ink2:#1A2F4A;--gold:#B8843A;--gold2:#D4A055;--gold3:#EEC87A;--cream:#F9F4EC;--cream2:#F0E9DC;--cream3:#E5DDD0;--rb:#FDEAEA;--rt:#7A1212;--rd:#E8A8A8;--ob:#FEF3E0;--ot:#6B3A00;--od:#E8C878;--gb:#E8F5EC;--gt:#124A1E;--gd:#90C8A0;--sl:#5A6B7E;--lt:#F5F2ED;--bd:rgba(184,132,58,.22);--sh:0 2px 16px rgba(13,30,53,.1);--r:10px;--tr:.2s ease;--fh:'Palatino Linotype',Palatino,serif;--fb:'Trebuchet MS','Segoe UI',sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px}body{background:var(--lt);color:var(--ink);font-family:var(--fb);min-height:100vh}
+.hdr{background:linear-gradient(135deg,var(--ink),var(--ink2));padding:14px 20px 10px;border-bottom:3px solid var(--gold)}
+.hdr h1{font-family:var(--fh);font-size:1.2rem;font-weight:normal;color:var(--cream)}
+.hdr .sub{font-size:.72rem;color:var(--gold3);margin-top:2px}
+.hdr-b{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
+.hb{font-size:.67rem;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.04em}
+.hbg{background:var(--gold);color:var(--ink)}.hbo{background:transparent;border:1px solid rgba(184,132,58,.5);color:var(--gold3)}
+.nn{background:var(--ink2);border:1px solid rgba(184,132,58,.4);color:var(--gold3);font-size:.68rem;padding:3px 9px;border-radius:6px;margin-top:4px;display:inline-block}
+.stp-wrap{background:var(--ink2);padding:9px 16px;display:flex;gap:3px;overflow-x:auto;border-bottom:2px solid rgba(184,132,58,.12)}
+.stp{display:flex;align-items:center;gap:6px;padding:5px 11px;border:1.5px solid rgba(184,132,58,.2);border-radius:var(--r);background:transparent;color:rgba(249,244,236,.4);font-size:.72rem;cursor:default;white-space:nowrap;transition:var(--tr);font-family:var(--fb)}
+.stp .sn{width:19px;height:19px;border-radius:50%;background:rgba(184,132,58,.15);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.68rem;flex-shrink:0}
+.stp.active{color:var(--cream);border-color:var(--gold);background:rgba(184,132,58,.1);cursor:pointer}.stp.active .sn{background:var(--gold);color:var(--ink)}
+.stp.done{color:var(--gold2);border-color:rgba(184,132,58,.4);cursor:pointer}.stp.done .sn{background:rgba(184,132,58,.25);color:var(--gold2)}
+.sarr{color:rgba(184,132,58,.3);align-self:center;font-size:.8rem;padding:0 1px}
+.main{max-width:1280px;margin:0 auto;padding:18px 16px}
+.sec{display:none}.sec.vis{display:block}
+.card{background:#fff;border:1px solid var(--bd);border-radius:var(--r);padding:16px 18px;margin-bottom:12px;box-shadow:var(--sh)}
+.card h2{font-family:var(--fh);font-size:.98rem;color:var(--ink);margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--bd);font-weight:normal}
+.card h3{font-size:.75rem;font-weight:700;color:var(--sl);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+.fg{display:grid;grid-template-columns:1fr repeat(3,80px) 28px;gap:5px;align-items:center;margin-bottom:4px}
+.fgh{font-size:.68rem;color:var(--sl);font-weight:700;text-align:center}
+.fgh:first-child{text-align:left}
+input[type=text],input[type=number],input[type=date]{width:100%;padding:5px 8px;border:1.5px solid var(--cream3);border-radius:6px;font-size:.8rem;font-family:var(--fb);transition:var(--tr);background:#fff;color:var(--ink)}
+input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,132,58,.1)}
+input.err{border-color:#C0392B;background:#fff8f8}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border:none;border-radius:var(--r);font-size:.79rem;font-weight:700;cursor:pointer;transition:var(--tr);font-family:var(--fb);white-space:nowrap}
+.bp{background:var(--ink);color:var(--cream);border:2px solid var(--ink)}.bp:hover{background:var(--ink2);border-color:var(--gold)}
+.bg{background:var(--gold);color:var(--ink);border:2px solid var(--gold)}.bg:hover{background:var(--gold2)}
+.bo{background:transparent;color:var(--ink);border:1.5px solid var(--bd)}.bo:hover{background:var(--cream2)}
+.bsm{padding:3px 9px;font-size:.7rem}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.brow{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--bd)}
+.ba{background:var(--rb);color:var(--rt);border:1px solid var(--rd);padding:1px 7px;border-radius:20px;font-size:.7rem;font-weight:700;display:inline-block}
+.bb{background:var(--ob);color:var(--ot);border:1px solid var(--od);padding:1px 7px;border-radius:20px;font-size:.7rem;font-weight:700;display:inline-block}
+.bc{background:var(--gb);color:var(--gt);border:1px solid var(--gd);padding:1px 7px;border-radius:20px;font-size:.7rem;font-weight:700;display:inline-block}
+.tw{overflow-x:auto;margin-top:7px}
+table{width:100%;border-collapse:collapse;font-size:.73rem}
+th{background:var(--ink);color:var(--cream);padding:6px 8px;text-align:left;font-weight:700;white-space:nowrap;font-size:.69rem}
+td{padding:5px 8px;border-bottom:1px solid var(--cream2);vertical-align:top}
+tr.ra td{background:var(--rb)}tr.rb td{background:var(--ob)}tr.rc td{background:var(--gb)}
+.sr{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:9px;margin:9px 0}
+.sc{background:#fff;border:1px solid var(--bd);border-radius:var(--r);padding:10px 9px;text-align:center;box-shadow:var(--sh)}
+.sc .v{font-family:var(--fh);font-size:1.6rem;font-weight:700;line-height:1}.sc .l{font-size:.65rem;color:var(--sl);margin-top:2px;text-transform:uppercase;letter-spacing:.04em}
+.sca{border-color:var(--rd)}.scb{border-color:var(--od)}.scc{border-color:var(--gd)}
+.sca .v{color:var(--rt)}.scb .v{color:var(--ot)}.scc .v{color:var(--gt)}
+.obr{display:flex;align-items:center;gap:7px;margin:4px 0}
+.obrl{width:95px;font-size:.7rem;font-weight:700;flex-shrink:0}
+.obrt{flex:1;height:9px;background:var(--cream2);border-radius:5px;overflow:hidden}
+.obrf{height:100%;border-radius:5px;transition:width .5s}
+.obrv{width:42px;font-size:.7rem;color:var(--sl);text-align:right;flex-shrink:0}
+.obst{font-size:.65rem;font-weight:700;padding:1px 6px;border-radius:10px;flex-shrink:0}
+.dbox{background:var(--ink);color:var(--cream);border-radius:var(--r);padding:12px 16px;margin-top:9px;border-left:4px solid var(--gold)}
+.dbox h3{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--gold3);margin-bottom:4px}
+.dbox p{font-size:.83rem;line-height:1.55}
+.axc{background:#fff;border:1.5px solid var(--bd);border-radius:var(--r);padding:11px 13px;margin-bottom:7px;cursor:pointer;transition:var(--tr)}
+.axc:hover{border-color:var(--gold);box-shadow:0 2px 9px rgba(184,132,58,.1)}.axc.sel{border-color:var(--gold);background:rgba(184,132,58,.03)}
+.axc .ah{display:flex;align-items:flex-start;gap:9px}
+.axc input[type=checkbox]{width:16px;height:16px;accent-color:var(--gold);flex-shrink:0;margin-top:2px;cursor:pointer}
+.axc .at{font-weight:700;font-size:.83rem;color:var(--ink)}.axc .ad{font-size:.73rem;color:var(--sl);margin-top:2px}
+.axc .am{font-size:.69rem;color:var(--sl);margin-top:4px;display:flex;gap:11px;flex-wrap:wrap}
+.pb{display:inline-block;height:4px;background:var(--gold);border-radius:2px;vertical-align:middle;margin-right:3px;min-width:3px}
+.axmsg{background:var(--cream2);border:1px solid var(--bd);border-radius:6px;padding:6px 10px;font-size:.74rem;margin-bottom:7px;color:var(--sl)}
+.slw{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:10px 0}
+input[type=range]{-webkit-appearance:none;width:230px;height:5px;border-radius:3px;background:var(--cream2);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:19px;height:19px;border-radius:50%;background:var(--gold);border:2px solid var(--ink);cursor:pointer;box-shadow:0 2px 4px rgba(0,0,0,.18)}
+.slv{font-family:var(--fh);font-size:1.35rem;color:var(--ink);font-weight:700;min-width:34px}
+.dseq{background:var(--cream2);border-left:3px solid var(--gold);border-radius:0 6px 6px 0;padding:6px 11px;margin-bottom:4px;font-size:.75rem}
+.dseq .sh{font-weight:700;color:var(--ink)}.dseq .ss{color:var(--sl);margin-top:1px}
+.sqb{margin-bottom:22px}
+.sqh{background:var(--ink);color:var(--cream);padding:8px 13px;border-radius:var(--r) var(--r) 0 0;display:flex;justify-content:space-between;align-items:center}
+.sqh h3{font-family:var(--fh);font-size:.88rem;font-weight:normal}
+.sqt{font-size:.65rem;background:var(--gold);color:var(--ink);padding:2px 7px;border-radius:20px;font-weight:700}
+.pt{width:100%;border-collapse:collapse;border:1px solid var(--bd);font-size:.71rem}
+.pt th{background:var(--ink2);color:var(--cream);padding:5px 8px;text-align:left;font-size:.67rem}
+.pt td{padding:5px 8px;border-bottom:1px solid var(--cream2);vertical-align:top}
+.pt .ga{background:var(--rb)}.pt .gb{background:var(--ob)}.pt .gc{background:var(--gb)}
+.ind{background:var(--cream);border:1px dashed var(--bd);border-radius:5px;padding:4px 9px;font-size:.67rem;color:var(--sl);margin:2px 0}
+.ind em{color:var(--ink);font-style:normal;font-weight:700}
+.cycs{background:var(--ink);color:var(--cream);border-radius:var(--r);padding:14px 16px;margin-top:16px}
+.cycs h3{font-family:var(--fh);font-size:.92rem;margin-bottom:7px;color:var(--gold3);font-weight:normal}
+.cycs p{font-size:.78rem;line-height:1.65;opacity:.9}
+.al{padding:8px 11px;border-radius:6px;font-size:.75rem;margin:6px 0}
+.alw{background:var(--ob);border-left:4px solid var(--gold);color:#5C3D00}
+.ale{background:var(--rb);border-left:4px solid #C0392B;color:var(--rt)}
+.ali{background:var(--gb);border-left:4px solid #2E7D32;color:var(--gt)}
+.dz{border:2px dashed var(--bd);border-radius:var(--r);padding:18px;text-align:center;cursor:pointer;transition:var(--tr);background:var(--lt)}
+.dz:hover,.dz.dgo{border-color:var(--gold);background:rgba(184,132,58,.03)}
+.dz p{font-size:.76rem;color:var(--sl)}.dz .di{font-size:1.7rem;margin-bottom:5px}
+#csvf{display:none}
+.grb{display:flex;align-items:center;gap:7px;padding:6px 10px;margin:3px 0;border-radius:6px;font-size:.75rem}
+@media print{.stp-wrap,.brow,#s1inp,#step2,#step3,.dz,.hdr-b,.nn{display:none!important}.sec.vis{display:block!important}body,html{background:#fff}.card{box-shadow:none;border:1px solid #ccc;break-inside:avoid}.pt th{background:#222!important;-webkit-print-color-adjust:exact}.pt .ga,.pt .gb,.pt .gc,.ra,.rb,.rc{-webkit-print-color-adjust:exact}@page{margin:1.2cm;size:A4 landscape}}
+@media(max-width:560px){.fg{grid-template-columns:1fr repeat(3,60px) 22px}.sr{grid-template-columns:repeat(2,1fr)}input[type=range]{width:150px}.main{padding:10px 9px}.pt{font-size:.65rem}.pt td,.pt th{padding:3px 5px}}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap">
+    <div>
+      <h1>Outil d&rsquo;aide &agrave; la d&eacute;cision p&eacute;dagogique &mdash; EPS</h1>
+      <div class="sub">Gymnastiqu Artistique &middot; DI-GYM &middot; ADP 2026 &middot; CRMEF Inezgane &middot; BOUARGANE</div>
+      <div class="hdr-b">
+        <span class="hb hbg">GAF / GAM</span>
+        <span class="hb hbo">4&egrave;me &middot; 3&egrave;me</span>
+        <span class="hb hbo">DI &mdash; Diagnostique Initial</span>
+        <span class="hb hbo">coll1 DI 08</span>
+      </div>
+    </div>
+    <div class="nn">&#128683; Outil sans note &mdash; D&eacute;cision&nbsp;: l&rsquo;enseignant</div>
+  </div>
+</div>
+<div class="stp-wrap">
+  <button class="stp active" id="n1" onclick="gS(1)"><span class="sn">1</span> Diagnostic</button>
+  <span class="sarr">&#8250;</span>
+  <button class="stp" id="n2" onclick="gS(2)"><span class="sn">2</span> Axes</button>
+  <span class="sarr">&#8250;</span>
+  <button class="stp" id="n3" onclick="gS(3)"><span class="sn">3</span> Param&eacute;trage</button>
+  <span class="sarr">&#8250;</span>
+  <button class="stp" id="n4" onclick="gS(4)"><span class="sn">4</span> Planification</button>
+</div>
+<div class="main">
+
+<!-- STEP 1 -->
+<div class="sec vis" id="step1">
+  <div class="card" id="s1inp">
+    <h2>&#128221; Saisie des donn&eacute;es &mdash; S&eacute;ance S1</h2>
+    <div style="display:flex;gap:9px;margin-bottom:10px;flex-wrap:wrap">
+      <div style="flex:1;min-width:170px"><label style="font-size:.69rem;font-weight:700;color:var(--sl);display:block;margin-bottom:3px">Classe / Groupe</label><input type="text" id="cl" placeholder="Ex : 3&egrave;me B"></div>
+      <div style="flex:0 0 155px"><label style="font-size:.69rem;font-weight:700;color:var(--sl);display:block;margin-bottom:3px">Date</label><input type="date" id="dt"></div>
+    </div>
+    <div class="fg" style="margin-bottom:2px">
+      <span class="fgh" style="text-align:left">Pr&eacute;nom *</span>
+      <span class="fgh">OBS-01<br><small style="font-weight:400;font-size:.62rem">Posture /10</small></span>
+      <span class="fgh">OBS-02<br><small style="font-weight:400;font-size:.62rem">Renversmt /10</small></span>
+      <span class="fgh">OBS-03<br><small style="font-weight:400;font-size:.62rem">Compos. /10</small></span>
+      <span></span>
+    </div>
+    <div id="rows"></div>
+    <div style="display:flex;gap:6px;margin-top:7px;flex-wrap:wrap">
+      <button class="btn bo bsm" onclick="aR()">+ &Eacute;l&egrave;ve</button>
+      <button class="btn bo bsm" onclick="aRn(5)">+ 5</button>
+      <button class="btn bo bsm" onclick="aRn(10)">+ 10</button>
+    </div>
+    <div style="margin-top:14px;padding-top:10px;border-top:1px solid var(--bd)">
+      <h3>Import CSV terrain (format ADP 2026)</h3>
+      <div class="dz" id="dz" onclick="document.getElementById('csvf').click()" ondragover="event.preventDefault();this.classList.add('dgo')" ondragleave="this.classList.remove('dgo')" ondrop="hDrop(event)">
+        <div class="di">&#128196;</div>
+        <p>Glisser-d&eacute;poser le CSV ici ou cliquer</p>
+        <p style="font-size:.64rem;margin-top:2px;color:#999">OBS01_Degre / OBS02_Degre / OBS03_Degre (A/B/C) ou OBS1/OBS2/OBS3 (0-10) &mdash; Codes m&eacute;tier PT&minus; PT~ PT+ / GM&minus; GM~ GM+ / CL&minus; CL~ CL+</p>
+      </div>
+      <input type="file" id="csvf" accept=".csv,.txt" onchange="hCSV(event)">
+      <div id="csvst"></div>
+    </div>
+    <div id="s1al" class="al ale" style="display:none"></div>
+    <div class="brow">
+      <button class="btn bp" onclick="analyser()">&#128269; Analyser la classe</button>
+      <button class="btn bo" onclick="xCSV()">&#128190; Export CSV</button>
+      <button class="btn bo" onclick="window.print()">&#128424; Imprimer</button>
+    </div>
+  </div>
+  <div id="r1" style="display:none">
+    <div class="card">
+      <h2>&#128202; Tableau individuel</h2>
+      <div class="tw"><table id="itbl"><thead><tr><th>Rang</th><th>Pr&eacute;nom</th><th>OBS-01</th><th>OBS-02</th><th>OBS-03</th><th>Moy /10</th><th>/20</th><th>Profil</th><th>D&eacute;taill&eacute;</th><th>Lacune(s)</th><th>Axe prioritaire</th><th>SA</th></tr></thead><tbody id="itb"></tbody></table></div>
+      <div class="brow"><button class="btn bo bsm" onclick="xCSV()">&#128190; Export CSV</button><button class="btn bo bsm" onclick="window.print()">&#128424; Imprimer</button></div>
+    </div>
+    <div class="card">
+      <h2>&#127970; Bilan de classe</h2>
+      <div class="sr" id="stc"></div>
+      <h3 style="margin-top:11px;margin-bottom:6px">Analyse par observable</h3>
+      <div id="obars"></div>
+      <h3 style="margin-top:11px;margin-bottom:6px">Groupes de besoin</h3>
+      <div id="gbsn"></div>
+      <div class="dbox" id="ddb"></div>
+    </div>
+    <div class="brow" style="justify-content:flex-end"><button class="btn bg" onclick="gS(2)">Passer &agrave; l&rsquo;&eacute;tape 2 &mdash; Axes prioritaires &#8594;</button></div>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="sec" id="step2">
+  <div class="card">
+    <h2>&#127919; S&eacute;lection des axes prioritaires</h2>
+    <div class="al ali" style="margin-bottom:8px">S&eacute;lectionnez entre <strong>3 et 4 axes</strong>. Class&eacute;s par pertinence selon les donn&eacute;es r&eacute;elles.</div>
+    <div class="axmsg" id="axmsg">0 axe s&eacute;lectionn&eacute; &mdash; minimum 3 requis</div>
+    <div id="axcon"></div>
+    <div class="brow">
+      <button class="btn bo" onclick="gS(1)">&#8592; Retour</button>
+      <button class="btn bg" id="bts3" onclick="gS(3)" disabled>Param&eacute;trer le cycle &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="sec" id="step3">
+  <div class="card">
+    <h2>&#9881;&#65039; Param&eacute;trage du cycle</h2>
+    <h3>Nombre de s&eacute;ances</h3>
+    <div class="slw">
+      <input type="range" id="sl" min="6" max="10" value="8" oninput="uSl()">
+      <div class="slv" id="slv">8</div>
+      <div style="font-size:.75rem;color:var(--sl)">s&eacute;ances &mdash; <span id="sldc"></span></div>
+    </div>
+    <div id="dprev"></div>
+    <div class="brow">
+      <button class="btn bo" onclick="gS(2)">&#8592; Retour</button>
+      <button class="btn bg" onclick="gS(4)">G&eacute;n&eacute;rer la planification &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 4 -->
+<div class="sec" id="step4">
+  <div class="card">
+    <h2>&#128197; Planification dynamique du cycle</h2>
+    <div id="pcon"></div>
+    <div id="cycs"></div>
+    <div class="brow">
+      <button class="btn bo" onclick="gS(3)">&#8592; Retour</button>
+      <button class="btn bo" onclick="window.print()">&#128424; Imprimer</button>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+/* Référentiel extrait de referentiel_GYM-ART_DI-GYM.txt + grille_v2 + ADP2026_DI_GYM_rempli.xlsx */
+var OBS=[
+  {id:"OBS-01",nom:"Posture et tonicit\u00e9 globale en appui",famille:"F1\u00b7F5",
+   codes:{A:"PT\u2212",B:"PT~",C:"PT+"},
+   conduites:{A:"Corps mou, chutes de bassin, ruptures > 3 \u00e9l\u00e9ments",B:"Rel\u00e2chement sur dernier tiers",C:"Gainage continu 100% encha\u00eenement"},
+   motrice:{A:"l\u2019\u00e9l\u00e8ve maintient le gainage sur 3 \u00e9l\u00e9ments cons\u00e9cutifs sans rupture",B:"l\u2019\u00e9l\u00e8ve maintient la tonicit\u00e9 sur plus de la moiti\u00e9 de l\u2019encha\u00eenement",C:"l\u2019\u00e9l\u00e8ve maintient un gainage continu sur la totalit\u00e9 de l\u2019encha\u00eenement"}},
+  {id:"OBS-02",nom:"Gabarit moteur du renversement \u2014 ATR / Roulade",famille:"F1",
+   codes:{A:"GM\u2212",B:"GM~",C:"GM+"},
+   conduites:{A:"Renversement absent ou aide syst\u00e9matique",B:"Renversement r\u00e9alis\u00e9, axe perturb\u00e9",C:"ATR align\u00e9 3s, roulade encha\u00een\u00e9e sans aide"},
+   motrice:{A:"l\u2019\u00e9l\u00e8ve r\u00e9alise l\u2019ATR sans aide pendant 2 secondes",B:"l\u2019\u00e9l\u00e8ve r\u00e9alise un renversement autonome axe align\u00e9",C:"l\u2019\u00e9l\u00e8ve encha\u00eene ATR et roulade sans pause"}},
+  {id:"OBS-03",nom:"Composition et liaisons entre \u00e9l\u00e9ments",famille:"F1-F5",
+   codes:{A:"CL\u2212",B:"CL~",C:"CL+"},
+   conduites:{A:"Juxtaposition 1 famille, arr\u00eats fr\u00e9quents",B:"2 familles, transitions h\u00e9sitantes",C:"Liaison fluide \u22653 familles, 0 arr\u00eat"},
+   motrice:{A:"l\u2019\u00e9l\u00e8ve encha\u00eene 2 \u00e9l\u00e9ments de familles diff\u00e9rentes sans arr\u00eat complet",B:"l\u2019\u00e9l\u00e8ve produit un encha\u00eenement 2 familles avec au max 1 rupture",C:"l\u2019\u00e9l\u00e8ve r\u00e9alise un encha\u00eenement 3 familles minimum sans rupture"}}
+];
+var SH={C:7.5,B:4.5};
+var DS={A:3,B:6,C:9};
+var SA={A:{nom:"SA-A1",lib:"Adaptation anatomique posturale"},B:{nom:"SA-B1",lib:"Renforcement fonctionnel gymnique"},C:{nom:"SA-C1",lib:"Int\u00e9gration technique et composition"}};
+var AX=[
+  {id:1,oi:0,titre:"Gainage et tonicit\u00e9 posturale globale",desc:"Construction et maintien de l\u2019axe corporel sur la dur\u00e9e de l\u2019encha\u00eenement",prereq:"N1-5 \u00b7 Tonus et gestion de l\u2019effort",impact:"N2-6 \u00b7 N2-8 \u00b7 N2-9",
+   ind:"l\u2019\u00e9l\u00e8ve maintient sa tonicit\u00e9 sur 4 \u00e9l\u00e9ments cons\u00e9cutifs sans rupture visible",
+   csg:{A:{sa:"SA-A1",c:"Tenir la planche 10 secondes, dos droit, lombaires neutres",cr:"Dos align\u00e9 t\u00eate-talons pendant toute la dur\u00e9e"},B:{sa:"SA-B1",c:"3 planches dynamiques encha\u00een\u00e9es avec lever de jambe altern\u00e9",cr:"Hanches stables lors de chaque lever de jambe"},C:{sa:"SA-C1",c:"Maintenir le gainage sur un encha\u00eenement de 5 \u00e9l\u00e9ments",cr:"Aucune rupture posturale du premier au dernier \u00e9l\u00e9ment"}}},
+  {id:2,oi:1,titre:"Gabarit moteur du renversement \u2014 ATR et roulade",desc:"Construction et stabilisation de l\u2019ATR et de la roulade sans aide",prereq:"N1-2 \u00b7 N1-3 \u00b7 R\u00e9alisation et liaison du renversement",impact:"N2-3 \u00b7 N2-4 \u00b7 N2-6",
+   ind:"l\u2019\u00e9l\u00e8ve r\u00e9alise un ATR 3 secondes sans aide lors de 2 tentatives cons\u00e9cutives",
+   csg:{A:{sa:"SA-A1",c:"5 tentatives ATR contre mur, tenir 3 secondes puis l\u00e2cher le mur",cr:"Corps align\u00e9 t\u00eate-\u00e9paules-hanches 3 secondes sans appui"},B:{sa:"SA-B1",c:"Encha\u00eener ATR libre et roulade avant group\u00e9e sans pause",cr:"ATR tenu 2 secondes, roulade repart sans arr\u00eat"},C:{sa:"SA-C1",c:"R\u00e9aliser ATR + roulade + \u00e9l\u00e9ment F2 ou F4",cr:"3 \u00e9l\u00e9ments encha\u00een\u00e9s sans aide, axe maintenu"}}},
+  {id:3,oi:2,titre:"Composition et liaisons multi-familles",desc:"Construction d\u2019un encha\u00eenement avec transitions intentionnelles",prereq:"N1-4 \u00b7 N1-1 \u00b7 Coordonner et choisir",impact:"N2-2 \u00b7 N2-5 \u00b7 N2-7 \u00b7 N2-8",
+   ind:"l\u2019\u00e9l\u00e8ve choisit spontan\u00e9ment 2 familles diff\u00e9rentes en composition libre",
+   csg:{A:{sa:"SA-A1",c:"Composer 3 \u00e9l\u00e9ments de 2 familles diff\u00e9rentes, ex\u00e9cuter 2 fois",cr:"2 familles identifiables, pas d\u2019arr\u00eat entre elles"},B:{sa:"SA-B1",c:"Composer 5 \u00e9l\u00e9ments avec 2 transitions pr\u00e9par\u00e9es",cr:"Transitions intentionnelles, sans perte d\u2019\u00e9quilibre"},C:{sa:"SA-C1",c:"Pr\u00e9senter un encha\u00eenement de 8 \u00e9l\u00e9ments de 3 familles minimum",cr:"Fluide, 3 familles identifi\u00e9es, z\u00e9ro rupture"}}},
+  {id:4,oi:1,titre:"Coordination tourner \u2014 voler \u2014 se renverser",desc:"R\u00e9alisation d\u2019\u00e9l\u00e9ments complexes combinant rotation et renversement (N2-3)",prereq:"N1-2 consolid\u00e9 \u2014 Axe 2 pr\u00e9requis",impact:"N2-3 \u00b7 N2-4 \u00b7 N2-8",
+   ind:"l\u2019\u00e9l\u00e8ve encha\u00eene une rotation et un renversement sans pause lors de 2 tentatives sur 3",
+   csg:{A:{sa:"SA-A1",c:"Roulade avant + arr\u00eat debout + roulade arri\u00e8re : 3 rotations cons\u00e9cutives",cr:"3 rotations sans aide, directions diff\u00e9rentes"},B:{sa:"SA-B1",c:"ATR suivi d\u2019une roue, passage sans pause",cr:"Passage ATR-roue sans arr\u00eat, gainage maintenu"},C:{sa:"SA-C1",c:"S\u00e9rie acrobatique : 2 renversements + 1 rotation en vol",cr:"S\u00e9rie fluide, \u00e9l\u00e9ments encha\u00een\u00e9s sans rupture"}}},
+  {id:5,oi:0,titre:"Encha\u00eener sans rupture avec alignement segmentaire",desc:"Amplitude, correction et alignement maintenus sur tout l\u2019encha\u00eenement (N2-8)",prereq:"N1-2 \u00b7 N1-4 \u00b7 N1-5 consolid\u00e9s \u2014 Axes 1-2-3 pr\u00e9requis",impact:"N2-8 \u00b7 N2-9",
+   ind:"l\u2019\u00e9l\u00e8ve ne pr\u00e9sente aucune rupture d\u2019alignement sur les 3 derniers \u00e9l\u00e9ments",
+   csg:{A:{sa:"SA-A1",c:"R\u00e9aliser l\u2019encha\u00eenement avec une correction de posture indiqu\u00e9e",cr:"Correction visible sur au moins 3 \u00e9l\u00e9ments"},B:{sa:"SA-B1",c:"R\u00e9aliser 2 fois et noter les \u00e9l\u00e9ments o\u00f9 la posture d\u00e9faille",cr:"L\u2019\u00e9l\u00e8ve identifie 1 \u00e9l\u00e9ment \u00e0 corriger au 2e passage"},C:{sa:"SA-C1",c:"Pr\u00e9senter devant un jury de pairs avec code simplifi\u00e9",cr:"Note maximale sur le crit\u00e8re alignement du code"}}},
+  {id:6,oi:0,titre:"Gestion de l\u2019effort et du rythme sur la prestation",desc:"Maintien de la qualit\u00e9 tonique et du rythme jusqu\u2019au dernier \u00e9l\u00e9ment (N2-9)",prereq:"N1-5 consolid\u00e9 \u2014 Axe 1 pr\u00e9requis",impact:"N2-9",
+   ind:"l\u2019\u00e9l\u00e8ve maintient une qualit\u00e9 d\u2019ex\u00e9cution constante entre le premier et le dernier \u00e9l\u00e9ment",
+   csg:{A:{sa:"SA-A1",c:"3 passages complets avec 1 minute de r\u00e9cup\u00e9ration",cr:"Qualit\u00e9 du 3e passage \u00e9gale ou sup\u00e9rieure au 1er"},B:{sa:"SA-B1",c:"R\u00e9aliser l\u2019encha\u00eenement sur musique avec temps forts",cr:"Actions coïncident avec au moins 3 temps forts musicaux"},C:{sa:"SA-C1",c:"Donner du rythme par variations d\u2019amplitude et de vitesse",cr:"2 moments de contraste dynamique identifi\u00e9s par l\u2019observateur"}}}
+];
+var DI={3:{6:[2,2,2],7:[2,2,3],8:[3,2,3],9:[3,3,3],10:[3,4,3]},4:{6:[1,2,2,1],7:[2,2,2,1],8:[2,2,2,2],9:[2,3,2,2],10:[3,2,3,2]}};
+var eleves=[],res=[],cmoy=0,omoys=[0,0,0],axsel=[],nseances=8,rc=0;
+
+/* Navigation entre étapes */
+function gS(n){
+  if(n===2&&res.length===0){alert("Analysez la classe d\u2019abord.");return;}
+  if(n===3&&axsel.length<3){alert("S\u00e9lectionnez au moins 3 axes.");return;}
+  if(n===4) genPlan();
+  [1,2,3,4].forEach(function(i){
+    document.getElementById("step"+i).classList.remove("vis");
+    var nb=document.getElementById("n"+i);nb.className="stp";
+    if(i<n)nb.classList.add("done");
+    else if(i===n){document.getElementById("step"+i).classList.add("vis");nb.classList.add("active");}
+  });
+  if(n===2)bldAx();if(n===3)uSl();
+  window.scrollTo(0,0);
+}
+
+/* Gestion des lignes de saisie */
+function aR(){rc++;var d=document.createElement("div");d.className="fg";d.id="r"+rc;d.innerHTML='<input type="text" class="pf" placeholder="Pr\u00e9nom"><input type="number" min="0" max="10" step="0.5" placeholder="0-10" class="of"><input type="number" min="0" max="10" step="0.5" placeholder="0-10" class="of"><input type="number" min="0" max="10" step="0.5" placeholder="0-10" class="of"><button class="btn bo bsm" style="padding:2px 7px" onclick="rR(\'r'+rc+'\')">&#10005;</button>';document.getElementById("rows").appendChild(d);}
+function aRn(n){for(var i=0;i<n;i++)aR();}
+function rR(id){var e=document.getElementById(id);if(e)e.remove();}
+
+/* Calcul profil */
+function prof(v){return v>=SH.C?"C":v>=SH.B?"B":"A";}
+function lacs(vs){var l=[];vs.forEach(function(v,i){if(v<SH.B)l.push({i:i,v:v});});return l.sort(function(a,b){return a.v-b.v;});}
+function axPrio(l){if(l.length===0)return "Approfondissement \u2014 composition et performance";var m=["Gainage et tonicit\u00e9 posturale \u2014 construire l\u2019axe corporel","Gabarit moteur du renversement \u2014 ATR sans aide","Composition et liaisons \u2014 2 familles sans arr\u00eat"];return m[l[0].i]||m[0];}
+function getSA(l){if(l.length===0)return SA.C;return l[0].v<3?SA.A:SA.B;}
+
+/* Analyser la classe */
+function analyser(){
+  eleves=[];res=[];
+  var rows=document.querySelectorAll("#rows .fg");
+  rows.forEach(function(row){
+    var pn=row.querySelector(".pf").value.trim();if(!pn)return;
+    var ofs=row.querySelectorAll(".of"),vals=[],ok=true;
+    ofs.forEach(function(el){el.classList.remove("err");var v=parseFloat(el.value);if(isNaN(v)||v<0||v>10){el.classList.add("err");ok=false;}else vals.push(v);});
+    if(ok&&vals.length===3)eleves.push({pn:pn,vs:vals});
+  });
+  if(eleves.length===0){var al=document.getElementById("s1al");al.style.display="block";al.textContent="Aucun \u00e9l\u00e8ve valide. V\u00e9rifiez les saisies.";return;}
+  document.getElementById("s1al").style.display="none";
+  eleves.forEach(function(e){var m=(e.vs[0]+e.vs[1]+e.vs[2])/3;var pr=prof(m);var op=e.vs.map(prof);var ls=lacs(e.vs);res.push({pn:e.pn,vs:e.vs,moy:m,pr:pr,op:op,ls:ls,axe:axPrio(ls),sa:getSA(ls)});});
+  res.sort(function(a,b){return b.moy-a.moy;});res.forEach(function(r,i){r.rg=i+1;});
+  cmoy=res.reduce(function(s,r){return s+r.moy;},0)/res.length;
+  omoys=[0,1,2].map(function(i){return res.reduce(function(s,r){return s+r.vs[i];},0)/res.length;});
+  bldR1();document.getElementById("r1").style.display="block";
+}
+
+/* Construction tableau individuel */
+function bldR1(){
+  var tb=document.getElementById("itb");tb.innerHTML="";
+  res.forEach(function(r){
+    var cls="r"+r.pr.toLowerCase();
+    var lstr=r.ls.length===0?"Aucune lacune":r.ls.map(function(l,i){return "L"+(i+1)+" \u2014 "+OBS[l.i].id+" : "+l.v.toFixed(1)+"/10";}).join("<br>");
+    var pdet=r.op.map(function(p){return '<span class="b'+p.toLowerCase()+'">'+p+"</span>";}).join(" / ");
+    var tr=document.createElement("tr");tr.className=cls;
+    tr.innerHTML="<td>"+r.rg+"</td><td><strong>"+r.pn+"</strong></td><td>"+r.vs[0].toFixed(1)+"</td><td>"+r.vs[1].toFixed(1)+"</td><td>"+r.vs[2].toFixed(1)+"</td><td><strong>"+r.moy.toFixed(1)+"</strong></td><td>"+(r.moy*2).toFixed(1)+"</td><td><span class='b"+r.pr.toLowerCase()+"'>"+r.pr+"</span></td><td>"+pdet+"</td><td style='font-size:.67rem'>"+lstr+"</td><td style='font-size:.69rem'>"+r.axe+"</td><td><strong>"+r.sa.nom+"</strong><br><small>"+r.sa.lib+"</small></td>";
+    tb.appendChild(tr);
+  });
+  /* Bilan */
+  var cnt={A:0,B:0,C:0};res.forEach(function(r){cnt[r.pr]++;});var tot=res.length;
+  var p=function(n){return Math.round(n/tot*100);};
+  document.getElementById("stc").innerHTML='<div class="sc sca"><div class="v">'+cnt.A+'</div><div class="l">D\u00e9butants A<br>'+p(cnt.A)+"%</div></div><div class='sc scb'><div class='v'>"+cnt.B+"</div><div class='l'>Interm. B<br>"+p(cnt.B)+"%</div></div><div class='sc scc'><div class='v'>"+cnt.C+"</div><div class='l'>Avanc\u00e9s C<br>"+p(cnt.C)+"%</div></div><div class='sc'><div class='v'>"+cmoy.toFixed(1)+"</div><div class='l'>Moy /10</div></div><div class='sc'><div class='v'>"+(cmoy*2).toFixed(1)+"</div><div class='l'>Moy /20</div></div><div class='sc'><div class='v'>"+tot+"</div><div class='l'>\u00c9l\u00e8ves</div></div>";
+  var ob=document.getElementById("obars");ob.innerHTML="";
+  omoys.forEach(function(m,i){var pc=Math.round(m/10*100);var bc=m>=SH.C?"#27AE60":m>=SH.B?"#E67E22":"#C0392B";var st=m>=SH.C?"Bon niveau":m>=SH.B?"En cours":"Lacune collective";var stb=m>=SH.C?"var(--gb)":m>=SH.B?"var(--ob)":"var(--rb)";var stc=m>=SH.C?"var(--gt)":m>=SH.B?"var(--ot)":"var(--rt)";var d=document.createElement("div");d.className="obr";d.innerHTML='<div class="obrl">'+OBS[i].id+'</div><div class="obrt"><div class="obrf" style="width:'+pc+'%;background:'+bc+'"></div></div><div class="obrv">'+m.toFixed(1)+'/10</div><div class="obst" style="background:'+stb+';color:'+stc+'">'+st+'</div>';ob.appendChild(d);});
+  var gb=document.getElementById("gbsn");gb.innerHTML="";var bgs={A:"var(--rb)",B:"var(--ob)",C:"var(--gb)"};
+  ["A","B","C"].forEach(function(pp){if(cnt[pp]===0)return;var si=SA[pp];var d=document.createElement("div");d.className="grb";d.style.background=bgs[pp];d.innerHTML='<span class="b'+pp.toLowerCase()+'">'+pp+"</span><span style='flex:1'>"+cnt[pp]+" \u00e9l\u00e8ve"+(cnt[pp]>1?"s":"")+" \u2014 "+p(cnt[pp])+"%</span><span style='font-size:.73rem;font-weight:700'>"+si.nom+" : "+si.lib+"</span>";gb.appendChild(d);});
+  var mx=Math.max(cnt.A,cnt.B,cnt.C);var dom=cnt.A===mx?"A":cnt.B===mx?"B":"C";
+  var msgs={A:"Classe d\u00e9butante \u2014 Priorit\u00e9 fondamentaux : gainage et renversement",B:"Classe interm\u00e9diaire \u2014 Diff\u00e9renciation A/B : consolider posture, d\u00e9velopper composition",C:"Classe avanc\u00e9e \u2014 Approfondissement et tutorat : composition multi-familles"};
+  document.getElementById("ddb").innerHTML='<h3>D\u00e9cision dominante automatique</h3><p>'+msgs[dom]+'</p><p style="font-size:.67rem;margin-top:5px;opacity:.6">(D\u00e9cision finale : l\u2019enseignant)</p>';
+}
+
+/* Construction axes step 2 */
+function bldAx(){
+  var sc=AX.map(function(a){var pp=Math.round(res.filter(function(r){return r.vs[a.oi]<SH.B;}).length/res.length*100);return{a:a,p:pp};});
+  sc.sort(function(a,b){return b.p-a.p;});
+  var c=document.getElementById("axcon");c.innerHTML="";
+  sc.forEach(function(s){
+    var a=s.a;var sel=axsel.indexOf(a.id)>-1;
+    var d=document.createElement("div");d.className="axc"+(sel?" sel":"");d.id="ac"+a.id;
+    d.innerHTML='<div class="ah"><input type="checkbox" id="cb'+a.id+'"'+(sel?" checked":"")+'><div style="flex:1"><div class="at">Axe '+a.id+' \u2014 '+a.titre+'</div><div class="ad">'+a.desc+'</div><div class="am"><span><span class="pb" style="width:'+Math.min(s.p,100)+'px"></span>Pertinence : '+s.p+'% concern\u00e9s</span><span>Observable : '+OBS[a.oi].id+' &middot; Moy : '+omoys[a.oi].toFixed(1)+'/10</span><span>SA : '+a.csg.A.sa+'</span></div></div></div>';
+    var cb=d.querySelector("input");
+    cb.addEventListener("change",function(){tgA(a.id,d,this.checked);});
+    d.addEventListener("click",function(ev){if(ev.target.tagName!=="INPUT"){var x=document.getElementById("cb"+a.id);x.checked=!x.checked;tgA(a.id,d,x.checked);}});
+    c.appendChild(d);
+  });
+  uAxMsg();
+}
+function tgA(id,card,chk){if(chk){if(axsel.length>=4){alert("Maximum 4 axes atteint.");document.getElementById("cb"+id).checked=false;return;}axsel.push(id);card.classList.add("sel");}else{axsel=axsel.filter(function(x){return x!==id;});card.classList.remove("sel");}uAxMsg();}
+function uAxMsg(){var n=axsel.length;document.getElementById("axmsg").textContent=n+" axe"+(n>1?"s":"")+" s\u00e9lectionn\u00e9"+(n>1?"s":"")+(n<3?" \u2014 minimum 3 requis":n===4?" \u2014 maximum atteint":" \u2014 vous pouvez en ajouter un 4e");document.getElementById("bts3").disabled=n<3;}
+
+/* Slider step 3 */
+function uSl(){
+  nseances=parseInt(document.getElementById("sl").value);
+  document.getElementById("slv").textContent=nseances;
+  var na=axsel.length,dist=(DI[na]&&DI[na][nseances])||[];
+  var aos=axsel.map(function(id){return AX.find(function(a){return a.id===id;});}).filter(Boolean);
+  document.getElementById("sldc").textContent=dist.length+" s\u00e9quences";
+  var dp=document.getElementById("dprev");dp.innerHTML="";
+  dist.forEach(function(ns,i){var a=aos[i];var d=document.createElement("div");d.className="dseq";d.innerHTML='<div class="sh">S\u00e9quence '+(i+1)+' \u2014 '+ns+' s\u00e9ance'+(ns>1?"s":"")+'</div><div class="ss">'+(a?"Axe "+a.id+" \u2014 "+a.titre:"Axe "+(i+1))+'</div>';dp.appendChild(d);});
+}
+
+/* Génération planification step 4 */
+function genPlan(){
+  var na=axsel.length,dist=(DI[na]&&DI[na][nseances])||[];
+  var aos=axsel.map(function(id){return AX.find(function(a){return a.id===id;});}).filter(Boolean);
+  var pc=document.getElementById("pcon");pc.innerHTML="";var sg=0;
+  dist.forEach(function(ns,si){
+    var a=aos[si];if(!a)return;sg++;
+    var ss=sg,se=sg+ns-1;
+    var blk=document.createElement("div");blk.className="sqb";
+    blk.innerHTML='<div class="sqh"><h3>S\u00e9quence '+(si+1)+' \u2014 '+a.titre+'</h3><span class="sqt">S\u00e9ances '+ss+' \u00e0 '+se+'</span></div>';
+    var tbl=document.createElement("table");tbl.className="pt";
+    tbl.innerHTML='<thead><tr><th>N\u00b0</th><th>Axe</th><th>Objectif</th><th class="ga">Groupe A \u2014 D\u00e9butants<br><small>'+SA.A.nom+'</small></th><th class="gb">Groupe B \u2014 Interm\u00e9diaires<br><small>'+SA.B.nom+'</small></th><th class="gc">Groupe C \u2014 Avanc\u00e9s<br><small>'+SA.C.nom+'</small></th></tr></thead>';
+    var tb="<tbody>";
+    for(var s=0;s<ns;s++){
+      var sn=sg+s;var islast=(si===dist.length-1&&s===ns-1);
+      var obj=islast?"Bilan et \u00e9valuation formative de l\u2019encha\u00eenement gymnique":"D\u00e9velopper : "+a.titre;
+      tb+="<tr><td><strong>"+sn+"</strong></td><td style='font-size:.67rem'>Axe "+a.id+"</td><td style='font-size:.69rem'>"+obj+"</td><td class='ga'><strong>"+a.csg.A.sa+"</strong><br>"+a.csg.A.c+"<br><em style='font-size:.63rem;color:var(--rt)'>\u2713 "+a.csg.A.cr+"</em></td><td class='gb'><strong>"+a.csg.B.sa+"</strong><br>"+a.csg.B.c+"<br><em style='font-size:.63rem;color:var(--ot)'>\u2713 "+a.csg.B.cr+"</em></td><td class='gc'><strong>"+a.csg.C.sa+"</strong><br>"+a.csg.C.c+"<br><em style='font-size:.63rem;color:var(--gt)'>\u2713 "+a.csg.C.cr+"</em></td></tr>";
+      if(s<ns-1)tb+='<tr><td colspan="6"><div class="ind">&#128203; \u00c0 observer avant la s\u00e9ance suivante \u2014 <em>'+a.ind+'</em> <span style="color:var(--sl);font-size:.62rem">(Indicatif \u2014 d\u00e9cision de progression : vous)</span></div></td></tr>';
+    }
+    tb+="</tbody>";tbl.innerHTML+=tb;blk.appendChild(tbl);pc.appendChild(blk);sg+=ns-1;
+  });
+  var cnt2={A:0,B:0,C:0};res.forEach(function(r){cnt2[r.pr]++;});var tot=res.length;
+  var dom2=cnt2.A>=cnt2.B&&cnt2.A>=cnt2.C?"A":cnt2.B>=cnt2.C?"B":"C";
+  var p2=function(n){return Math.round(n/tot*100);};
+  var seqstr=dist.map(function(ns,i){var a2=aos[i];return a2?"Axe "+a2.id+" ("+ns+" s\u00e9ance"+(ns>1?"s":"")+")":"?";}).join(" \u2014 ");
+  document.getElementById("cycs").innerHTML='<div class="cycs"><h3>R\u00e9sum\u00e9 du cycle</h3><p>'+seqstr+'</p><p style="margin-top:7px">Ce cycle de <strong>'+nseances+' s\u00e9ances</strong> cible <strong>'+axsel.length+' axes prioritaires</strong>. Profil le plus concern\u00e9 : <strong>'+dom2+'</strong> ('+cnt2[dom2]+' \u00e9l\u00e8ve'+(cnt2[dom2]>1?"s":"")+" \u00b7 "+p2(cnt2[dom2])+"%). R\u00e9\u00e9valuer apr\u00e8s la s\u00e9quence "+Math.ceil(dist.length/2)+" avec une nouvelle collecte terrain.</p><p style='font-size:.67rem;margin-top:5px;opacity:.6'>D\u00e9cision finale de progression : l\u2019enseignant.</p></div>";
+}
+
+/* Import CSV */
+function hDrop(ev){ev.preventDefault();document.getElementById("dz").classList.remove("dgo");if(ev.dataTransfer.files[0])pCSV(ev.dataTransfer.files[0]);}
+function hCSV(ev){if(ev.target.files[0])pCSV(ev.target.files[0]);}
+function pCSV(file){
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var txt=e.target.result,lines=txt.split(/\r?\n/),hi=-1,hl=null;
+    for(var i=0;i<lines.length;i++){if(lines[i].indexOf("Nom_Eleve")>-1||lines[i].indexOf("Prenom")>-1){hi=i;hl=lines[i];break;}}
+    if(hi===-1){document.getElementById("csvst").innerHTML='<div class="al ale">En-t\u00eate "Nom_Eleve" introuvable.</div>';return;}
+    var sep=hl.indexOf(";")>-1?";":",";
+    var hdrs=hl.split(sep).map(function(h){return h.trim().replace(/^"|"$/g,"");});
+    function fc(pats){for(var pi=0;pi<pats.length;pi++)for(var hi2=0;hi2<hdrs.length;hi2++)if(hdrs[hi2].toUpperCase().indexOf(pats[pi].toUpperCase())>-1)return hi2;return -1;}
+    var nc=fc(["Nom_Eleve","Prenom","NOM","PRENOM"]);
+    var c1=fc(["OBS01","OBS1_D","OBS01_D"]);var c2=fc(["OBS02","OBS2_D","OBS02_D"]);var c3=fc(["OBS03","OBS3_D","OBS03_D"]);
+    if(c1===-1)c1=fc(["OBS1"]);if(c2===-1)c2=fc(["OBS2"]);if(c3===-1)c3=fc(["OBS3"]);
+    var added=0,ign=0,rows=document.getElementById("rows");
+    for(var li=hi+1;li<lines.length;li++){
+      var l=lines[li].trim();if(!l||l.indexOf("BILAN_CLASSE")>-1){ign++;continue;}
+      var cols=l.split(sep).map(function(c){return c.trim().replace(/^"|"$/g,"");});
+      if(cols.length<2){ign++;continue;}
+      var pn=nc>-1?cols[nc]:cols[0];if(!pn){ign++;continue;}
+      function gs(ci){if(ci===-1)return "";var raw=(cols[ci]||"").trim().toUpperCase();if(raw.indexOf("PT-")>-1||raw==="PT\u2212")return DS.A;if(raw==="PT~")return DS.B;if(raw==="PT+")return DS.C;if(raw.indexOf("GM-")>-1||raw==="GM\u2212")return DS.A;if(raw==="GM~")return DS.B;if(raw==="GM+")return DS.C;if(raw.indexOf("CL-")>-1||raw==="CL\u2212")return DS.A;if(raw==="CL~")return DS.B;if(raw==="CL+")return DS.C;if(raw==="A")return DS.A;if(raw==="B")return DS.B;if(raw==="C")return DS.C;var n=parseFloat(raw);return isNaN(n)?"":n;}
+      rc++;var dv=document.createElement("div");dv.className="fg";dv.id="r"+rc;
+      var v1=gs(c1),v2=gs(c2),v3=gs(c3);
+      dv.innerHTML='<input type="text" class="pf" value="'+pn+'"><input type="number" min="0" max="10" step="0.5" class="of" value="'+(v1!==""?v1:"")+'"><input type="number" min="0" max="10" step="0.5" class="of" value="'+(v2!==""?v2:"")+'"><input type="number" min="0" max="10" step="0.5" class="of" value="'+(v3!==""?v3:"")+'"><button class="btn bo bsm" style="padding:2px 7px" onclick="rR(\'r'+rc+'\')">&#10005;</button>';
+      rows.appendChild(dv);added++;
+    }
+    document.getElementById("csvst").innerHTML='<div class="al ali">'+added+' \u00e9l\u00e8ve'+(added>1?"s":"")+" import\u00e9"+(added>1?"s":"")+" \u2014 "+ign+" ligne"+(ign>1?"s":"")+" ignor\u00e9e"+(ign>1?"s":"")+'</div>';
+  };
+  reader.readAsText(file,"UTF-8");
+}
+
+/* Export CSV */
+function xCSV(){
+  if(res.length===0){alert("Analysez la classe d\u2019abord.");return;}
+  var bom="\uFEFF";
+  var hdr="Pr\u00e9nom;Code OBS-01;OBS-01;Code OBS-02;OBS-02;Code OBS-03;OBS-03;Moyenne;/20;Rang;Profil global;Profil d\u00e9taill\u00e9;Lacune 1;SA recommand\u00e9e\n";
+  var rows=res.map(function(r){return [r.pn,OBS[0].codes[r.op[0]],r.vs[0].toFixed(1),OBS[1].codes[r.op[1]],r.vs[1].toFixed(1),OBS[2].codes[r.op[2]],r.vs[2].toFixed(1),r.moy.toFixed(2),(r.moy*2).toFixed(2),r.rg,r.pr,r.op.join("/"),r.ls.length>0?OBS[r.ls[0].i].id+" : "+r.ls[0].v.toFixed(1)+"/10":"Aucune",r.sa.nom+" - "+r.sa.lib].join(";");}).join("\n");
+  var d=new Date(),dt=d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+  var blob=new Blob([bom+hdr+rows],{type:"text/csv;charset=utf-8"});
+  var url=URL.createObjectURL(blob);var a=document.createElement("a");a.href=url;a.download="outil_v0_GYM-ART_DI-GYM_"+dt+".csv";a.click();URL.revokeObjectURL(url);
+}
+
+/* Init */
+document.getElementById("dt").value=new Date().toISOString().split("T")[0];
+aRn(5);
+</script>
+</body>
+</html>

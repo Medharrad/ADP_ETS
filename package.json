@@ -1,0 +1,12 @@
+{
+  "name": "adp-gym",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ADP-GYM — Next.js app (route handlers + node:sqlite). The former Express backend/ is retired; its auth + API are consolidated into frontend/.",
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "start": "npm --prefix frontend run start",
+    "install:all": "npm install && npm --prefix frontend install"
+  }
+}

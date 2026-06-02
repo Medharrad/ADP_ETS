@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ADP 2026 · Gymnastiqu Artistique · DI-GYM</title>
+<style>
+/* ─────────────────────────────────────────────────
+   DESIGN SYSTEM — Palette : encre profonde + ambre
+   ───────────────────────────────────────────────── */
+:root{
+  --ink:   #0B1828;
+  --ink2:  #14263E;
+  --ink3:  #1C3352;
+  --amber: #C8893A;
+  --amber2:#E4A84D;
+  --amber3:#F5C97A;
+  --parch: #F6F0E6;
+  --parch2:#EDE3D0;
+  --parch3:#E2D5BC;
+  --red:   #B83232;
+  --redbg: #FBE9E9;
+  --ora:   #C06A00;
+  --orabg: #FEF4E5;
+  --grn:   #1E6B3E;
+  --grnbg: #E5F5EC;
+  --slate: #3D5166;
+  --light: #FAFAF7;
+  --bdr:   rgba(200,137,58,.22);
+  --sh:    0 2px 16px rgba(11,24,40,.10);
+  --sh2:   0 6px 32px rgba(11,24,40,.16);
+  --r:     10px;
+  --fh:    'Georgia','Times New Roman',serif;
+  --fb:    'Trebuchet MS','Segoe UI',Helvetica,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;scroll-behavior:smooth}
+body{background:var(--light);color:var(--ink);font-family:var(--fb);min-height:100vh}
+
+/* ── HEADER ── */
+.hdr{background:linear-gradient(135deg,var(--ink) 0%,var(--ink3) 100%);
+     color:var(--parch);padding:16px 22px;border-bottom:3px solid var(--amber)}
+.hdr-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.hdr h1{font-family:var(--fh);font-size:1.3rem;font-weight:normal;letter-spacing:.015em;line-height:1.3}
+.hdr .sub{font-size:.74rem;color:var(--amber3);margin-top:3px}
+.hdr-pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.hdr-pill{font-size:.68rem;padding:2px 9px;border-radius:20px;border:1px solid rgba(200,137,58,.4);
+          color:var(--amber3);background:rgba(200,137,58,.1);white-space:nowrap}
+.hdr-pill.amber{background:var(--amber);color:var(--ink);border-color:var(--amber);font-weight:bold}
+
+/* ── STEPPER ── */
+.stepper{background:var(--ink2);display:flex;padding:10px 18px;gap:4px;overflow-x:auto;
+         border-bottom:1px solid rgba(200,137,58,.2)}
+.stp{display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:var(--r);
+     border:1.5px solid transparent;font-size:.77rem;cursor:default;white-space:nowrap;
+     transition:.2s;color:rgba(230,215,190,.4)}
+.stp .n{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+        font-weight:bold;font-size:.7rem;background:rgba(200,137,58,.15);flex-shrink:0}
+.stp.active{color:var(--parch);border-color:var(--amber);background:rgba(200,137,58,.12);cursor:pointer}
+.stp.active .n{background:var(--amber);color:var(--ink)}
+.stp.done{color:var(--amber2);border-color:rgba(200,137,58,.35);cursor:pointer}
+.stp.done .n{background:rgba(200,137,58,.25);color:var(--amber2)}
+.stp-arr{color:rgba(200,137,58,.3);align-self:center;font-size:.85rem;flex-shrink:0}
+
+/* ── MAIN ── */
+.main{max-width:1240px;margin:0 auto;padding:20px 18px}
+.sec{display:none}.sec.on{display:block}
+
+/* ── CARDS ── */
+.card{background:#fff;border:1px solid var(--bdr);border-radius:var(--r);
+      padding:18px 20px;margin-bottom:14px;box-shadow:var(--sh)}
+.card-hd{font-family:var(--fh);font-size:1rem;color:var(--ink);margin-bottom:12px;
+         padding-bottom:8px;border-bottom:1.5px solid var(--bdr);display:flex;
+         align-items:center;gap:8px}
+.card-hd .ico{font-size:1.1rem}
+.card-sub{font-size:.76rem;font-weight:bold;color:var(--slate);text-transform:uppercase;
+          letter-spacing:.05em;margin-bottom:7px;margin-top:12px}
+
+/* ── FORM ── */
+.fg{display:grid;grid-template-columns:1fr 82px 82px 82px 34px;
+    gap:6px;align-items:center;margin-bottom:5px}
+.fg-hdr{display:grid;grid-template-columns:1fr 82px 82px 82px 34px;
+        gap:6px;align-items:end;margin-bottom:2px;font-size:.72rem;
+        font-weight:bold;color:var(--slate)}
+input[type=text],input[type=number],input[type=date]{
+  width:100%;padding:6px 9px;border:1.5px solid #D4C9B4;border-radius:6px;
+  font-size:.83rem;font-family:var(--fb);transition:.2s;background:#FDFCF8}
+input:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 3px rgba(200,137,58,.14)}
+input.err{border-color:var(--red);background:var(--redbg)}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border:none;
+     border-radius:var(--r);font-size:.82rem;font-weight:bold;cursor:pointer;
+     transition:.2s;font-family:var(--fb);white-space:nowrap}
+.btn-ink{background:var(--ink);color:var(--parch);border:2px solid var(--ink)}
+.btn-ink:hover{background:var(--ink3);border-color:var(--amber)}
+.btn-amb{background:var(--amber);color:var(--ink);border:2px solid var(--amber)}
+.btn-amb:hover{background:var(--amber2)}
+.btn-out{background:transparent;color:var(--ink);border:1.5px solid var(--bdr)}
+.btn-out:hover{background:var(--parch2)}
+.btn-sm{padding:4px 11px;font-size:.74rem}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:12px;
+         border-top:1px solid var(--bdr)}
+.del-btn{width:28px;height:28px;border-radius:50%;border:1.5px solid #E0D4C0;
+         background:transparent;cursor:pointer;font-size:.8rem;color:var(--slate);
+         display:flex;align-items:center;justify-content:center;transition:.2s}
+.del-btn:hover{background:var(--redbg);border-color:var(--red);color:var(--red)}
+
+/* ── BADGES ── */
+.ba{background:var(--redbg);color:var(--red);border:1px solid #F0B8B8;
+    padding:2px 8px;border-radius:20px;font-size:.72rem;font-weight:bold;white-space:nowrap}
+.bb{background:var(--orabg);color:var(--ora);border:1px solid #F0D090;
+    padding:2px 8px;border-radius:20px;font-size:.72rem;font-weight:bold;white-space:nowrap}
+.bc{background:var(--grnbg);color:var(--grn);border:1px solid #A0D8B0;
+    padding:2px 8px;border-radius:20px;font-size:.72rem;font-weight:bold;white-space:nowrap}
+
+/* ── TABLE ── */
+.twrap{overflow-x:auto;margin-top:8px}
+table{width:100%;border-collapse:collapse;font-size:.76rem}
+th{background:var(--ink);color:var(--parch);padding:8px 9px;text-align:left;
+   font-weight:bold;white-space:nowrap;font-size:.72rem}
+td{padding:6px 9px;border-bottom:1px solid var(--parch2);vertical-align:top}
+tr:nth-child(even) td{background:var(--parch)}
+tr.rA td{background:var(--redbg)}
+tr.rB td{background:var(--orabg)}
+tr.rC td{background:var(--grnbg)}
+
+/* ── STAT CARDS ── */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:10px;margin:10px 0}
+.sc{background:#fff;border:1px solid var(--bdr);border-radius:var(--r);padding:12px;text-align:center}
+.sc .v{font-family:var(--fh);font-size:1.7rem;font-weight:bold;line-height:1}
+.sc .l{font-size:.68rem;color:var(--slate);margin-top:3px;text-transform:uppercase;letter-spacing:.04em}
+.sc.sA{border-color:#F0B8B8}.sc.sA .v{color:var(--red)}
+.sc.sB{border-color:#F0D090}.sc.sB .v{color:var(--ora)}
+.sc.sC{border-color:#A0D8B0}.sc.sC .v{color:var(--grn)}
+
+/* ── OBS BARS ── */
+.ob-row{display:flex;align-items:center;gap:8px;margin:5px 0}
+.ob-lbl{width:100px;font-size:.74rem;font-weight:bold;flex-shrink:0;white-space:nowrap}
+.ob-track{flex:1;height:10px;background:var(--parch2);border-radius:5px;overflow:hidden;min-width:60px}
+.ob-fill{height:100%;border-radius:5px;transition:width .5s ease}
+.ob-val{width:46px;font-size:.74rem;color:var(--slate);text-align:right;flex-shrink:0}
+.ob-tag{font-size:.68rem;font-weight:bold;padding:2px 7px;border-radius:10px;flex-shrink:0;white-space:nowrap}
+
+/* ── DECISION BOX ── */
+.dbox{background:var(--ink);color:var(--parch);border-radius:var(--r);padding:14px 18px;
+      margin-top:12px;border-left:4px solid var(--amber)}
+.dbox .dtitle{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;
+              color:var(--amber3);margin-bottom:5px}
+.dbox p{font-size:.86rem;line-height:1.6}
+.dbox .disclaimer{font-size:.68rem;color:rgba(230,215,190,.55);margin-top:6px}
+
+/* ── AXES ── */
+.axe{background:#fff;border:1.5px solid var(--bdr);border-radius:var(--r);
+     padding:12px 14px;margin-bottom:9px;cursor:pointer;transition:.2s}
+.axe:hover{border-color:var(--amber);box-shadow:0 2px 10px rgba(200,137,58,.14)}
+.axe.sel{border-color:var(--amber);background:rgba(200,137,58,.05)}
+.axe-h{display:flex;align-items:flex-start;gap:10px}
+.axe-cb{width:17px;height:17px;accent-color:var(--amber);flex-shrink:0;margin-top:2px;cursor:pointer}
+.axe-title{font-weight:bold;font-size:.88rem;color:var(--ink)}
+.axe-desc{font-size:.76rem;color:var(--slate);margin-top:3px}
+.axe-meta{display:flex;gap:12px;flex-wrap:wrap;margin-top:5px;font-size:.72rem;color:var(--slate)}
+.pert{display:inline-block;height:5px;background:var(--amber);
+      border-radius:3px;vertical-align:middle;margin-right:3px}
+.axe-msg{background:var(--parch2);border:1px solid var(--bdr);border-radius:6px;
+         padding:7px 11px;font-size:.78rem;margin-bottom:9px;color:var(--slate)}
+
+/* ── SLIDER ── */
+.sl-wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:14px 0}
+input[type=range]{-webkit-appearance:none;width:240px;height:5px;border-radius:3px;
+                  background:var(--parch2);outline:none;cursor:pointer;flex-shrink:0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;
+  border-radius:50%;background:var(--amber);border:2px solid var(--ink);cursor:pointer;
+  box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.sl-val{font-family:var(--fh);font-size:1.4rem;color:var(--ink);font-weight:bold;
+        min-width:36px;text-align:center}
+.sl-lbl{font-size:.78rem;color:var(--slate)}
+.dp-seq{background:var(--parch2);border-left:3px solid var(--amber);border-radius:0 6px 6px 0;
+        padding:7px 12px;margin-bottom:5px;font-size:.8rem}
+.dp-seq .dsh{font-weight:bold;color:var(--ink)}
+.dp-seq .dss{color:var(--slate);margin-top:2px;font-size:.76rem}
+
+/* ── PLANIFICATION ── */
+.seq-blk{margin-bottom:24px}
+.seq-hd{background:var(--ink);color:var(--parch);padding:9px 14px;
+        border-radius:var(--r) var(--r) 0 0;display:flex;justify-content:space-between;align-items:center}
+.seq-hd h3{font-family:var(--fh);font-size:.92rem;font-weight:normal}
+.seq-tag{font-size:.68rem;background:var(--amber);color:var(--ink);
+         padding:2px 8px;border-radius:20px;font-weight:bold;white-space:nowrap}
+.ptbl{width:100%;border-collapse:collapse;border:1px solid var(--bdr);font-size:.74rem}
+.ptbl th{background:var(--ink2);color:var(--parch);padding:6px 8px;text-align:left;font-size:.7rem}
+.ptbl td{padding:6px 8px;border-bottom:1px solid var(--parch2);vertical-align:top}
+.ptbl .ga{background:var(--redbg)}.ptbl .gb{background:var(--orabg)}.ptbl .gc{background:var(--grnbg)}
+.ptbl .sa-nm{font-weight:bold;font-size:.72rem;display:block;margin-bottom:2px}
+.ptbl .crit{font-style:italic;font-size:.68rem;color:var(--slate);margin-top:3px;display:block}
+.indicatif{background:var(--parch);border:1px dashed var(--bdr);border-radius:5px;
+           padding:5px 10px;font-size:.7rem;color:var(--slate);margin:3px 0 0}
+.indicatif em{color:var(--ink);font-style:normal;font-weight:bold}
+.cyc-sum{background:linear-gradient(135deg,var(--ink) 0%,var(--ink3) 100%);
+         color:var(--parch);border-radius:var(--r);padding:16px 18px;margin-top:18px;
+         border-left:4px solid var(--amber)}
+.cyc-sum h3{font-family:var(--fh);font-size:.95rem;margin-bottom:8px;color:var(--amber3)}
+.cyc-sum p{font-size:.8rem;line-height:1.7;opacity:.9}
+
+/* ── ALERTS ── */
+.alrt{padding:8px 12px;border-radius:6px;font-size:.78rem;margin:7px 0}
+.awarn{background:var(--orabg);border-left:3px solid var(--amber);color:#5C3000}
+.aerr{background:var(--redbg);border-left:3px solid var(--red);color:var(--red)}
+.aok{background:var(--grnbg);border-left:3px solid var(--grn);color:var(--grn)}
+
+/* ── DROP ZONE ── */
+.drop{border:2px dashed var(--bdr);border-radius:var(--r);padding:20px;
+      text-align:center;cursor:pointer;transition:.2s;background:var(--parch)}
+.drop:hover,.drop.dg{border-color:var(--amber);background:rgba(200,137,58,.05)}
+.drop p{font-size:.8rem;color:var(--slate)}
+.drop .ico2{font-size:1.8rem;margin-bottom:6px}
+#csv-file{display:none}
+
+/* ── GROUPES BESOIN ── */
+.gb-row{display:flex;align-items:center;gap:8px;padding:7px 11px;
+        margin:4px 0;border-radius:6px;font-size:.78rem}
+
+/* ── PRINT ── */
+@media print{
+  .stepper,.btn-row,.drop,#inp-sec,.hdr-pills,.del-btn{display:none!important}
+  .sec.on{display:block}
+  body{background:#fff}
+  .card{box-shadow:none;border:1px solid #ccc;page-break-inside:avoid}
+  .ptbl th,.seq-hd,.dbox,.cyc-sum{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .ptbl .ga,.ptbl .gb,.ptbl .gc{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:580px){
+  .fg,.fg-hdr{grid-template-columns:1fr 70px 70px 70px 28px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  input[type=range]{width:160px}
+  .main{padding:12px 10px}
+  .ob-lbl{width:80px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-row">
+    <div>
+      <h1>Outil d&rsquo;aide &agrave; la d&eacute;cision p&eacute;dagogique &mdash; EPS</h1>
+      <div class="sub">Gymnastiqu Artistique (GAF/GAM) &middot; DI-GYM &middot; ADP 2026 &middot; CRMEF Inezgane &middot; BOUARGANE</div>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:flex-start">
+      <button class="btn btn-out btn-sm" style="color:var(--parch);border-color:rgba(200,137,58,.4)" onclick="window.print()">&#128424; Imprimer</button>
+      <button class="btn btn-out btn-sm" style="color:var(--parch);border-color:rgba(200,137,58,.4)" onclick="exportCSV()">&#128190; CSV</button>
+    </div>
+  </div>
+  <div class="hdr-pills">
+    <span class="hdr-pill amber">APS : Gymnastiqu Artistique</span>
+    <span class="hdr-pill">Code : DI-GYM</span>
+    <span class="hdr-pill">Niveau : 4&egrave;me &middot; 3&egrave;me</span>
+    <span class="hdr-pill">3 observables &middot; 6 axes</span>
+    <span class="hdr-pill">Seuils : A&lt;4.5 · B 4.5&ndash;7.4 · C&ge;7.5</span>
+  </div>
+</div>
+
+<!-- STEPPER -->
+<div class="stepper">
+  <button class="stp active" id="n1" onclick="goStep(1)"><span class="n">1</span>Diagnostic</button>
+  <span class="stp-arr">›</span>
+  <button class="stp" id="n2" onclick="goStep(2)"><span class="n">2</span>Axes</button>
+  <span class="stp-arr">›</span>
+  <button class="stp" id="n3" onclick="goStep(3)"><span class="n">3</span>Param&eacute;trage</button>
+  <span class="stp-arr">›</span>
+  <button class="stp" id="n4" onclick="goStep(4)"><span class="n">4</span>Planification</button>
+</div>
+
+<!-- ─────────────────────────────────────────────── -->
+<!--  ÉTAPE 1 — DIAGNOSTIC                          -->
+<!-- ─────────────────────────────────────────────── -->
+<div class="main">
+<div class="sec on" id="s1">
+
+  <div class="card" id="inp-sec">
+    <div class="card-hd"><span class="ico">&#128221;</span>Saisie terrain &mdash; Diagnostique Initial</div>
+
+    <!-- Méta classe -->
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+      <div style="flex:1;min-width:180px">
+        <div class="card-sub" style="margin-top:0">Classe / Groupe</div>
+        <input type="text" id="cl-in" placeholder="Ex : 3&egrave;me B">
+      </div>
+      <div style="flex:1;min-width:140px">
+        <div class="card-sub" style="margin-top:0">Date</div>
+        <input type="date" id="dt-in">
+      </div>
+    </div>
+
+    <!-- En-têtes colonnes -->
+    <div class="fg-hdr">
+      <span>Pr&eacute;nom *</span>
+      <span style="text-align:center">OBS-01<br><small style="font-weight:normal">Posture /10</small></span>
+      <span style="text-align:center">OBS-02<br><small style="font-weight:normal">Renversmt /10</small></span>
+      <span style="text-align:center">OBS-03<br><small style="font-weight:normal">Compos. /10</small></span>
+      <span></span>
+    </div>
+    <div id="rows"></div>
+
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:8px">
+      <button class="btn btn-out btn-sm" onclick="addRow()">+ 1 &eacute;l&egrave;ve</button>
+      <button class="btn btn-out btn-sm" onclick="addN(5)">+ 5 &eacute;l&egrave;ves</button>
+    </div>
+
+    <!-- Import CSV -->
+    <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--bdr)">
+      <div class="card-sub">Import CSV terrain (format ADP 2026)</div>
+      <div class="drop" id="dropz" onclick="document.getElementById('csv-file').click()"
+           ondragover="event.preventDefault();this.classList.add('dg')"
+           ondragleave="this.classList.remove('dg')"
+           ondrop="onDrop(event)">
+        <div class="ico2">&#128196;</div>
+        <p>Glisser-d&eacute;poser ou cliquer &mdash; CSV avec colonnes OBS01_Degre / OBS02_Degre / OBS03_Degre (A/B/C) ou OBS1/OBS2/OBS3 (0&ndash;10)</p>
+      </div>
+      <input type="file" id="csv-file" accept=".csv,.txt" onchange="onCSV(event)">
+      <div id="csv-msg"></div>
+    </div>
+
+    <div id="inp-err" class="alrt aerr" style="display:none"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-ink" onclick="analyser()">&#128269; Analyser la classe</button>
+    </div>
+  </div>
+
+  <!-- RÉSULTATS -->
+  <div id="res1" style="display:none">
+
+    <div class="card">
+      <div class="card-hd"><span class="ico">&#128202;</span>Tableau individuel</div>
+      <div class="twrap">
+        <table id="itbl">
+          <thead><tr>
+            <th>Rang</th><th>Pr&eacute;nom</th>
+            <th>OBS-01</th><th>OBS-02</th><th>OBS-03</th>
+            <th>Moy /10</th><th>/20</th>
+            <th>Profil</th><th>D&eacute;tail</th>
+            <th>Lacune(s)</th><th>Axe prioritaire</th><th>SA</th>
+          </tr></thead>
+          <tbody id="itbd"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hd"><span class="ico">&#127970;</span>Bilan de classe</div>
+      <div class="stats" id="scards"></div>
+
+      <div class="card-sub">Analyse par observable</div>
+      <div id="obars"></div>
+
+      <div class="card-sub">Groupes de besoin</div>
+      <div id="gbsn"></div>
+
+      <div class="dbox" id="dbox"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-amb" onclick="goStep(2)">Axes prioritaires &mdash; &Eacute;tape 2 &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────── -->
+<!--  ÉTAPE 2 — AXES                                -->
+<!-- ─────────────────────────────────────────────── -->
+<div class="sec" id="s2">
+  <div class="card">
+    <div class="card-hd"><span class="ico">&#127919;</span>S&eacute;lection des axes prioritaires</div>
+    <div class="alrt aok" style="margin-bottom:10px">
+      S&eacute;lectionnez entre <strong>3 et 4 axes</strong> parmi les 6 propos&eacute;s, class&eacute;s par pertinence selon votre classe.
+    </div>
+    <div class="axe-msg" id="amsg">0 axe s&eacute;lectionn&eacute; &mdash; minimum 3 requis</div>
+    <div id="axes-c"></div>
+    <div class="btn-row">
+      <button class="btn btn-out" onclick="goStep(1)">&#8592; Retour</button>
+      <button class="btn btn-amb" id="btn3" disabled onclick="goStep(3)">Param&eacute;trer &mdash; &Eacute;tape 3 &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────── -->
+<!--  ÉTAPE 3 — SLIDER                              -->
+<!-- ─────────────────────────────────────────────── -->
+<div class="sec" id="s3">
+  <div class="card">
+    <div class="card-hd"><span class="ico">&#9881;&#65039;</span>Param&eacute;trage du cycle</div>
+    <div class="card-sub">Nombre de s&eacute;ances</div>
+    <div class="sl-wrap">
+      <input type="range" id="sl" min="6" max="10" value="8" oninput="updSl()">
+      <div class="sl-val" id="slv">8</div>
+      <div class="sl-lbl">s&eacute;ances</div>
+    </div>
+    <div id="dp"></div>
+    <div class="btn-row">
+      <button class="btn btn-out" onclick="goStep(2)">&#8592; Retour</button>
+      <button class="btn btn-amb" onclick="goStep(4)">G&eacute;n&eacute;rer la planification &mdash; &Eacute;tape 4 &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────── -->
+<!--  ÉTAPE 4 — PLANIFICATION                       -->
+<!-- ─────────────────────────────────────────────── -->
+<div class="sec" id="s4">
+  <div class="card">
+    <div class="card-hd"><span class="ico">&#128197;</span>Planification dynamique du cycle</div>
+    <div id="plan"></div>
+    <div id="csum"></div>
+    <div class="btn-row">
+      <button class="btn btn-out" onclick="goStep(3)">&#8592; Retour</button>
+      <button class="btn btn-out" onclick="window.print()">&#128424; Imprimer</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+/* ============================================================
+   RÉFÉRENTIEL EXTRAIT — mémoire de conversation ADP 2026
+   (referentiel_GYM-ART_DI-GYM.txt + grille DI + referentiel QP)
+   ============================================================ */
+
+/* Observables */
+var OBS = [
+  { id:"OBS-01", nm:"Posture et tonicit\u00e9 globale",
+    codes:{ A:"PT\u2212", B:"PT~", C:"PT+" },
+    cond:{ A:"Corps mou, chutes de bassin, ruptures posturales > 3 \u00e9l\u00e9ments",
+           B:"Tonicit\u00e9 pr\u00e9sente, rel\u00e2chement visible sur le dernier tiers",
+           C:"Corps align\u00e9, gainage continu sur 100\u00a0% de l'encha\u00eenement" },
+    motrice:{ A:"l'\u00e9l\u00e8ve maintient son gainage sur au moins 3 \u00e9l\u00e9ments cons\u00e9cutifs sans rupture posturale visible",
+              B:"l'\u00e9l\u00e8ve maintient la tonicit\u00e9 sur plus de la moiti\u00e9 de l'encha\u00eenement sans rel\u00e2chement",
+              C:"l'\u00e9l\u00e8ve maintient un gainage continu sur la totalit\u00e9 de l'encha\u00eenement" } },
+  { id:"OBS-02", nm:"Gabarit moteur du renversement",
+    codes:{ A:"GM\u2212", B:"GM~", C:"GM+" },
+    cond:{ A:"Renversement absent, incomplet ou avec aide syst\u00e9matique",
+           B:"Renversement r\u00e9alis\u00e9, amplitude ou axe perturb\u00e9 \u00e0 l'issue",
+           C:"ATR align\u00e9 3\u00a0s, roulade group\u00e9e sans aide, encha\u00een\u00e9 directement" },
+    motrice:{ A:"l'\u00e9l\u00e8ve r\u00e9alise l'ATR sans aide pendant au moins 2 secondes avec appuis stables",
+              B:"l'\u00e9l\u00e8ve r\u00e9alise un renversement autonome dont l'axe est correctement align\u00e9 \u00e0 l'issue",
+              C:"l'\u00e9l\u00e8ve encha\u00eene directement ATR et roulade sans pause interm\u00e9diaire" } },
+  { id:"OBS-03", nm:"Composition et liaisons entre \u00e9l\u00e9ments",
+    codes:{ A:"CL\u2212", B:"CL~", C:"CL+" },
+    cond:{ A:"Juxtaposition d'\u00e9l\u00e9ments isol\u00e9s, 1 seule famille, arr\u00eats fr\u00e9quents",
+           B:"2 familles pr\u00e9sentes, transitions h\u00e9sitantes mais organis\u00e9es",
+           C:"Liaison fluide, \u2265\u00a03 familles gymniques, 0 arr\u00eat, transitions intentionnelles" },
+    motrice:{ A:"l'\u00e9l\u00e8ve encha\u00eene 2 \u00e9l\u00e9ments de familles diff\u00e9rentes sans arr\u00eat complet entre eux",
+              B:"l'\u00e9l\u00e8ve produit un encha\u00eenement de 2 familles avec au maximum 1 rupture visible",
+              C:"l'\u00e9l\u00e8ve r\u00e9alise un encha\u00eenement de 3 familles ou plus sans aucune rupture" } }
+];
+
+/* Seuils extraits du référentiel */
+var SL = { C:7.5, B:4.5 };
+
+/* Mapping degré → score */
+var DS = { A:3, B:6, C:9 };
+
+/* SA extraites */
+var SA = {
+  A:{ id:"SA-A1", lb:"Adaptation anatomique posturale" },
+  B:{ id:"SA-B1", lb:"Renforcement fonctionnel gymnique" },
+  C:{ id:"SA-C1", lb:"Int\u00e9gration technique et composition" }
+};
+
+/* 6 axes extraits — referentiel_GYM-ART_DI-GYM.txt Partie B */
+var AXES = [
+  { id:1, oi:0,
+    ti:"Gainage et tonicit\u00e9 posturale globale",
+    ds:"Construction et maintien de l'axe corporel sur la dur\u00e9e de l'encha\u00eenement (N1-5 \u2192 N2-6\u00b7N2-8\u00b7N2-9)",
+    ind:"l'\u00e9l\u00e8ve maintient sa tonicit\u00e9 posturale sur au moins 4 \u00e9l\u00e9ments cons\u00e9cutifs sans rupture visible",
+    sa:"SA-A1",
+    con:{ A:{ sa:"SA-A1", c:"Tenir la planche frontale 10\u00a0s, dos droit, lombaires non creus\u00e9es", cr:"Le dos reste align\u00e9 de la t\u00eate aux talons pendant toute la dur\u00e9e" },
+          B:{ sa:"SA-B1", c:"R\u00e9aliser 3 planches dynamiques encha\u00een\u00e9es avec lever de jambe altern\u00e9", cr:"Les hanches ne basculent pas lors de chaque lever de jambe" },
+          C:{ sa:"SA-C1", c:"Maintenir le gainage sur un encha\u00eenement complet de 5 \u00e9l\u00e9ments gymniques", cr:"Aucune rupture posturale du premier au dernier \u00e9l\u00e9ment" } } },
+  { id:2, oi:1,
+    ti:"Gabarit moteur du renversement \u2014 ATR et roulade",
+    ds:"Construction et stabilisation de l'ATR et de la roulade group\u00e9e sans aide (N1-2 \u2192 N2-3\u00b7N2-4\u00b7N2-6)",
+    ind:"l'\u00e9l\u00e8ve r\u00e9alise un ATR de 3 secondes minimum sans aide ext\u00e9rieure lors de 2 tentatives cons\u00e9cutives",
+    sa:"SA-A1",
+    con:{ A:{ sa:"SA-A1", c:"R\u00e9aliser 5 tentatives d'ATR contre le mur, tenir 3\u00a0s puis l\u00e2cher les pieds", cr:"Le corps reste align\u00e9 t\u00eate-\u00e9paules-hanches pendant 3 secondes sans appui au mur" },
+          B:{ sa:"SA-B1", c:"Encha\u00eener ATR libre et roulade avant group\u00e9e sans pause", cr:"L'ATR est tenu 2\u00a0s et la roulade repart sans arr\u00eat interm\u00e9diaire" },
+          C:{ sa:"SA-C1", c:"R\u00e9aliser un encha\u00eenement ATR \u2192 roulade \u2192 \u00e9l\u00e9ment F2 ou F4", cr:"Les 3 \u00e9l\u00e9ments s'encha\u00eenent sans aide, sans arr\u00eat, axe maintenu" } } },
+  { id:3, oi:2,
+    ti:"Composition et liaisons entre \u00e9l\u00e9ments multi-familles",
+    ds:"Construction d'un encha\u00eenement gymnique avec transitions intentionnelles (N1-4 \u2192 N2-2\u00b7N2-5\u00b7N2-7\u00b7N2-8)",
+    ind:"l'\u00e9l\u00e8ve choisit spontan\u00e9ment des \u00e9l\u00e9ments de 2 familles diff\u00e9rentes lors de la composition libre",
+    sa:"SA-B1",
+    con:{ A:{ sa:"SA-A1", c:"Composer un encha\u00eenement de 3 \u00e9l\u00e9ments de 2 familles, ex\u00e9cut\u00e9 2 fois", cr:"Les 2 familles sont identifiables et l'\u00e9l\u00e8ve ne s'arr\u00eate pas entre elles" },
+          B:{ sa:"SA-B1", c:"Composer un encha\u00eenement de 5 \u00e9l\u00e9ments avec au minimum 2 transitions pr\u00e9par\u00e9es", cr:"Les transitions sont intentionnelles, sans perte d'\u00e9quilibre ni arr\u00eat complet" },
+          C:{ sa:"SA-C1", c:"Composer et pr\u00e9senter un encha\u00eenement de 8 \u00e9l\u00e9ments de 3 familles minimum", cr:"L'encha\u00eenement est fluide, 3 familles identifi\u00e9es, z\u00e9ro rupture" } } },
+  { id:4, oi:1,
+    ti:"Coordination \u00ab tourner, voler, se renverser \u00bb",
+    ds:"R\u00e9alisation d'\u00e9l\u00e9ments complexes combinant rotation et renversement (N2-3 \u2192 N2-4\u00b7N2-8)",
+    ind:"l'\u00e9l\u00e8ve encha\u00eene une rotation et un renversement sans pause ni aide lors de 2 tentatives sur 3",
+    sa:"SA-B1",
+    con:{ A:{ sa:"SA-A1", c:"Roulade avant, arr\u00eat debout, roulade arri\u00e8re \u2014 3 rotations cons\u00e9cutives", cr:"Les 3 rotations s'encha\u00eenent sans aide, dans des directions diff\u00e9rentes" },
+          B:{ sa:"SA-B1", c:"ATR suivi d'une roue : passage ATR \u2192 roue sans pause", cr:"Le passage ATR-roue s'effectue sans arr\u00eat, gainage maintenu" },
+          C:{ sa:"SA-C1", c:"Composer une s\u00e9rie acrobatique : 2 renversements + 1 rotation en vol", cr:"La s\u00e9rie est fluide, diff\u00e9rents niveaux s'encha\u00eenent sans rupture" } } },
+  { id:5, oi:0,
+    ti:"Encha\u00eener sans rupture avec alignement segmentaire",
+    ds:"Amplitude, correction et alignement maintenus sur tout l'encha\u00eenement \u2014 N2-8 (Axes 1+2+3 pr\u00e9requis)",
+    ind:"l'\u00e9l\u00e8ve ne pr\u00e9sente aucune rupture d'alignement sur les 3 derniers \u00e9l\u00e9ments de l'encha\u00eenement",
+    sa:"SA-C1",
+    con:{ A:{ sa:"SA-A1", c:"R\u00e9aliser l'encha\u00eenement compos\u00e9 en Axe 3 en corrigeant 1 d\u00e9faut de posture indiqu\u00e9", cr:"La correction est visible sur au moins 3 \u00e9l\u00e9ments de l'encha\u00eenement" },
+          B:{ sa:"SA-B1", c:"R\u00e9aliser l'encha\u00eenement 2 fois et noter les \u00e9l\u00e9ments o\u00f9 la posture d\u00e9faille", cr:"L'\u00e9l\u00e8ve identifie au moins 1 \u00e9l\u00e9ment \u00e0 corriger lors du 2e passage" },
+          C:{ sa:"SA-C1", c:"Pr\u00e9senter un encha\u00eenement devant un jury de 2 pairs avec code simplifi\u00e9", cr:"L'encha\u00eenement obtient la note maximale sur le crit\u00e8re alignement" } } },
+  { id:6, oi:0,
+    ti:"Gestion de l'effort et du rythme sur la prestation",
+    ds:"Maintien de la qualit\u00e9 tonique et du rythme jusqu'au dernier \u00e9l\u00e9ment \u2014 N2-9 (Axe 1 pr\u00e9requis)",
+    ind:"l'\u00e9l\u00e8ve maintient une qualit\u00e9 d'ex\u00e9cution constante entre le premier et le dernier \u00e9l\u00e9ment",
+    sa:"SA-C1",
+    con:{ A:{ sa:"SA-A1", c:"R\u00e9aliser 3 passages complets avec 1 minute de r\u00e9cup\u00e9ration entre eux", cr:"La qualit\u00e9 du 3e passage est \u00e9gale ou sup\u00e9rieure au 1er selon l'observateur" },
+          B:{ sa:"SA-B1", c:"R\u00e9aliser l'encha\u00eenement sur une musique avec temps forts identifi\u00e9s", cr:"Les actions gymniques co\u00efncident avec au moins 3 temps forts musicaux" },
+          C:{ sa:"SA-C1", c:"Donner du rythme par variations d'amplitude et de vitesse d'ex\u00e9cution", cr:"L'observateur identifie au moins 2 moments de contraste dynamique dans la prestation" } } }
+];
+
+/* Distribution séances × axes */
+var DIST = {
+  3:{ 6:[2,2,2], 7:[2,2,3], 8:[3,2,3], 9:[3,3,3], 10:[3,4,3] },
+  4:{ 6:[1,2,2,1], 7:[2,2,2,1], 8:[2,2,2,2], 9:[2,3,2,2], 10:[3,2,3,2] }
+};
+
+/* ============================================================
+   STATE
+   ============================================================ */
+var eleves=[], res=[], obsMoy=[0,0,0], clsMoy=0;
+var axSel=[], nbS=8, rc=0;
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function goStep(n){
+  if(n===2 && res.length===0){ alert("Analysez la classe d'abord."); return; }
+  if(n===3 && axSel.length<3){ alert("S\u00e9lectionnez au moins 3 axes."); return; }
+  if(n===4){ buildPlan(); }
+  [1,2,3,4].forEach(function(i){
+    document.getElementById("s"+i).classList.remove("on");
+    var b=document.getElementById("n"+i);
+    b.classList.remove("active","done");
+    if(i<n) b.classList.add("done");
+    else if(i===n){ document.getElementById("s"+i).classList.add("on"); b.classList.add("active"); }
+  });
+  if(n===2) buildAxes();
+  if(n===3) updSl();
+  window.scrollTo(0,0);
+}
+
+/* ============================================================
+   LIGNES DE SAISIE
+   ============================================================ */
+function addRow(){
+  rc++;
+  var d=document.createElement("div");
+  d.className="fg"; d.id="row"+rc;
+  d.innerHTML='<input type="text" class="pf" placeholder="Pr\u00e9nom">'+
+    '<input type="number" min="0" max="10" step="0.5" placeholder="0\u201310" class="of">'+
+    '<input type="number" min="0" max="10" step="0.5" placeholder="0\u201310" class="of">'+
+    '<input type="number" min="0" max="10" step="0.5" placeholder="0\u201310" class="of">'+
+    '<button class="del-btn" onclick="document.getElementById(\'row'+rc+'\').remove()">&#10005;</button>';
+  document.getElementById("rows").appendChild(d);
+}
+function addN(n){ for(var i=0;i<n;i++) addRow(); }
+addN(5); // 5 lignes initiales
+
+/* ============================================================
+   CALCULS
+   ============================================================ */
+function pr(v){ return v>=SL.C?"C":v>=SL.B?"B":"A"; }
+
+function getLac(vals){
+  var lac=[];
+  vals.forEach(function(v,i){ if(v<SL.B) lac.push({i:i,v:v}); });
+  lac.sort(function(a,b){return a.v-b.v;});
+  return lac;
+}
+
+function getAxe(lac){
+  if(!lac.length) return "Approfondissement composition et performance";
+  var mp=["Gainage et tonicit\u00e9 posturale \u2014 construire l'axe corporel",
+          "Gabarit moteur du renversement \u2014 ATR et roulade sans aide",
+          "Composition et liaisons \u2014 encha\u00eener 2 familles sans arr\u00eat"];
+  return mp[lac[0].i]||mp[0];
+}
+
+function getSA(lac){
+  if(!lac.length) return SA.C;
+  return lac[0].v<SL.B&&lac[0].v<=3 ? SA.A : SA.B;
+}
+
+function analyser(){
+  var rows=document.querySelectorAll("#rows .fg");
+  eleves=[]; res=[];
+  var hasErr=false;
+  var erDiv=document.getElementById("inp-err");
+  erDiv.style.display="none";
+
+  rows.forEach(function(r){
+    var pn=r.querySelector(".pf").value.trim();
+    if(!pn) return;
+    var ofs=r.querySelectorAll(".of"), vals=[], ok=true;
+    ofs.forEach(function(el){
+      el.classList.remove("err");
+      var v=parseFloat(el.value);
+      if(isNaN(v)||v<0||v>10){ el.classList.add("err"); ok=false; hasErr=true; }
+      else vals.push(v);
+    });
+    if(ok&&vals.length===3) eleves.push({pn:pn,vals:vals});
+  });
+
+  if(!eleves.length){
+    erDiv.style.display="block";
+    erDiv.textContent="Aucun \u00e9l\u00e8ve valide. V\u00e9rifiez les saisies.";
+    return;
+  }
+
+  eleves.forEach(function(e){
+    var moy=(e.vals[0]+e.vals[1]+e.vals[2])/3;
+    var lac=getLac(e.vals);
+    res.push({ pn:e.pn, vals:e.vals, moy:moy,
+               prof:pr(moy), opf:e.vals.map(pr),
+               lac:lac, axe:getAxe(lac), sa:getSA(lac) });
+  });
+
+  res.sort(function(a,b){return b.moy-a.moy;});
+  res.forEach(function(r,i){r.rang=i+1;});
+
+  clsMoy=res.reduce(function(s,r){return s+r.moy;},0)/res.length;
+  obsMoy=[0,1,2].map(function(i){
+    return res.reduce(function(s,r){return s+r.vals[i];},0)/res.length;
+  });
+
+  buildRes();
+  document.getElementById("res1").style.display="block";
+}
+
+/* ============================================================
+   BUILD ÉTAPE 1
+   ============================================================ */
+function buildRes(){
+  buildTable();
+  buildBilan();
+}
+
+function buildTable(){
+  var tb=document.getElementById("itbd");
+  tb.innerHTML="";
+  res.forEach(function(r){
+    var ls=r.lac.length===0?"<em>Aucune lacune</em>":
+      r.lac.map(function(l,i){
+        return "L"+(i+1)+" \u2014 "+OBS[l.i].id+" : "+l.v.toFixed(1)+"/10";
+      }).join("<br>");
+    var pd=r.opf.map(function(p){
+      return '<span class="b'+p.toLowerCase()+'">'+p+"</span>";
+    }).join(" / ");
+    var tr=document.createElement("tr");
+    tr.className="r"+r.prof;
+    tr.innerHTML="<td>"+r.rang+"</td><td><strong>"+r.pn+"</strong></td>"+
+      r.vals.map(function(v){return "<td>"+v.toFixed(1)+"</td>";}).join("")+
+      "<td><strong>"+r.moy.toFixed(1)+"</strong></td>"+
+      "<td>"+(r.moy*2).toFixed(1)+"</td>"+
+      '<td><span class="b'+r.prof.toLowerCase()+'">'+r.prof+"</span></td>"+
+      "<td>"+pd+"</td>"+
+      "<td style='font-size:.7rem'>"+ls+"</td>"+
+      "<td style='font-size:.72rem'>"+r.axe+"</td>"+
+      "<td><strong>"+r.sa.id+"</strong><br><small>"+r.sa.lb+"</small></td>";
+    tb.appendChild(tr);
+  });
+}
+
+function buildBilan(){
+  var cnt={A:0,B:0,C:0};
+  res.forEach(function(r){cnt[r.prof]++;});
+  var tot=res.length;
+
+  /* Stat cards */
+  var sc=document.getElementById("scards");
+  sc.innerHTML=[
+    {cl:"sA",v:cnt.A,l:"D\u00e9butants (A)<br>"+Math.round(cnt.A/tot*100)+"%"},
+    {cl:"sB",v:cnt.B,l:"Interm\u00e9diaires (B)<br>"+Math.round(cnt.B/tot*100)+"%"},
+    {cl:"sC",v:cnt.C,l:"Avanc\u00e9s (C)<br>"+Math.round(cnt.C/tot*100)+"%"},
+    {cl:"",v:clsMoy.toFixed(1),l:"Moy. /10"},
+    {cl:"",v:(clsMoy*2).toFixed(1),l:"Moy. /20"}
+  ].map(function(x){
+    return '<div class="sc '+x.cl+'"><div class="v">'+x.v+'</div><div class="l">'+x.l+"</div></div>";
+  }).join("");
+
+  /* OBS bars */
+  var ob=document.getElementById("obars");
+  ob.innerHTML="";
+  obsMoy.forEach(function(m,i){
+    var p=Math.round(m/10*100);
+    var status,tc,bc,fc;
+    if(m>=SL.C){status="Bon niveau";tc=getVar("--grn");bc="E5F5EC";fc="#27AE60";}
+    else if(m>=SL.B){status="En cours";tc=getVar("--ora");bc="FEF4E5";fc="#C06A00";}
+    else{status="Lacune collective";tc=getVar("--red");bc="FBE9E9";fc="#B83232";}
+    var row=document.createElement("div");
+    row.className="ob-row";
+    row.innerHTML='<div class="ob-lbl">'+OBS[i].id+'</div>'+
+      '<div class="ob-track"><div class="ob-fill" style="width:'+p+'%;background:'+fc+'"></div></div>'+
+      '<div class="ob-val">'+m.toFixed(1)+'/10</div>'+
+      '<div class="ob-tag" style="background:#'+bc+';color:'+tc+'">'+status+"</div>";
+    ob.appendChild(row);
+  });
+
+  /* Groupes de besoin */
+  var gb=document.getElementById("gbsn");
+  gb.innerHTML="";
+  ["A","B","C"].forEach(function(p){
+    if(!cnt[p]) return;
+    var s=SA[p];
+    var bgs={A:"var(--redbg)",B:"var(--orabg)",C:"var(--grnbg)"};
+    var d=document.createElement("div");
+    d.className="gb-row";
+    d.style.background=bgs[p];
+    d.innerHTML='<span class="b'+p.toLowerCase()+'">'+p+"</span>"+
+      '<span style="flex:1">'+cnt[p]+" \u00e9l\u00e8ve"+(cnt[p]>1?"s":"")+
+      " &mdash; "+Math.round(cnt[p]/tot*100)+"%</span>"+
+      '<span style="font-weight:bold;font-size:.78rem">'+s.id+" : "+s.lb+"</span>";
+    gb.appendChild(d);
+  });
+
+  /* Décision dominante */
+  var mx=Math.max(cnt.A,cnt.B,cnt.C);
+  var dm=cnt.A===mx?"A":cnt.B===mx?"B":"C";
+  var msgs={
+    A:"Classe d\u00e9butante \u2014 Priorit\u00e9 fondamentaux : gainage et gabarit moteur du renversement",
+    B:"Classe interm\u00e9diaire \u2014 Diff\u00e9renciation A/B : consolider la posture, d\u00e9velopper la composition",
+    C:"Classe avanc\u00e9e \u2014 Approfondissement et tutorat : composition multi-familles et rythmique"
+  };
+  var db=document.getElementById("dbox");
+  db.innerHTML='<div class="dtitle">D\u00e9cision dominante automatique</div><p>'+msgs[dm]+'</p>'+
+    '<p class="disclaimer">(D\u00e9cision finale : vous)</p>';
+}
+
+function getVar(v){
+  var m={
+    "--grn":"#1E6B3E","--ora":"#C06A00","--red":"#B83232",
+    "--amber":"#C8893A","--ink":"#0B1828"
+  };
+  return m[v]||"#333";
+}
+
+/* ============================================================
+   BUILD ÉTAPE 2 — AXES
+   ============================================================ */
+function buildAxes(){
+  /* Classer par pertinence */
+  var scored=AXES.map(function(a){
+    var pct=Math.round(res.filter(function(r){return r.vals[a.oi]<SL.B;}).length/res.length*100);
+    return {a:a,pct:pct};
+  });
+  scored.sort(function(a,b){return b.pct-a.pct;});
+
+  var c=document.getElementById("axes-c");
+  c.innerHTML="";
+  scored.forEach(function(s){
+    var a=s.a;
+    var sel=axSel.indexOf(a.id)>-1;
+    var div=document.createElement("div");
+    div.className="axe"+(sel?" sel":"");
+    div.id="ax"+a.id;
+    div.innerHTML='<div class="axe-h">'+
+      '<input type="checkbox" class="axe-cb" id="cb'+a.id+'"'+(sel?" checked":"")+'>'+
+      '<div style="flex:1">'+
+      '<div class="axe-title">Axe '+a.id+' &mdash; '+a.ti+'</div>'+
+      '<div class="axe-desc">'+a.ds+'</div>'+
+      '<div class="axe-meta">'+
+      '<span><span class="pert" style="width:'+Math.min(s.pct,90)+'px"></span>Pertinence : '+s.pct+"% concern\u00e9s</span>"+
+      '<span>'+OBS[a.oi].id+' &middot; Moy. : '+obsMoy[a.oi].toFixed(1)+'/10</span>'+
+      '<span>SA : '+a.sa+'</span>'+
+      '</div></div></div>';
+
+    div.querySelector(".axe-cb").addEventListener("change",function(ev){
+      toggleAx(a.id,div,ev.target.checked);
+    });
+    div.addEventListener("click",function(ev){
+      if(ev.target.classList.contains("axe-cb")) return;
+      var cb=document.getElementById("cb"+a.id);
+      cb.checked=!cb.checked;
+      toggleAx(a.id,div,cb.checked);
+    });
+    c.appendChild(div);
+  });
+  updAxMsg();
+}
+
+function toggleAx(id,card,chk){
+  if(chk){
+    if(axSel.length>=4){
+      alert("Maximum 4 axes atteint. D\u00e9cochez un axe avant d'en choisir un autre.");
+      document.getElementById("cb"+id).checked=false;
+      return;
+    }
+    axSel.push(id);
+    card.classList.add("sel");
+  } else {
+    axSel=axSel.filter(function(x){return x!==id;});
+    card.classList.remove("sel");
+  }
+  updAxMsg();
+}
+
+function updAxMsg(){
+  var n=axSel.length;
+  document.getElementById("amsg").textContent=n+" axe"+(n>1?"s":"")+
+    " s\u00e9lectionn\u00e9"+(n>1?"s":"")+
+    (n<3?" \u2014 minimum 3 requis":n===4?" \u2014 maximum atteint":" \u2014 vous pouvez en ajouter un 4e");
+  document.getElementById("btn3").disabled=n<3;
+}
+
+/* ============================================================
+   BUILD ÉTAPE 3 — SLIDER
+   ============================================================ */
+function updSl(){
+  nbS=parseInt(document.getElementById("sl").value);
+  document.getElementById("slv").textContent=nbS;
+  var na=axSel.length;
+  var dist=(DIST[na]&&DIST[na][nbS])||[];
+  var axObj=axSel.map(function(id){return AXES.find(function(a){return a.id===id;});}).filter(Boolean);
+  var dp=document.getElementById("dp");
+  if(!dist.length){ dp.innerHTML='<p style="color:var(--red)">Distribution non d\u00e9finie.</p>'; return; }
+  var html='<p style="font-size:.76rem;color:var(--slate);margin-bottom:7px">Aper\u00e7u de la distribution :</p>';
+  dist.forEach(function(ns,i){
+    var ax=axObj[i];
+    html+='<div class="dp-seq"><div class="dsh">S\u00e9quence '+(i+1)+" &mdash; "+ns+" s\u00e9ance"+(ns>1?"s":"")+'</div>'+
+          '<div class="dss">'+(ax?"Axe "+ax.id+" \u2014 "+ax.ti:"Axe "+(i+1))+"</div></div>";
+  });
+  dp.innerHTML=html;
+}
+
+/* ============================================================
+   BUILD ÉTAPE 4 — PLANIFICATION
+   ============================================================ */
+function buildPlan(){
+  var na=axSel.length;
+  var dist=(DIST[na]&&DIST[na][nbS])||[];
+  var axObj=axSel.map(function(id){return AXES.find(function(a){return a.id===id;});}).filter(Boolean);
+  var cnt={A:0,B:0,C:0};
+  res.forEach(function(r){cnt[r.prof]++;});
+  var tot=res.length;
+
+  var plan=document.getElementById("plan");
+  plan.innerHTML="";
+  var sGlb=0;
+
+  dist.forEach(function(ns,si){
+    var ax=axObj[si]; if(!ax) return;
+    sGlb++;
+    var sStart=sGlb, sEnd=sGlb+ns-1;
+
+    var blk=document.createElement("div");
+    blk.className="seq-blk";
+
+    blk.innerHTML='<div class="seq-hd"><h3>S\u00e9quence '+(si+1)+" &mdash; "+ax.ti+"</h3>"+
+      '<span class="seq-tag">S\u00e9ances '+sStart+" \u00e0 "+sEnd+"</span></div>";
+
+    var rows="<thead><tr>"+
+      "<th>N\u00b0</th><th>Axe</th><th>Objectif</th>"+
+      '<th class="ga">Groupe A &mdash; D\u00e9butants<br><small>'+SA.A.id+" "+SA.A.lb+"</small></th>"+
+      '<th class="gb">Groupe B &mdash; Interm\u00e9diaires<br><small>'+SA.B.id+" "+SA.B.lb+"</small></th>"+
+      '<th class="gc">Groupe C &mdash; Avanc\u00e9s<br><small>'+SA.C.id+" "+SA.C.lb+"</small></th>"+
+      "</tr></thead><tbody>";
+
+    for(var s=0;s<ns;s++){
+      var sn=sGlb+s;
+      var isDer=(si===dist.length-1&&s===ns-1);
+      var obj=isDer?"Bilan formatif de l'encha\u00eenement gymnique":
+        "D\u00e9velopper : "+ax.ti;
+
+      function cellGrp(grp){
+        var cn=ax.con[grp];
+        return "<td class='g"+grp.toLowerCase()+"'>"+
+          '<span class="sa-nm">'+cn.sa+"</span>"+cn.c+
+          '<span class="crit">\u2713 '+cn.cr+"</span></td>";
+      }
+
+      rows+="<tr><td><strong>"+sn+"</strong></td>"+
+        "<td style='font-size:.7rem'>Axe "+ax.id+"</td>"+
+        "<td style='font-size:.72rem'>"+obj+"</td>"+
+        cellGrp("A")+cellGrp("B")+cellGrp("C")+"</tr>";
+
+      if(s<ns-1){
+        rows+='<tr><td colspan="6"><div class="indicatif">&#128203; \u00c0 observer avant la s\u00e9ance suivante &mdash; '+
+          '<em>'+ax.ind+'</em>'+
+          ' <span style="color:var(--slate);font-size:.68rem">(Indicatif \u2014 d\u00e9cision de progression\u00a0: vous)</span>'+
+          '</div></td></tr>';
+      }
+    }
+    rows+="</tbody>";
+
+    var tbl=document.createElement("table");
+    tbl.className="ptbl";
+    tbl.innerHTML=rows;
+    blk.appendChild(tbl);
+    plan.appendChild(blk);
+    sGlb+=ns-1;
+  });
+
+  /* Résumé */
+  var mx=Math.max(cnt.A,cnt.B,cnt.C);
+  var dm=cnt.A===mx?"A":cnt.B===mx?"B":"C";
+  var seqS=dist.map(function(ns,i){
+    var a=axObj[i];
+    return (a?"Axe "+a.id+" : "+a.ti:"?")+" ("+ns+"s\u00e9)";
+  }).join(" \u2014 ");
+
+  document.getElementById("csum").innerHTML=
+    '<div class="cyc-sum"><h3>R\u00e9sum\u00e9 du cycle</h3>'+
+    "<p>"+seqS+"</p>"+
+    '<p style="margin-top:9px">Ce cycle de <strong>'+nbS+" s\u00e9ances</strong> cible <strong>"+axSel.length+" axes prioritaires</strong>. "+
+    "Profil le plus concern\u00e9\u00a0: <strong>"+dm+"</strong> ("+cnt[dm]+" \u00e9l\u00e8ve"+(cnt[dm]>1?"s":"")+" &middot; "+Math.round(cnt[dm]/tot*100)+"%). "+
+    "R\u00e9\u00e9valuer apr\u00e8s la s\u00e9quence "+Math.ceil(dist.length/2)+" avec une nouvelle collecte terrain.</p>"+
+    '<p style="font-size:.7rem;margin-top:6px;opacity:.6">La d\u00e9cision finale de progression reste \u00e0 l\u2019enseignant.</p>'+
+    "</div>";
+}
+
+/* ============================================================
+   IMPORT CSV — P2 : parcourir tout le fichier
+   ============================================================ */
+function onDrop(ev){
+  ev.preventDefault();
+  document.getElementById("dropz").classList.remove("dg");
+  if(ev.dataTransfer.files[0]) parseCSV(ev.dataTransfer.files[0]);
+}
+function onCSV(ev){ if(ev.target.files[0]) parseCSV(ev.target.files[0]); }
+
+function parseCSV(file){
+  var rd=new FileReader();
+  rd.onload=function(e){
+    var txt=e.target.result;
+    var lines=txt.split(/\r?\n/);
+    var hIdx=-1, hLine=null;
+
+    /* P2 : chercher en-tête partout */
+    for(var i=0;i<lines.length;i++){
+      if(lines[i].indexOf("Nom_Eleve")>-1||lines[i].indexOf("Prenom")>-1){
+        hIdx=i; hLine=lines[i]; break;
+      }
+    }
+    if(hIdx===-1){
+      document.getElementById("csv-msg").innerHTML='<div class="alrt aerr">En-t\u00eate "Nom_Eleve" ou "Prenom" introuvable.</div>';
+      return;
+    }
+
+    var sep=hLine.indexOf(";")>-1?";":",";
+    var hdrs=hLine.split(sep).map(function(h){return h.trim().replace(/^"|"$/g,"");});
+
+    /* P3 : priorité colonnes */
+    function fc(pts){
+      for(var pi=0;pi<pts.length;pi++)
+        for(var hi=0;hi<hdrs.length;hi++)
+          if(hdrs[hi].indexOf(pts[pi])>-1) return hi;
+      return -1;
+    }
+    var nc=fc(["Nom_Eleve","Prenom","nom","prenom"]);
+    var c1=fc(["OBS01","OBS1_Degre","OBS1"]);
+    var c2=fc(["OBS02","OBS2_Degre","OBS2"]);
+    var c3=fc(["OBS03","OBS3_Degre","OBS3"]);
+
+    var added=0,ign=0;
+    var cont=document.getElementById("rows");
+
+    for(var li=hIdx+1;li<lines.length;li++){
+      var l=lines[li].trim();
+      if(!l||l.indexOf("BILAN_CLASSE")>-1){ign++;continue;}
+      var cols=l.split(sep).map(function(c){return c.trim().replace(/^"|"$/g,"");});
+      if(cols.length<2){ign++;continue;}
+      var pn=nc>-1?cols[nc]:cols[0];
+      if(!pn){ign++;continue;}
+
+      function gs(ci){
+        if(ci===-1) return "";
+        var raw=cols[ci]?cols[ci].trim():"";
+        if(raw==="A"||raw==="a") return DS.A;
+        if(raw==="B"||raw==="b") return DS.B;
+        if(raw==="C"||raw==="c") return DS.C;
+        var n=parseFloat(raw);
+        return isNaN(n)?"":n;
+      }
+      rc++;
+      var dv=document.createElement("div");
+      dv.className="fg"; dv.id="row"+rc;
+      var v1=gs(c1),v2=gs(c2),v3=gs(c3);
+      dv.innerHTML='<input type="text" class="pf" value="'+pn+'">'+
+        '<input type="number" min="0" max="10" step="0.5" class="of" value="'+(v1!==""?v1:"")+'">' +
+        '<input type="number" min="0" max="10" step="0.5" class="of" value="'+(v2!==""?v2:"")+'">' +
+        '<input type="number" min="0" max="10" step="0.5" class="of" value="'+(v3!==""?v3:"")+'">' +
+        '<button class="del-btn" onclick="document.getElementById(\'row'+rc+'\').remove()">&#10005;</button>';
+      cont.appendChild(dv);
+      added++;
+    }
+    document.getElementById("csv-msg").innerHTML=
+      '<div class="alrt aok">'+added+" \u00e9l\u00e8ve"+(added>1?"s":"")+" import\u00e9"+(added>1?"s":"")+" &mdash; "+ign+" ligne"+(ign>1?"s":"")+" ignor\u00e9e"+(ign>1?"s":"")+'</div>';
+  };
+  rd.readAsText(file,"UTF-8");
+}
+
+/* ============================================================
+   EXPORT CSV
+   ============================================================ */
+function exportCSV(){
+  if(!res.length){ alert("Analysez la classe d'abord."); return; }
+  var bom="\uFEFF";
+  var hdr="Pr\u00e9nom;Code OBS-01;OBS-01;Code OBS-02;OBS-02;Code OBS-03;OBS-03;Moyenne;/20;Rang;Profil global;Profil d\u00e9taill\u00e9;Lacune 1;SA recommand\u00e9e\n";
+  var rows=res.map(function(r){
+    return[
+      r.pn,
+      OBS[0].codes[r.opf[0]],r.vals[0].toFixed(1),
+      OBS[1].codes[r.opf[1]],r.vals[1].toFixed(1),
+      OBS[2].codes[r.opf[2]],r.vals[2].toFixed(1),
+      r.moy.toFixed(2),(r.moy*2).toFixed(2),r.rang,
+      r.prof,r.opf.join("/"),
+      r.lac.length?OBS[r.lac[0].i].id+" : "+r.lac[0].v.toFixed(1)+"/10":"Aucune",
+      r.sa.id+" - "+r.sa.lb
+    ].join(";");
+  }).join("\n");
+  var d=new Date();
+  var dt=d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+  var blob=new Blob([bom+hdr+rows],{type:"text/csv;charset=utf-8"});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement("a");
+  a.href=url; a.download="outil_v0_GYM-ART_DI-GYM_"+dt+".csv";
+  a.click(); URL.revokeObjectURL(url);
+}
+
+/* Init date */
+document.getElementById("dt-in").value=new Date().toISOString().split("T")[0];
+</script>
+</body>
+</html>

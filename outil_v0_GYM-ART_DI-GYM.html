@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Outil ADP 2026 — Gymnastiqu Artistique — DI-GYM</title>
+<style>
+/* ============================================================
+   VARIABLES & RESET
+   ============================================================ */
+:root {
+  --navy:    #0C1A2E;
+  --navy2:   #162540;
+  --navy3:   #1E3250;
+  --gold:    #C8973A;
+  --gold2:   #E4B355;
+  --cream:   #F5EFE4;
+  --cream2:  #EDE5D6;
+  --red-bg:  #FDE8E8;
+  --red-txt: #8B1A1A;
+  --ora-bg:  #FEF3E2;
+  --ora-txt: #7A4A00;
+  --grn-bg:  #E6F4EA;
+  --grn-txt: #1A5C2A;
+  --slate:   #4A5568;
+  --light:   #F7F4EF;
+  --border:  rgba(200,151,58,0.25);
+  --shadow:  0 4px 24px rgba(12,26,46,0.12);
+  --radius:  10px;
+  --font-h:  'Georgia', 'Times New Roman', serif;
+  --font-b:  'Trebuchet MS', 'Segoe UI', sans-serif;
+  --trans:   0.22s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth}
+body{background:var(--light);color:var(--navy);font-family:var(--font-b);min-height:100vh;line-height:1.6}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.app-header{background:var(--navy);color:var(--cream);padding:18px 24px 14px;border-bottom:3px solid var(--gold)}
+.app-header h1{font-family:var(--font-h);font-size:1.4rem;font-weight:normal;letter-spacing:.02em}
+.app-header .sub{font-size:.8rem;color:var(--gold2);margin-top:3px;opacity:.9}
+.app-header .badge{display:inline-block;background:var(--gold);color:var(--navy);font-size:.7rem;font-weight:bold;padding:2px 8px;border-radius:20px;margin-top:5px;letter-spacing:.04em}
+
+/* ============================================================
+   STEPPER
+   ============================================================ */
+.stepper{display:flex;background:var(--navy2);padding:12px 20px;gap:4px;overflow-x:auto}
+.step-btn{display:flex;align-items:center;gap:8px;padding:8px 14px;border:1.5px solid rgba(200,151,58,0.3);border-radius:var(--radius);background:transparent;color:rgba(245,239,228,0.5);font-size:.78rem;cursor:default;white-space:nowrap;transition:var(--trans)}
+.step-btn .num{width:22px;height:22px;border-radius:50%;background:rgba(200,151,58,0.2);display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:.75rem;flex-shrink:0}
+.step-btn.active{color:var(--cream);border-color:var(--gold);background:rgba(200,151,58,0.12);cursor:pointer}
+.step-btn.active .num{background:var(--gold);color:var(--navy)}
+.step-btn.done{color:var(--gold2);border-color:rgba(200,151,58,0.5);cursor:pointer}
+.step-btn.done .num{background:rgba(200,151,58,0.3);color:var(--gold2)}
+.step-arrow{color:rgba(200,151,58,0.3);align-self:center;font-size:.9rem}
+
+/* ============================================================
+   MAIN CONTAINER
+   ============================================================ */
+.main{max-width:1200px;margin:0 auto;padding:24px 20px}
+.section{display:none}
+.section.visible{display:block}
+
+/* ============================================================
+   CARDS & PANELS
+   ============================================================ */
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px;box-shadow:var(--shadow)}
+.card h2{font-family:var(--font-h);font-size:1.05rem;color:var(--navy);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.card h3{font-size:.88rem;font-weight:bold;color:var(--slate);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em}
+
+/* ============================================================
+   FORM ELEMENTS
+   ============================================================ */
+.form-grid{display:grid;grid-template-columns:1fr repeat(3,90px) auto;gap:8px;align-items:center;margin-bottom:6px}
+.form-grid label{font-size:.78rem;color:var(--slate);font-weight:bold}
+input[type=text],input[type=number]{width:100%;padding:7px 10px;border:1.5px solid #D1C8B8;border-radius:6px;font-size:.85rem;font-family:var(--font-b);transition:var(--trans)}
+input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,151,58,0.15)}
+input.err{border-color:#C0392B;background:#fff5f5}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border:none;border-radius:var(--radius);font-size:.85rem;font-weight:bold;cursor:pointer;transition:var(--trans);font-family:var(--font-b)}
+.btn-primary{background:var(--navy);color:var(--cream);border:2px solid var(--navy)}
+.btn-primary:hover{background:var(--navy3);border-color:var(--gold)}
+.btn-gold{background:var(--gold);color:var(--navy);border:2px solid var(--gold)}
+.btn-gold:hover{background:var(--gold2)}
+.btn-outline{background:transparent;color:var(--navy);border:1.5px solid var(--border)}
+.btn-outline:hover{background:var(--cream2)}
+.btn-sm{padding:5px 12px;font-size:.78rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+
+/* ============================================================
+   PROFIL BADGES
+   ============================================================ */
+.badge-A{background:var(--red-bg);color:var(--red-txt);border:1px solid #F5BABA;padding:2px 8px;border-radius:20px;font-size:.75rem;font-weight:bold}
+.badge-B{background:var(--ora-bg);color:var(--ora-txt);border:1px solid #F5D8A0;padding:2px 8px;border-radius:20px;font-size:.75rem;font-weight:bold}
+.badge-C{background:var(--grn-bg);color:var(--grn-txt);border:1px solid #A8D9B2;padding:2px 8px;border-radius:20px;font-size:.75rem;font-weight:bold}
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+.tbl-wrap{overflow-x:auto;margin-top:10px}
+table{width:100%;border-collapse:collapse;font-size:.8rem}
+th{background:var(--navy);color:var(--cream);padding:8px 10px;text-align:left;font-weight:bold;white-space:nowrap}
+td{padding:7px 10px;border-bottom:1px solid var(--cream2);vertical-align:top}
+tr:nth-child(even) td{background:var(--light)}
+tr.row-A td{background:var(--red-bg)}
+tr.row-B td{background:var(--ora-bg)}
+tr.row-C td{background:var(--grn-bg)}
+
+/* ============================================================
+   STAT CARDS
+   ============================================================ */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:12px 0}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:14px 12px;text-align:center}
+.stat-card .val{font-family:var(--font-h);font-size:1.8rem;font-weight:bold;line-height:1}
+.stat-card .lbl{font-size:.72rem;color:var(--slate);margin-top:4px;text-transform:uppercase;letter-spacing:.04em}
+.stat-card.sa{border-color:#F5BABA}.stat-card.sb{border-color:#F5D8A0}.stat-card.sc{border-color:#A8D9B2}
+.stat-card.sa .val{color:var(--red-txt)}.stat-card.sb .val{color:var(--ora-txt)}.stat-card.sc .val{color:var(--grn-txt)}
+
+/* ============================================================
+   OBS ANALYSIS BARS
+   ============================================================ */
+.obs-bar-row{display:flex;align-items:center;gap:10px;margin:6px 0}
+.obs-bar-lbl{width:110px;font-size:.78rem;font-weight:bold;flex-shrink:0}
+.obs-bar-track{flex:1;height:12px;background:var(--cream2);border-radius:6px;overflow:hidden}
+.obs-bar-fill{height:100%;border-radius:6px;transition:width .5s ease}
+.obs-bar-val{width:50px;font-size:.78rem;color:var(--slate);text-align:right;flex-shrink:0}
+.obs-status{font-size:.72rem;font-weight:bold;padding:2px 7px;border-radius:10px;flex-shrink:0}
+
+/* ============================================================
+   AXES SELECTION (STEP 2)
+   ============================================================ */
+.axe-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:var(--trans)}
+.axe-card:hover{border-color:var(--gold);box-shadow:0 2px 12px rgba(200,151,58,0.15)}
+.axe-card.selected{border-color:var(--gold);background:rgba(200,151,58,0.06)}
+.axe-card .axe-head{display:flex;align-items:flex-start;gap:12px}
+.axe-card input[type=checkbox]{width:18px;height:18px;accent-color:var(--gold);flex-shrink:0;margin-top:2px}
+.axe-card .axe-title{font-weight:bold;font-size:.9rem;color:var(--navy)}
+.axe-card .axe-meta{font-size:.76rem;color:var(--slate);margin-top:5px;display:flex;gap:14px;flex-wrap:wrap}
+.axe-card .axe-meta span{display:flex;align-items:center;gap:4px}
+.pert-bar{display:inline-block;height:6px;background:var(--gold);border-radius:3px;vertical-align:middle;margin-right:4px}
+.axe-count-msg{background:var(--cream2);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-size:.8rem;margin-bottom:10px;color:var(--slate)}
+
+/* ============================================================
+   SLIDER (STEP 3)
+   ============================================================ */
+.slider-section{margin:20px 0}
+.slider-wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+input[type=range]{-webkit-appearance:none;width:260px;height:6px;border-radius:3px;background:var(--cream2);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--gold);border:2px solid var(--navy);cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.slider-val{font-family:var(--font-h);font-size:1.5rem;color:var(--navy);font-weight:bold;min-width:40px;text-align:center}
+.slider-label{font-size:.8rem;color:var(--slate)}
+.distrib-preview{margin-top:16px}
+.distrib-seq{background:var(--cream2);border-left:3px solid var(--gold);border-radius:0 6px 6px 0;padding:8px 14px;margin-bottom:6px;font-size:.82rem}
+.distrib-seq .seq-h{font-weight:bold;color:var(--navy)}
+.distrib-seq .seq-s{color:var(--slate);margin-top:2px}
+
+/* ============================================================
+   PLANIFICATION (STEP 4)
+   ============================================================ */
+.seq-block{margin-bottom:28px}
+.seq-header{background:var(--navy);color:var(--cream);padding:10px 16px;border-radius:var(--radius) var(--radius) 0 0;display:flex;justify-content:space-between;align-items:center}
+.seq-header h3{font-family:var(--font-h);font-size:.95rem;font-weight:normal}
+.seq-header .seq-tag{font-size:.72rem;background:var(--gold);color:var(--navy);padding:2px 8px;border-radius:20px;font-weight:bold}
+.plan-table{width:100%;border-collapse:collapse;border:1px solid var(--border);font-size:.78rem}
+.plan-table th{background:var(--navy2);color:var(--cream);padding:7px 10px;text-align:left;font-size:.75rem}
+.plan-table td{padding:7px 10px;border-bottom:1px solid var(--cream2);vertical-align:top}
+.plan-table .col-grp-a{background:var(--red-bg)}
+.plan-table .col-grp-b{background:var(--ora-bg)}
+.plan-table .col-grp-c{background:var(--grn-bg)}
+.indicatif{background:var(--cream);border:1px dashed var(--border);border-radius:6px;padding:6px 12px;font-size:.74rem;color:var(--slate);margin:4px 0 0 0}
+.indicatif em{color:var(--navy);font-style:normal;font-weight:bold}
+.cycle-summary{background:var(--navy);color:var(--cream);border-radius:var(--radius);padding:18px 20px;margin-top:20px}
+.cycle-summary h3{font-family:var(--font-h);font-size:1rem;margin-bottom:10px;color:var(--gold2)}
+.cycle-summary p{font-size:.83rem;line-height:1.7;opacity:.9}
+
+/* ============================================================
+   ALERT / INFO
+   ============================================================ */
+.alert{padding:10px 14px;border-radius:6px;font-size:.82rem;margin:8px 0}
+.alert-warn{background:#FEF3E2;border-left:4px solid var(--gold);color:#5C3D00}
+.alert-err{background:var(--red-bg);border-left:4px solid #C0392B;color:var(--red-txt)}
+.alert-info{background:var(--grn-bg);border-left:4px solid #2E7D32;color:var(--grn-txt)}
+
+/* ============================================================
+   IMPORT ZONE
+   ============================================================ */
+.drop-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:24px;text-align:center;cursor:pointer;transition:var(--trans);background:var(--light)}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--gold);background:rgba(200,151,58,0.05)}
+.drop-zone p{font-size:.85rem;color:var(--slate)}
+.drop-zone .icon{font-size:2rem;margin-bottom:8px}
+#csv-file{display:none}
+
+/* ============================================================
+   DECISION BOX
+   ============================================================ */
+.decision-box{background:var(--navy);color:var(--cream);border-radius:var(--radius);padding:16px 20px;margin-top:12px;border-left:4px solid var(--gold)}
+.decision-box h3{font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;color:var(--gold2);margin-bottom:6px}
+.decision-box p{font-size:.9rem;line-height:1.6}
+
+/* ============================================================
+   PRINT
+   ============================================================ */
+@media print{
+  .stepper,.btn-row,.app-header .badge,#input-section,#step2,#step3,.drop-zone{display:none!important}
+  .section.visible{display:block}
+  body{background:#fff}
+  .card{box-shadow:none;border:1px solid #ccc}
+  .plan-table th{background:#333!important;-webkit-print-color-adjust:exact}
+  .plan-table .col-grp-a,.plan-table .col-grp-b,.plan-table .col-grp-c{-webkit-print-color-adjust:exact}
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media(max-width:600px){
+  .form-grid{grid-template-columns:1fr repeat(3,70px) auto}
+  .stat-row{grid-template-columns:repeat(2,1fr)}
+  input[type=range]{width:180px}
+  .main{padding:14px 12px}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<div class="app-header">
+  <h1>Outil d'aide &agrave; la d&eacute;cision p&eacute;dagogique &mdash; EPS</h1>
+  <div class="sub">Gymnastiqu Artistique &middot; DI-GYM &middot; ADP 2026 &middot; CRMEF Inezgane &middot; BOUARGANE</div>
+  <div class="badge">APS&nbsp;: Gymnastiqu Artistique (GAF/GAM) &nbsp;|&nbsp; Code&nbsp;: DI-GYM &nbsp;|&nbsp; Niveau&nbsp;: 4&egrave;me &middot; 3&egrave;me</div>
+</div>
+
+<!-- ============================================================
+     STEPPER
+     ============================================================ -->
+<div class="stepper">
+  <button class="step-btn active" id="nav1" onclick="goStep(1)">
+    <span class="num">1</span> Diagnostic
+  </button>
+  <span class="step-arrow">›</span>
+  <button class="step-btn" id="nav2" onclick="goStep(2)">
+    <span class="num">2</span> Axes
+  </button>
+  <span class="step-arrow">›</span>
+  <button class="step-btn" id="nav3" onclick="goStep(3)">
+    <span class="num">3</span> Param&eacute;trage
+  </button>
+  <span class="step-arrow">›</span>
+  <button class="step-btn" id="nav4" onclick="goStep(4)">
+    <span class="num">4</span> Planification
+  </button>
+</div>
+
+<!-- ============================================================
+     STEP 1 — DIAGNOSTIC
+     ============================================================ -->
+<div class="main">
+<div class="section visible" id="step1">
+
+  <!-- SAISIE MANUELLE -->
+  <div class="card">
+    <h2>&#128221; Saisie des donn&eacute;es &mdash; Diagnostique Initial</h2>
+
+    <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+      <div style="flex:1;min-width:200px">
+        <label style="font-size:.78rem;font-weight:bold;color:var(--slate);display:block;margin-bottom:4px">Classe / Groupe</label>
+        <input type="text" id="classe-input" placeholder="Ex : 3&egrave;me B" style="width:100%">
+      </div>
+      <div style="flex:1;min-width:150px">
+        <label style="font-size:.78rem;font-weight:bold;color:var(--slate);display:block;margin-bottom:4px">Date</label>
+        <input type="date" id="date-input" style="width:100%">
+      </div>
+    </div>
+
+    <div class="form-grid" style="font-size:.76rem;font-weight:bold;color:var(--slate);margin-bottom:2px">
+      <span>Pr&eacute;nom *</span>
+      <span style="text-align:center">OBS-01<br><small style="font-weight:normal">Posture/10</small></span>
+      <span style="text-align:center">OBS-02<br><small style="font-weight:normal">Renversemt/10</small></span>
+      <span style="text-align:center">OBS-03<br><small style="font-weight:normal">Composition/10</small></span>
+      <span></span>
+    </div>
+
+    <div id="rows-container"></div>
+
+    <div class="btn-row" style="margin-top:10px">
+      <button class="btn btn-outline btn-sm" onclick="addRow()">+ Ajouter un &eacute;l&egrave;ve</button>
+      <button class="btn btn-outline btn-sm" onclick="addRows(5)">+ 5 &eacute;l&egrave;ves</button>
+    </div>
+
+    <!-- IMPORT CSV -->
+    <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border)">
+      <h3>Import CSV terrain (format ADP 2026)</h3>
+      <div class="drop-zone" id="drop-zone" onclick="document.getElementById('csv-file').click()"
+           ondragover="ev.preventDefault();this.classList.add('dragover')"
+           ondragleave="this.classList.remove('dragover')"
+           ondrop="handleDrop(event)">
+        <div class="icon">&#128196;</div>
+        <p>Glisser-d&eacute;poser le fichier CSV ici, ou cliquer pour choisir</p>
+        <p style="font-size:.72rem;margin-top:4px">Colonnes reconnues : OBS01_Degre / OBS02_Degre / OBS03_Degre (A/B/C) ou OBS1/OBS2/OBS3 (0-10)</p>
+      </div>
+      <input type="file" id="csv-file" accept=".csv,.txt" onchange="handleCSV(event)">
+      <div id="csv-status"></div>
+    </div>
+
+    <div id="saisie-alert" class="alert alert-warn" style="display:none"></div>
+
+    <div class="btn-row" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+      <button class="btn btn-primary" onclick="analyser()">&#128269; Analyser la classe</button>
+      <button class="btn btn-outline" onclick="exportCSV()">&#128190; Exporter CSV</button>
+    </div>
+  </div>
+
+  <!-- RESULTATS STEP 1 -->
+  <div id="results-step1" style="display:none">
+
+    <!-- TABLEAU INDIVIDUEL -->
+    <div class="card">
+      <h2>&#128202; Tableau individuel</h2>
+      <div class="tbl-wrap">
+        <table id="indiv-table">
+          <thead>
+            <tr>
+              <th>Rang</th><th>Pr&eacute;nom</th>
+              <th>OBS-01<br>Posture</th>
+              <th>OBS-02<br>Renversmt</th>
+              <th>OBS-03<br>Compos.</th>
+              <th>Moy /10</th><th>/20</th>
+              <th>Profil global</th>
+              <th>Profil d&eacute;taill&eacute;</th>
+              <th>Lacune(s)</th>
+              <th>Axe prioritaire</th>
+              <th>SA</th>
+            </tr>
+          </thead>
+          <tbody id="indiv-tbody"></tbody>
+        </table>
+      </div>
+      <div class="btn-row" style="margin-top:10px">
+        <button class="btn btn-outline btn-sm" onclick="window.print()">&#128424; Imprimer</button>
+        <button class="btn btn-outline btn-sm" onclick="exportCSV()">&#128190; Export CSV</button>
+      </div>
+    </div>
+
+    <!-- BILAN CLASSE -->
+    <div class="card">
+      <h2>&#127970; Bilan de classe</h2>
+      <div class="stat-row" id="stat-cards"></div>
+
+      <!-- OBS Analysis -->
+      <h3 style="margin-top:14px;margin-bottom:8px">Analyse par observable</h3>
+      <div id="obs-bars"></div>
+
+      <!-- Groupes de besoin -->
+      <h3 style="margin-top:14px;margin-bottom:8px">Groupes de besoin</h3>
+      <div id="groupes-besoin"></div>
+
+      <!-- Decision dominante -->
+      <div class="decision-box" id="decision-box"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="goStep(2)">Passer &agrave; l&rsquo;&eacute;tape 2 &mdash; Axes prioritaires &#8594;</button>
+    </div>
+  </div>
+
+</div><!-- /step1 -->
+
+<!-- ============================================================
+     STEP 2 — AXES
+     ============================================================ -->
+<div class="section" id="step2">
+  <div class="card">
+    <h2>&#127919; S&eacute;lection des axes prioritaires</h2>
+    <div class="alert-info alert" style="margin-bottom:12px">
+      S&eacute;lectionnez entre <strong>3 et 4 axes</strong> parmi les 6 propos&eacute;s ci-dessous.
+      Ils sont class&eacute;s par pertinence selon les donn&eacute;es r&eacute;elles de la classe.
+    </div>
+    <div class="axe-count-msg" id="axe-count-msg">0 axe s&eacute;lectionn&eacute; &mdash; minimum 3 requis</div>
+    <div id="axes-container"></div>
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="goStep(1)">&#8592; Retour Diagnostic</button>
+      <button class="btn btn-gold" id="btn-step3" onclick="goStep(3)" disabled>
+        Param&eacute;trer le cycle &mdash; &Eacute;tape 3 &#8594;
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     STEP 3 — SLIDER
+     ============================================================ -->
+<div class="section" id="step3">
+  <div class="card">
+    <h2>&#9881;&#65039; Param&eacute;trage du cycle</h2>
+    <div class="slider-section">
+      <h3>Nombre de s&eacute;ances</h3>
+      <div class="slider-wrap">
+        <input type="range" id="seances-slider" min="6" max="10" value="8" oninput="updateSlider()">
+        <div class="slider-val" id="slider-val">8</div>
+        <div class="slider-label">s&eacute;ances</div>
+      </div>
+      <div class="distrib-preview" id="distrib-preview"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="goStep(2)">&#8592; Retour Axes</button>
+      <button class="btn btn-gold" onclick="goStep(4)">G&eacute;n&eacute;rer la planification &mdash; &Eacute;tape 4 &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     STEP 4 — PLANIFICATION
+     ============================================================ -->
+<div class="section" id="step4">
+  <div class="card">
+    <h2>&#128197; Planification dynamique du cycle</h2>
+    <div id="plan-container"></div>
+    <div id="cycle-summary"></div>
+    <div class="btn-row" style="margin-top:16px">
+      <button class="btn btn-outline" onclick="goStep(3)">&#8592; Retour Param&eacute;trage</button>
+      <button class="btn btn-outline" onclick="window.print()">&#128424; Imprimer la planification</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+/* ============================================================
+   RÉFÉRENTIEL — DONNÉES EXTRAITES DES FICHIERS ADP 2026
+   ============================================================ */
+
+// Observables extraits du référentiel
+var OBS = [
+  {
+    id: "OBS-01",
+    nom: "Posture et tonicit\u00e9 globale en appui",
+    famille: "F1 \u00b7 F5 \u00b7 Technique",
+    codes: { A: "PT\u2212", B: "PT~", C: "PT+" },
+    conduites: {
+      A: "Corps mou, chutes de bassin, ruptures posturales > 3 \u00e9l\u00e9ments",
+      B: "Tonicit\u00e9 pr\u00e9sente, rel\u00e2chement visible sur le dernier tiers",
+      C: "Corps align\u00e9, gainage continu sur 100% de l\u2019encha\u00eenement"
+    },
+    motrice: {
+      A: "l\u2019\u00e9l\u00e8ve maintient son gainage sur au moins 3 \u00e9l\u00e9ments cons\u00e9cutifs sans rupture posturale visible",
+      B: "l\u2019\u00e9l\u00e8ve maintient la tonicit\u00e9 sur plus de la moiti\u00e9 de l\u2019encha\u00eenement sans rel\u00e2chement",
+      C: "l\u2019\u00e9l\u00e8ve maintient un gainage continu sur la totalit\u00e9 de l\u2019encha\u00eenement"
+    }
+  },
+  {
+    id: "OBS-02",
+    nom: "Gabarit moteur du renversement (ATR / Roulade)",
+    famille: "F1 \u00b7 Technique",
+    codes: { A: "GM\u2212", B: "GM~", C: "GM+" },
+    conduites: {
+      A: "Renversement absent, incomplet ou avec aide syst\u00e9matique",
+      B: "Renversement r\u00e9alis\u00e9, amplitude ou axe perturb\u00e9 \u00e0 l\u2019issue",
+      C: "ATR align\u00e9 3s, roulade group\u00e9e sans aide, encha\u00een\u00e9 directement"
+    },
+    motrice: {
+      A: "l\u2019\u00e9l\u00e8ve r\u00e9alise l\u2019ATR sans aide pendant au moins 2 secondes avec appuis stables",
+      B: "l\u2019\u00e9l\u00e8ve r\u00e9alise un renversement autonome dont l\u2019axe est correctement align\u00e9 \u00e0 l\u2019issue",
+      C: "l\u2019\u00e9l\u00e8ve encha\u00eene directement ATR et roulade sans pause interm\u00e9diaire"
+    }
+  },
+  {
+    id: "OBS-03",
+    nom: "Composition et liaisons entre \u00e9l\u00e9ments",
+    famille: "F1-F5 \u00b7 Technique + D\u00e9cisionnelle",
+    codes: { A: "CL\u2212", B: "CL~", C: "CL+" },
+    conduites: {
+      A: "Juxtaposition d\u2019\u00e9l\u00e9ments isol\u00e9s, 1 seule famille, arr\u00eats fr\u00e9quents",
+      B: "2 familles pr\u00e9sentes, transitions h\u00e9sitantes mais organis\u00e9es",
+      C: "Liaison fluide, \u2265 3 familles gymniques, transitions intentionnelles, 0 arr\u00eat"
+    },
+    motrice: {
+      A: "l\u2019\u00e9l\u00e8ve encha\u00eene 2 \u00e9l\u00e9ments de familles diff\u00e9rentes sans arr\u00eat complet entre eux",
+      B: "l\u2019\u00e9l\u00e8ve produit un encha\u00eenement de 2 familles avec au maximum 1 rupture visible",
+      C: "l\u2019\u00e9l\u00e8ve r\u00e9alise un encha\u00eenement de 3 familles ou plus sans aucune rupture"
+    }
+  }
+];
+
+// Seuils /10 extraits du référentiel
+var SEUILS = { C_min: 7.5, B_min: 4.5 };
+
+// Mapping degré lettre → score /10
+var DEG_SCORE = { A: 3, B: 6, C: 9 };
+
+// SA extraites
+var SA = {
+  A: { nom: "SA-A1", libelle: "Adaptation anatomique posturale" },
+  B: { nom: "SA-B1", libelle: "Renforcement fonctionnel gymnique" },
+  C: { nom: "SA-C1", libelle: "Int\u00e9gration technique et composition" }
+};
+
+// 6 Axes extraits du référentiel didactique (referentiel_GYM-ART_DI-GYM.txt)
+var AXES_REF = [
+  {
+    id: 1, obs_id: 0,
+    titre: "Gainage et tonicit\u00e9 posturale globale",
+    desc: "Construction et maintien de l\u2019axe corporel sur la dur\u00e9e de l\u2019encha\u00eenement",
+    prerequis: "N1-5 \u00b7 Doser son \u00e9nergie, son tonus musculaire et g\u00e9rer son effort",
+    impact: "N2-6 \u00b7 N2-8 \u00b7 N2-9 d\u00e9bloqu\u00e9es",
+    sa: "SA-A1",
+    consignes: {
+      A: { sa: "SA-A1", consigne: "Tenir la planche frontale 10 secondes, dos droit, sans creuser les lombaires", critere: "Le dos reste align\u00e9 de la t\u00eate aux talons pendant toute la dur\u00e9e" },
+      B: { sa: "SA-B1", consigne: "R\u00e9aliser 3 planches dynamiques encha\u00een\u00e9es avec lever de jambe altern\u00e9", critere: "Les hanches ne basculent pas lors de chaque lever de jambe" },
+      C: { sa: "SA-C1", consigne: "Maintenir le gainage tout au long d\u2019un encha\u00eenement de 5 \u00e9l\u00e9ments gymniques", critere: "Aucune rupture posturale visible d\u00e8s le premier jusqu\u2019au dernier \u00e9l\u00e9ment" }
+    },
+    indicateur: "l\u2019\u00e9l\u00e8ve maintient sa tonicit\u00e9 posturale sur au moins 4 \u00e9l\u00e9ments cons\u00e9cutifs sans rupture visible"
+  },
+  {
+    id: 2, obs_id: 1,
+    titre: "Gabarit moteur du renversement \u2014 ATR et roulade",
+    desc: "Construction et stabilisation de l\u2019ATR et de la roulade group\u00e9e sans aide",
+    prerequis: "N1-2 \u00b7 N1-3 \u00b7 R\u00e9aliser et encha\u00eener le renversement",
+    impact: "N2-3 \u00b7 N2-4 \u00b7 N2-6 d\u00e9bloqu\u00e9es",
+    sa: "SA-A1",
+    consignes: {
+      A: { sa: "SA-A1", consigne: "R\u00e9aliser 5 tentatives d\u2019ATR contre le mur, tenir 3 secondes, pieds l\u00e2cher le mur", critere: "Le corps reste align\u00e9 t\u00eate-\u00e9paules-hanches pendant 3 secondes sans appui au mur" },
+      B: { sa: "SA-B1", consigne: "Encha\u00eener ATR libre et roulade avant group\u00e9e sans pause", critere: "L\u2019ATR est tenu 2 secondes et la roulade repart sans arr\u00eat interm\u00e9diaire" },
+      C: { sa: "SA-C1", consigne: "R\u00e9aliser un encha\u00eenement incluant ATR, roulade et un \u00e9l\u00e9ment de F2 ou F4", critere: "Les 3 \u00e9l\u00e9ments s\u2019encha\u00eenent sans aide, sans arr\u00eat, axe maintenu" }
+    },
+    indicateur: "l\u2019\u00e9l\u00e8ve r\u00e9alise un ATR de 3 secondes minimum sans aide ext\u00e9rieure lors de 2 tentatives cons\u00e9cutives"
+  },
+  {
+    id: 3, obs_id: 2,
+    titre: "Composition et liaisons entre \u00e9l\u00e9ments multi-familles",
+    desc: "Construction d\u2019un encha\u00eenement gymnique avec transitions intentionnelles",
+    prerequis: "N1-4 \u00b7 N1-1 \u00b7 Coordonner et choisir",
+    impact: "N2-2 \u00b7 N2-5 \u00b7 N2-7 \u00b7 N2-8 d\u00e9bloqu\u00e9es",
+    sa: "SA-B1",
+    consignes: {
+      A: { sa: "SA-A1", consigne: "Composer un encha\u00eenement de 3 \u00e9l\u00e9ments de 2 familles diff\u00e9rentes, ex\u00e9cut\u00e9 2 fois", critere: "Les 2 familles sont identifiables et l\u2019\u00e9l\u00e8ve ne s\u2019arr\u00eate pas entre elles" },
+      B: { sa: "SA-B1", consigne: "Composer un encha\u00eenement de 5 \u00e9l\u00e9ments avec au minimum 2 transitions pr\u00e9par\u00e9es", critere: "Les transitions sont intentionnelles, sans perte d\u2019\u00e9quilibre ni arr\u00eat complet" },
+      C: { sa: "SA-C1", consigne: "Composer et pr\u00e9senter un encha\u00eenement de 8 \u00e9l\u00e9ments appartenant \u00e0 3 familles minimum", critere: "L\u2019encha\u00eenement est fluide, les 3 familles sont identifi\u00e9es, z\u00e9ro rupture" }
+    },
+    indicateur: "l\u2019\u00e9l\u00e8ve choisit spontan\u00e9ment des \u00e9l\u00e9ments de 2 familles diff\u00e9rentes lors de la composition libre"
+  },
+  {
+    id: 4, obs_id: 1,
+    titre: "Coordination des actions \u00ab tourner, voler, se renverser \u00bb",
+    desc: "R\u00e9alisation d\u2019\u00e9l\u00e9ments complexes combinant rotation et renversement (N2-3)",
+    prerequis: "N1-2 \u00b7 N1-3 consolid\u00e9s \u2014 Axe 2 pr\u00e9requis",
+    impact: "N2-3 \u00b7 N2-4 \u00b7 N2-8",
+    sa: "SA-B1",
+    consignes: {
+      A: { sa: "SA-A1", consigne: "Roulade avant, arr\u00eat debout, puis roulade arri\u00e8re : 3 rotations cons\u00e9cutives", critere: "Les 3 rotations s\u2019encha\u00eenent sans aide, dans des directions diff\u00e9rentes" },
+      B: { sa: "SA-B1", consigne: "ATR suivi d\u2019une roue : le passage de l\u2019ATR \u00e0 la roue sans pause", critere: "Le passage ATR-roue s\u2019effectue sans arr\u00eat, gainage maintenu" },
+      C: { sa: "SA-C1", consigne: "Composer une s\u00e9rie acrobatique combinant 2 renversements et 1 rotation en vol", critere: "La s\u00e9rie est fluide, les \u00e9l\u00e9ments de niveaux diff\u00e9rents s\u2019encha\u00eenent sans rupture" }
+    },
+    indicateur: "l\u2019\u00e9l\u00e8ve encha\u00eene une rotation et un renversement sans pause ni aide lors de 2 tentatives sur 3"
+  },
+  {
+    id: 5, obs_id: 0,
+    titre: "Encha\u00eener sans rupture avec alignement segmentaire",
+    desc: "Amplitude, correction et alignement maintenus sur tout l\u2019encha\u00eenement (N2-8)",
+    prerequis: "N1-2 \u00b7 N1-4 \u00b7 N1-5 tous consolid\u00e9s \u2014 Axes 1-2-3 pr\u00e9requis",
+    impact: "N2-8 \u00b7 N2-9",
+    sa: "SA-C1",
+    consignes: {
+      A: { sa: "SA-A1", consigne: "R\u00e9aliser l\u2019encha\u00eenement compos\u00e9 en Axe 3 en ajoutant une correction de posture indiqu\u00e9e", critere: "La correction est visible sur au moins 3 \u00e9l\u00e9ments de l\u2019encha\u00eenement" },
+      B: { sa: "SA-B1", consigne: "R\u00e9aliser l\u2019encha\u00eenement 2 fois et noter soi-m\u00eame les \u00e9l\u00e9ments o\u00f9 la posture d\u00e9faille", critere: "L\u2019\u00e9l\u00e8ve identifie au moins 1 \u00e9l\u00e9ment \u00e0 corriger lors du 2e passage" },
+      C: { sa: "SA-C1", consigne: "Pr\u00e9senter un encha\u00eenement devant un jury de 2 pairs avec code de notation simplifi\u00e9", critere: "L\u2019encha\u00eenement obtient la note maximale sur le crit\u00e8re alignement du code simplifi\u00e9" }
+    },
+    indicateur: "l\u2019\u00e9l\u00e8ve ne pr\u00e9sente aucune rupture d\u2019alignement segmentaire lors des 3 derniers \u00e9l\u00e9ments de l\u2019encha\u00eenement"
+  },
+  {
+    id: 6, obs_id: 0,
+    titre: "Gestion de l\u2019effort et du rythme sur la prestation",
+    desc: "Maintien de la qualit\u00e9 tonique et du rythme jusqu\u2019au dernier \u00e9l\u00e9ment (N2-9)",
+    prerequis: "N1-5 consolid\u00e9 \u2014 Axe 1 pr\u00e9requis",
+    impact: "N2-9",
+    sa: "SA-C1",
+    consignes: {
+      A: { sa: "SA-A1", consigne: "R\u00e9aliser 3 passages complets de l\u2019encha\u00eenement avec 1 minute de r\u00e9cup\u00e9ration", critere: "La qualit\u00e9 du 3e passage est \u00e9gale ou sup\u00e9rieure au 1er selon l\u2019observateur" },
+      B: { sa: "SA-B1", consigne: "R\u00e9aliser l\u2019encha\u00eenement sur une musique avec temps forts identifi\u00e9s", critere: "Les actions gymniques co\u00efncident avec au moins 3 temps forts musicaux" },
+      C: { sa: "SA-C1", consigne: "Donner du rythme \u00e0 l\u2019encha\u00eenement par variations d\u2019amplitude et de vitesse d\u2019ex\u00e9cution", critere: "L\u2019observateur identifie au moins 2 moments de contraste dynamique dans la prestation" }
+    },
+    indicateur: "l\u2019\u00e9l\u00e8ve maintient une qualit\u00e9 d\u2019ex\u00e9cution constante entre le premier et le dernier \u00e9l\u00e9ment de l\u2019encha\u00eenement"
+  }
+];
+
+// Table de distribution séances × axes
+var DISTRIB = {
+  3: { 6:[2,2,2], 7:[2,2,3], 8:[3,2,3], 9:[3,3,3], 10:[3,4,3] },
+  4: { 6:[1,2,2,1], 7:[2,2,2,1], 8:[2,2,2,2], 9:[2,3,2,2], 10:[3,2,3,2] }
+};
+
+/* ============================================================
+   STATE
+   ============================================================ */
+var eleves = [];
+var resultats = [];
+var classeMoy = 0;
+var obsMoys = [0,0,0];
+var axesSelectionnes = [];
+var nbSeances = 8;
+var currentStep = 1;
+
+/* ============================================================
+   STEP NAVIGATION
+   ============================================================ */
+function goStep(n) {
+  if (n === 2 && resultats.length === 0) { alert("Veuillez d\u2019abord analyser la classe."); return; }
+  if (n === 3 && axesSelectionnes.length < 3) { alert("S\u00e9lectionnez au moins 3 axes."); return; }
+  if (n === 4) { genPlanification(); }
+  [1,2,3,4].forEach(function(i) {
+    var s = document.getElementById("step"+i);
+    var nb = document.getElementById("nav"+i);
+    s.classList.remove("visible");
+    nb.classList.remove("active","done");
+    if (i < n) nb.classList.add("done");
+    else if (i === n) { s.classList.add("visible"); nb.classList.add("active"); }
+  });
+  currentStep = n;
+  if (n === 2) buildAxesStep();
+  if (n === 3) updateSlider();
+  window.scrollTo(0,0);
+}
+
+/* ============================================================
+   ROW MANAGEMENT
+   ============================================================ */
+var rowCount = 0;
+function addRow() {
+  rowCount++;
+  var div = document.createElement("div");
+  div.className = "form-grid";
+  div.id = "row-" + rowCount;
+  div.innerHTML =
+    '<input type="text" placeholder="Pr\u00e9nom" class="prenom-field">' +
+    '<input type="number" min="0" max="10" step="0.5" placeholder="0\u201310" class="obs-field">' +
+    '<input type="number" min="0" max="10" step="0.5" placeholder="0\u201310" class="obs-field">' +
+    '<input type="number" min="0" max="10" step="0.5" placeholder="0\u201310" class="obs-field">' +
+    '<button class="btn btn-outline btn-sm" onclick="removeRow(\'row-' + rowCount + '\')">&#10005;</button>';
+  document.getElementById("rows-container").appendChild(div);
+}
+function addRows(n) { for (var i=0; i<n; i++) addRow(); }
+function removeRow(id) { var el=document.getElementById(id); if(el) el.remove(); }
+
+// Init with 5 rows
+addRows(5);
+
+/* ============================================================
+   ANALYSE
+   ============================================================ */
+function profil(moy) {
+  if (moy >= SEUILS.C_min) return "C";
+  if (moy >= SEUILS.B_min) return "B";
+  return "A";
+}
+function profilObs(val) { return profil(val); }
+
+function getLacune(vals) {
+  var lacunes = [];
+  vals.forEach(function(v,i) {
+    if (v < SEUILS.B_min) lacunes.push({ obs: i, val: v });
+  });
+  lacunes.sort(function(a,b){return a.val-b.val;});
+  return lacunes;
+}
+
+function getAxePrio(lacunes) {
+  if (lacunes.length === 0) return "Approfondissement composition et performance";
+  var l = lacunes[0];
+  var axes = [
+    "Gainage et tonicit\u00e9 posturale \u2014 construire l\u2019axe corporel",
+    "Gabarit moteur du renversement \u2014 ATR et roulade sans aide",
+    "Composition et liaisons \u2014 encha\u00eener 2 familles sans arr\u00eat"
+  ];
+  return axes[l.obs] || axes[0];
+}
+
+function getSA(lacunes) {
+  if (lacunes.length === 0) return SA.C;
+  if (lacunes[0].val < SEUILS.B_min && lacunes[0].val < 3) return SA.A;
+  return SA.B;
+}
+
+function analyser() {
+  var rows = document.querySelectorAll("#rows-container .form-grid");
+  eleves = [];
+  resultats = [];
+  var hasErr = false;
+
+  rows.forEach(function(row) {
+    var prenom = row.querySelector(".prenom-field").value.trim();
+    if (!prenom) return;
+    var obsEls = row.querySelectorAll(".obs-field");
+    var vals = [];
+    var ok = true;
+    obsEls.forEach(function(el,i) {
+      var v = parseFloat(el.value);
+      el.classList.remove("err");
+      if (isNaN(v) || v < 0 || v > 10) { el.classList.add("err"); ok = false; hasErr = true; }
+      else vals.push(v);
+    });
+    if (ok && vals.length === 3) {
+      eleves.push({ prenom: prenom, vals: vals });
+    }
+  });
+
+  if (eleves.length === 0) {
+    document.getElementById("saisie-alert").style.display = "block";
+    document.getElementById("saisie-alert").textContent = "Aucun \u00e9l\u00e8ve valide. V\u00e9rifiez les saisies.";
+    return;
+  }
+  document.getElementById("saisie-alert").style.display = "none";
+
+  // Calcul par élève
+  eleves.forEach(function(e) {
+    var moy = (e.vals[0]+e.vals[1]+e.vals[2])/3;
+    var pr = profil(moy);
+    var obsPr = e.vals.map(profilObs);
+    var lacunes = getLacune(e.vals);
+    var axe = getAxePrio(lacunes);
+    var sa = getSA(lacunes);
+    resultats.push({
+      prenom: e.prenom, vals: e.vals, moy: moy,
+      profil: pr, obsPr: obsPr, lacunes: lacunes,
+      axe: axe, sa: sa
+    });
+  });
+
+  // Trier par moyenne décroissante pour rang
+  resultats.sort(function(a,b){return b.moy-a.moy;});
+  resultats.forEach(function(r,i){ r.rang = i+1; });
+
+  // Moyennes classe
+  classeMoy = resultats.reduce(function(s,r){return s+r.moy;},0)/resultats.length;
+  obsMoys = [0,1,2].map(function(i){
+    return resultats.reduce(function(s,r){return s+r.vals[i];},0)/resultats.length;
+  });
+
+  buildStep1Results();
+  document.getElementById("results-step1").style.display = "block";
+}
+
+/* ============================================================
+   BUILD STEP 1 RESULTS
+   ============================================================ */
+function buildStep1Results() {
+  buildIndivTable();
+  buildBilanClasse();
+}
+
+function buildIndivTable() {
+  var tbody = document.getElementById("indiv-tbody");
+  tbody.innerHTML = "";
+  resultats.forEach(function(r) {
+    var cls = "row-" + r.profil;
+    var lacStr = r.lacunes.length === 0 ? "Aucune lacune" :
+      r.lacunes.map(function(l,i){
+        return "L"+(i+1)+" \u2014 "+OBS[l.obs].id+" : "+l.val.toFixed(1)+"/10";
+      }).join("<br>");
+    var profilDet = r.obsPr.map(function(p,i){
+      var span = '<span class="badge-'+p+'">'+p+"</span>";
+      return span;
+    }).join(" / ");
+    var tr = document.createElement("tr");
+    tr.className = cls;
+    tr.innerHTML =
+      "<td>"+r.rang+"</td>" +
+      "<td><strong>"+r.prenom+"</strong></td>" +
+      "<td>"+r.vals[0].toFixed(1)+"</td>" +
+      "<td>"+r.vals[1].toFixed(1)+"</td>" +
+      "<td>"+r.vals[2].toFixed(1)+"</td>" +
+      "<td><strong>"+r.moy.toFixed(1)+"</strong></td>" +
+      "<td>"+((r.moy*2).toFixed(1))+"</td>" +
+      '<td><span class="badge-'+r.profil+'">'+r.profil+"</span></td>" +
+      "<td>"+profilDet+"</td>" +
+      "<td style='font-size:.74rem'>"+lacStr+"</td>" +
+      "<td style='font-size:.76rem'>"+r.axe+"</td>" +
+      "<td><strong>"+r.sa.nom+"</strong><br><small>"+r.sa.libelle+"</small></td>";
+    tbody.appendChild(tr);
+  });
+}
+
+function buildBilanClasse() {
+  var counts = {A:0,B:0,C:0};
+  resultats.forEach(function(r){ counts[r.profil]++; });
+  var tot = resultats.length;
+
+  // Stat cards
+  var sc = document.getElementById("stat-cards");
+  sc.innerHTML =
+    '<div class="stat-card sa"><div class="val">'+counts.A+'</div><div class="lbl">D\u00e9butants (A)<br>'+Math.round(counts.A/tot*100)+"%</div></div>" +
+    '<div class="stat-card sb"><div class="val">'+counts.B+'</div><div class="lbl">Interm\u00e9diaires (B)<br>'+Math.round(counts.B/tot*100)+"%</div></div>" +
+    '<div class="stat-card sc"><div class="val">'+counts.C+'</div><div class="lbl">Avanc\u00e9s (C)<br>'+Math.round(counts.C/tot*100)+"%</div></div>" +
+    '<div class="stat-card"><div class="val">'+classeMoy.toFixed(1)+'</div><div class="lbl">Moy. /10</div></div>' +
+    '<div class="stat-card"><div class="val">'+(classeMoy*2).toFixed(1)+'</div><div class="lbl">Moy. /20</div></div>';
+
+  // OBS bars
+  var ob = document.getElementById("obs-bars");
+  ob.innerHTML = "";
+  obsMoys.forEach(function(m,i) {
+    var pct = Math.round(m/10*100);
+    var status, scolor, sbg;
+    if (m >= SEUILS.C_min) { status = "Bon niveau"; scolor = var_color("grn-txt"); sbg = "E6F4EA"; }
+    else if (m >= SEUILS.B_min) { status = "En cours"; scolor = var_color("ora-txt"); sbg = "FEF3E2"; }
+    else { status = "Lacune collective"; scolor = var_color("red-txt"); sbg = "FDE8E8"; }
+
+    var barColor = m >= SEUILS.C_min ? "#27AE60" : m >= SEUILS.B_min ? "#E67E22" : "#C0392B";
+    var row = document.createElement("div");
+    row.className = "obs-bar-row";
+    row.innerHTML =
+      '<div class="obs-bar-lbl">'+OBS[i].id+'</div>' +
+      '<div class="obs-bar-track"><div class="obs-bar-fill" style="width:'+pct+'%;background:'+barColor+'"></div></div>' +
+      '<div class="obs-bar-val">'+m.toFixed(1)+'/10</div>' +
+      '<div class="obs-status" style="background:#'+sbg+';color:'+scolor+'">'+status+'</div>';
+    ob.appendChild(row);
+  });
+
+  // Groupes de besoin
+  var gb = document.getElementById("groupes-besoin");
+  gb.innerHTML = "";
+  ["A","B","C"].forEach(function(p) {
+    if (counts[p] === 0) return;
+    var saInfo = SA[p];
+    var d = document.createElement("div");
+    d.style.cssText = "display:flex;align-items:center;gap:10px;padding:8px 12px;margin:4px 0;border-radius:6px;background:"+
+      (p==="A"?"var(--red-bg)":p==="B"?"var(--ora-bg)":"var(--grn-bg)");
+    d.innerHTML = '<span class="badge-'+p+'">'+p+'</span>' +
+      '<span style="font-size:.82rem;flex:1">'+counts[p]+' \u00e9l\u00e8ve'+(counts[p]>1?"s":"")+
+      ' &mdash; '+Math.round(counts[p]/tot*100)+'%</span>' +
+      '<span style="font-size:.8rem;font-weight:bold">'+saInfo.nom+' : '+saInfo.libelle+'</span>';
+    gb.appendChild(d);
+  });
+
+  // Décision dominante
+  var max = Math.max(counts.A, counts.B, counts.C);
+  var dom = counts.A===max?"A":counts.B===max?"B":"C";
+  var msgs = {
+    A: "Classe d\u00e9butante \u2014 Priorit\u00e9 fondamentaux : gainage et gabarit moteur du renversement",
+    B: "Classe interm\u00e9diaire \u2014 Diff\u00e9renciation A/B : consolider la posture, d\u00e9velopper la composition",
+    C: "Classe avanc\u00e9e \u2014 Approfondissement et tutorat : composition multi-familles et rythmique"
+  };
+  var db = document.getElementById("decision-box");
+  db.innerHTML = '<h3>D\u00e9cision dominante automatique</h3><p>'+msgs[dom]+'</p>' +
+    '<p style="font-size:.75rem;margin-top:8px;opacity:.7">(D\u00e9cision finale : vous)</p>';
+}
+
+function var_color(name) {
+  var map = { "grn-txt":"#1A5C2A","ora-txt":"#7A4A00","red-txt":"#8B1A1A" };
+  return map[name] || "#333";
+}
+
+/* ============================================================
+   STEP 2 — AXES
+   ============================================================ */
+function buildAxesStep() {
+  // Calculer pertinence de chaque axe
+  var scored = AXES_REF.map(function(a) {
+    var oi = a.obs_id;
+    var pct = Math.round(resultats.filter(function(r){return r.vals[oi]<SEUILS.B_min;}).length/resultats.length*100);
+    return { axe: a, pct: pct };
+  });
+  scored.sort(function(a,b){return b.pct-a.pct;});
+
+  var c = document.getElementById("axes-container");
+  c.innerHTML = "";
+  scored.forEach(function(s) {
+    var a = s.axe;
+    var div = document.createElement("div");
+    div.className = "axe-card";
+    div.id = "axe-card-"+a.id;
+    var checked = axesSelectionnes.indexOf(a.id) > -1;
+    if (checked) div.classList.add("selected");
+    div.innerHTML =
+      '<div class="axe-head">' +
+      '<input type="checkbox" id="axe-cb-'+a.id+'" '+(checked?"checked":"")+'>' +
+      '<div style="flex:1">' +
+      '<div class="axe-title">Axe '+a.id+' \u2014 '+a.titre+'</div>' +
+      '<div style="font-size:.8rem;color:var(--slate);margin-top:3px">'+a.desc+'</div>' +
+      '<div class="axe-meta">' +
+      '<span><span class="pert-bar" style="width:'+Math.min(s.pct,100)+'px"></span>Pertinence : '+s.pct+"% concern\u00e9s</span>" +
+      '<span>Observable : '+OBS[a.obs_id].id+' \u00b7 Moy. : '+obsMoys[a.obs_id].toFixed(1)+'/10</span>' +
+      '<span>SA associ\u00e9e : '+a.sa+'</span>' +
+      '</div></div></div>';
+    div.querySelector("input").addEventListener("change", function() { toggleAxe(a.id, div, this.checked); });
+    div.addEventListener("click", function(ev) {
+      if (ev.target.tagName !== "INPUT") {
+        var cb = document.getElementById("axe-cb-"+a.id);
+        cb.checked = !cb.checked;
+        toggleAxe(a.id, div, cb.checked);
+      }
+    });
+    c.appendChild(div);
+  });
+  updateAxeMsg();
+}
+
+function toggleAxe(id, card, checked) {
+  if (checked) {
+    if (axesSelectionnes.length >= 4) {
+      alert("Maximum 4 axes atteint. D\u00e9cochez un axe avant d\u2019en choisir un autre.");
+      document.getElementById("axe-cb-"+id).checked = false;
+      return;
+    }
+    axesSelectionnes.push(id);
+    card.classList.add("selected");
+  } else {
+    axesSelectionnes = axesSelectionnes.filter(function(x){return x!==id;});
+    card.classList.remove("selected");
+  }
+  updateAxeMsg();
+}
+
+function updateAxeMsg() {
+  var n = axesSelectionnes.length;
+  var msg = document.getElementById("axe-count-msg");
+  msg.textContent = n + " axe"+(n>1?"s":"")+" s\u00e9lectionn\u00e9"+(n>1?"s":"") +
+    (n<3?" \u2014 minimum 3 requis":n===4?" \u2014 maximum atteint":" \u2014 vous pouvez en ajouter un 4e");
+  document.getElementById("btn-step3").disabled = n < 3;
+}
+
+/* ============================================================
+   STEP 3 — SLIDER
+   ============================================================ */
+function updateSlider() {
+  nbSeances = parseInt(document.getElementById("seances-slider").value);
+  document.getElementById("slider-val").textContent = nbSeances;
+  var nAxes = axesSelectionnes.length;
+  var dist = (DISTRIB[nAxes] && DISTRIB[nAxes][nbSeances]) || [];
+  var preview = document.getElementById("distrib-preview");
+  if (dist.length === 0) { preview.innerHTML = '<p style="color:red">Distribution non d\u00e9finie.</p>'; return; }
+
+  var axesObjets = axesSelectionnes.map(function(id){
+    return AXES_REF.find(function(a){return a.id===id;});
+  }).filter(Boolean);
+
+  var html = '<p style="font-size:.8rem;color:var(--slate);margin-bottom:8px">Aper\u00e7u de la distribution :</p>';
+  dist.forEach(function(ns, i) {
+    var titre = axesObjets[i] ? "Axe "+axesObjets[i].id+" \u2014 "+axesObjets[i].titre : "Axe "+(i+1);
+    html += '<div class="distrib-seq">' +
+      '<div class="seq-h">S\u00e9quence '+(i+1)+' &mdash; '+ns+' s\u00e9ance'+(ns>1?"s":"")+'</div>' +
+      '<div class="seq-s">'+titre+'</div></div>';
+  });
+  preview.innerHTML = html;
+}
+
+/* ============================================================
+   STEP 4 — PLANIFICATION
+   ============================================================ */
+function genPlanification() {
+  var nAxes = axesSelectionnes.length;
+  var dist = (DISTRIB[nAxes] && DISTRIB[nAxes][nbSeances]) || [];
+  var axesObjets = axesSelectionnes.map(function(id){
+    return AXES_REF.find(function(a){return a.id===id;});
+  }).filter(Boolean);
+
+  var container = document.getElementById("plan-container");
+  container.innerHTML = "";
+
+  var seanceGlobale = 0;
+  dist.forEach(function(ns, si) {
+    var axe = axesObjets[si];
+    if (!axe) return;
+    seanceGlobale++;
+
+    var block = document.createElement("div");
+    block.className = "seq-block";
+
+    var seanceStart = seanceGlobale;
+    var seanceEnd = seanceGlobale + ns - 1;
+
+    block.innerHTML = '<div class="seq-header">' +
+      '<h3>S\u00e9quence '+(si+1)+' \u2014 '+axe.titre+'</h3>' +
+      '<span class="seq-tag">S\u00e9ances '+seanceStart+' \u00e0 '+seanceEnd+'</span></div>';
+
+    var tbl = document.createElement("table");
+    tbl.className = "plan-table";
+    tbl.innerHTML = '<thead><tr>' +
+      '<th>N\u00b0</th><th>Axe dominant</th><th>Objectif de s\u00e9ance</th>' +
+      '<th class="col-grp-a">Groupe A \u2014 D\u00e9butants<br><small>'+SA.A.nom+' '+SA.A.libelle+'</small></th>' +
+      '<th class="col-grp-b">Groupe B \u2014 Interm\u00e9diaires<br><small>'+SA.B.nom+' '+SA.B.libelle+'</small></th>' +
+      '<th class="col-grp-c">Groupe C \u2014 Avanc\u00e9s<br><small>'+SA.C.nom+' '+SA.C.libelle+'</small></th>' +
+      '</tr></thead><tbody>';
+
+    var tbody = "";
+    for (var s = 0; s < ns; s++) {
+      var snum = seanceGlobale + s;
+      var isDernier = (si === dist.length-1 && s === ns-1);
+      var obj = isDernier ?
+        "Bilan et \u00e9valuation formative de l\u2019encha\u00eenement gymnique" :
+        "D\u00e9velopper : "+axe.titre+" \u2014 "+axe.desc;
+
+      tbody += '<tr>' +
+        '<td><strong>'+snum+'</strong></td>' +
+        '<td style="font-size:.76rem">Axe '+axe.id+'<br><em>'+axe.titre+'</em></td>' +
+        '<td style="font-size:.76rem">'+obj+'</td>' +
+        '<td class="col-grp-a"><strong>'+axe.consignes.A.sa+'</strong><br>'+axe.consignes.A.consigne+'<br><em style="font-size:.7rem;color:var(--red-txt)">\u2713 '+axe.consignes.A.critere+'</em></td>' +
+        '<td class="col-grp-b"><strong>'+axe.consignes.B.sa+'</strong><br>'+axe.consignes.B.consigne+'<br><em style="font-size:.7rem;color:var(--ora-txt)">\u2713 '+axe.consignes.B.critere+'</em></td>' +
+        '<td class="col-grp-c"><strong>'+axe.consignes.C.sa+'</strong><br>'+axe.consignes.C.consigne+'<br><em style="font-size:.7rem;color:var(--grn-txt)">\u2713 '+axe.consignes.C.critere+'</em></td>' +
+        '</tr>';
+
+      // Indicateur de passage (sauf dernière séance de chaque séquence)
+      if (s < ns-1) {
+        tbody += '<tr><td colspan="6">' +
+          '<div class="indicatif">&#128203; \u00c0 observer avant la s\u00e9ance suivante &mdash; ' +
+          '<em>'+axe.indicateur+'</em>' +
+          ' <span style="color:var(--slate);font-size:.7rem">(Indicatif \u2014 d\u00e9cision de progression&nbsp;: vous)</span>' +
+          '</div></td></tr>';
+      }
+    }
+
+    tbl.innerHTML += tbody + "</tbody></table>";
+    block.appendChild(tbl);
+    container.appendChild(block);
+    seanceGlobale += ns - 1;
+  });
+
+  // Résumé du cycle
+  var counts = {A:0,B:0,C:0};
+  resultats.forEach(function(r){counts[r.profil]++;});
+  var tot = resultats.length;
+  var domP = counts.A>=counts.B&&counts.A>=counts.C?"A":counts.B>=counts.C?"B":"C";
+
+  var seqSummary = dist.map(function(ns,i){
+    var a = axesObjets[i];
+    return (a?"Axe "+a.id+" : "+a.titre:"?")+" ("+ns+" s\u00e9ance"+(ns>1?"s":"")+")";
+  }).join(" \u2014 ");
+
+  document.getElementById("cycle-summary").innerHTML =
+    '<div class="cycle-summary">' +
+    '<h3>R\u00e9sum\u00e9 du cycle</h3>' +
+    '<p>'+seqSummary+'</p>' +
+    '<p style="margin-top:10px">Ce cycle de <strong>'+nbSeances+' s\u00e9ances</strong> cible <strong>'+axesSelectionnes.length+' axes prioritaires</strong>. ' +
+    'Profil le plus concern\u00e9 : <strong>'+domP+'</strong> ('+counts[domP]+' \u00e9l\u00e8ve'+(counts[domP]>1?"s":"")+' &middot; '+Math.round(counts[domP]/tot*100)+'%). ' +
+    'R\u00e9\u00e9valuer apr\u00e8s la s\u00e9quence '+Math.ceil(dist.length/2)+' avec une nouvelle collecte terrain.</p>' +
+    '<p style="font-size:.74rem;margin-top:8px;opacity:.7">La d\u00e9cision finale de progression reste \u00e0 l\u2019enseignant.</p>' +
+    '</div>';
+}
+
+/* ============================================================
+   IMPORT CSV
+   ============================================================ */
+function handleDrop(ev) {
+  ev.preventDefault();
+  document.getElementById("drop-zone").classList.remove("dragover");
+  var f = ev.dataTransfer.files[0];
+  if (f) parseCSV(f);
+}
+function handleCSV(ev) { if (ev.target.files[0]) parseCSV(ev.target.files[0]); }
+
+function parseCSV(file) {
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var txt = e.target.result;
+    var lines = txt.split(/\r?\n/);
+    var headerIdx = -1;
+    var headerLine = null;
+
+    // P2 : parcourir tout le fichier pour trouver l'en-tête
+    for (var i=0; i<lines.length; i++) {
+      if (lines[i].indexOf("Nom_Eleve") > -1 || lines[i].indexOf("Prenom") > -1) {
+        headerIdx = i; headerLine = lines[i]; break;
+      }
+    }
+    if (headerIdx === -1) {
+      document.getElementById("csv-status").innerHTML = '<div class="alert alert-err">En-t\u00eate "Nom_Eleve" ou "Prenom" introuvable dans le CSV.</div>';
+      return;
+    }
+
+    var sep = headerLine.indexOf(";") > -1 ? ";" : ",";
+    var headers = headerLine.split(sep).map(function(h){return h.trim().replace(/^"|"$/g,"");});
+
+    // P3 : priorité colonnes
+    function findCol(patterns) {
+      for (var pi=0; pi<patterns.length; pi++) {
+        for (var hi=0; hi<headers.length; hi++) {
+          if (headers[hi].indexOf(patterns[pi]) > -1) return hi;
+        }
+      }
+      return -1;
+    }
+    var nomCol = findCol(["Nom_Eleve","Prenom","nom","prenom"]);
+    var obs1 = findCol(["OBS01","OBS1_Degre","OBS1"]);
+    var obs2 = findCol(["OBS02","OBS2_Degre","OBS2"]);
+    var obs3 = findCol(["OBS03","OBS3_Degre","OBS3"]);
+
+    var added = 0, ignored = 0;
+    var container = document.getElementById("rows-container");
+
+    for (var li=headerIdx+1; li<lines.length; li++) {
+      var l = lines[li].trim();
+      if (!l || l.indexOf("BILAN_CLASSE") > -1) { ignored++; continue; }
+      var cols = l.split(sep).map(function(c){return c.trim().replace(/^"|"$/g,"");});
+      if (cols.length < 2) { ignored++; continue; }
+
+      var prenom = nomCol > -1 ? cols[nomCol] : cols[0];
+      if (!prenom) { ignored++; continue; }
+
+      function getScore(ci) {
+        if (ci === -1) return "";
+        var raw = cols[ci] ? cols[ci].trim() : "";
+        if (raw === "A" || raw === "a") return DEG_SCORE.A;
+        if (raw === "B" || raw === "b") return DEG_SCORE.B;
+        if (raw === "C" || raw === "c") return DEG_SCORE.C;
+        var n = parseFloat(raw);
+        return isNaN(n) ? "" : n;
+      }
+
+      rowCount++;
+      var div = document.createElement("div");
+      div.className = "form-grid";
+      div.id = "row-"+rowCount;
+      var v1=getScore(obs1), v2=getScore(obs2), v3=getScore(obs3);
+      div.innerHTML =
+        '<input type="text" class="prenom-field" value="'+prenom+'">' +
+        '<input type="number" min="0" max="10" step="0.5" class="obs-field" value="'+(v1!==""?v1:"")+'">' +
+        '<input type="number" min="0" max="10" step="0.5" class="obs-field" value="'+(v2!==""?v2:"")+'">' +
+        '<input type="number" min="0" max="10" step="0.5" class="obs-field" value="'+(v3!==""?v3:"")+'">' +
+        '<button class="btn btn-outline btn-sm" onclick="removeRow(\'row-'+rowCount+'\')">&#10005;</button>';
+      container.appendChild(div);
+      added++;
+    }
+
+    document.getElementById("csv-status").innerHTML =
+      '<div class="alert alert-info">'+added+' \u00e9l\u00e8ve'+(added>1?"s":"")+" import\u00e9"+(added>1?"s":"")+" &mdash; "+ignored+" ligne"+(ignored>1?"s":"")+" ignor\u00e9e"+(ignored>1?"s":"")+'</div>';
+  };
+  reader.readAsText(file, "UTF-8");
+}
+
+/* ============================================================
+   EXPORT CSV
+   ============================================================ */
+function exportCSV() {
+  if (resultats.length === 0) { alert("Analysez la classe d\u2019abord."); return; }
+  var bom = "\uFEFF";
+  var header = "Pr\u00e9nom;Code OBS-01;OBS-01;Code OBS-02;OBS-02;Code OBS-03;OBS-03;Moyenne;/20;Rang;Profil global;Profil d\u00e9taill\u00e9;Lacune 1;SA recommand\u00e9e\n";
+  var rows = resultats.map(function(r) {
+    return [
+      r.prenom,
+      OBS[0].codes[r.obsPr[0]], r.vals[0].toFixed(1),
+      OBS[1].codes[r.obsPr[1]], r.vals[1].toFixed(1),
+      OBS[2].codes[r.obsPr[2]], r.vals[2].toFixed(1),
+      r.moy.toFixed(2), (r.moy*2).toFixed(2), r.rang,
+      r.profil, r.obsPr.join("/"),
+      r.lacunes.length>0 ? OBS[r.lacunes[0].obs].id+" : "+r.lacunes[0].val.toFixed(1)+"/10" : "Aucune",
+      r.sa.nom+" - "+r.sa.libelle
+    ].join(";");
+  }).join("\n");
+  var d = new Date();
+  var dt = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+  var blob = new Blob([bom+header+rows], {type:"text/csv;charset=utf-8"});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url; a.download = "outil_v0_GYM-ART_DI-GYM_"+dt+".csv";
+  a.click(); URL.revokeObjectURL(url);
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+// Initialiser la date
+document.getElementById("date-input").value = new Date().toISOString().split("T")[0];
+</script>
+</body>
+</html>

@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Fiche Observation EPS — Renforcement Musculaire Gymnique</title>
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN : Clinique de terrain — Vert forêt + Ivoire
+   Sobre, lisible, imprimable, professionnel
+   ═══════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@400;500;600&display=swap');
+
+:root {
+  --forest:  #1A3A2A;
+  --forest2: #245236;
+  --forest3: #2E6644;
+  --sage:    #5C8C6A;
+  --sage2:   #8CB89A;
+  --sage3:   #C2DEC8;
+  --ivory:   #FAF6EE;
+  --ivory2:  #F0EBE0;
+  --ivory3:  #E5DDD0;
+  --ink:     #1C1C1C;
+  --ink2:    #3A3A3A;
+  --slate:   #5A6472;
+  --red:     #9B2C2C;
+  --redbg:   #FDF0F0;
+  --orange:  #C05A00;
+  --orabg:   #FEF4E8;
+  --green:   #1E6B3E;
+  --grnbg:   #E8F5ED;
+  --bdr:     rgba(94,140,106,.22);
+  --sh:      0 2px 20px rgba(26,58,42,.10);
+  --r:       8px;
+  --fh:      'Source Serif 4', Georgia, serif;
+  --fb:      'DM Sans', 'Segoe UI', sans-serif;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+html { font-size:14px; scroll-behavior:smooth }
+body { background:var(--ivory); color:var(--ink); font-family:var(--fb); min-height:100vh }
+
+/* ── HEADER ── */
+.hdr { background:var(--forest); padding:20px 28px 16px; border-bottom:3px solid var(--forest3) }
+.hdr-inner { max-width:1100px; margin:0 auto; display:flex; align-items:flex-start; justify-content:space-between; gap:14px; flex-wrap:wrap }
+.hdr h1 { font-family:var(--fh); font-size:1.4rem; color:var(--ivory); font-weight:400; letter-spacing:.01em }
+.hdr .sub { font-size:.75rem; color:var(--sage2); margin-top:4px }
+.hdr-pills { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px }
+.pill { font-size:.66rem; padding:2px 8px; border-radius:20px; border:1px solid rgba(140,184,154,.3); color:var(--sage2); white-space:nowrap }
+.pill.hi { background:var(--forest3); color:var(--ivory); border-color:var(--forest3) }
+.hdr-btn { display:flex; gap:7px; align-items:flex-start; flex-wrap:wrap }
+
+/* ── MAIN ── */
+.main { max-width:1100px; margin:0 auto; padding:22px 20px }
+
+/* ── TABS ── */
+.tabs { display:flex; gap:4px; margin-bottom:18px; flex-wrap:wrap }
+.tab { padding:9px 16px; border-radius:var(--r); border:1.5px solid var(--bdr); background:transparent; font-size:.8rem; font-weight:500; cursor:pointer; font-family:var(--fb); color:var(--slate); transition:.18s }
+.tab.on { background:var(--forest); color:var(--ivory); border-color:var(--forest) }
+.tab:hover:not(.on) { background:var(--ivory2) }
+.panel { display:none }
+.panel.on { display:block }
+
+/* ── CARDS ── */
+.card { background:#fff; border:1px solid var(--bdr); border-radius:var(--r); padding:18px 20px; margin-bottom:14px; box-shadow:var(--sh) }
+.card-hd { font-family:var(--fh); font-size:1rem; color:var(--forest); margin-bottom:14px; padding-bottom:9px; border-bottom:1.5px solid var(--bdr); display:flex; align-items:center; gap:8px }
+.card-hd .ico { font-size:1.1rem }
+.section-lbl { font-size:.72rem; font-weight:600; color:var(--sage); text-transform:uppercase; letter-spacing:.07em; margin:14px 0 6px }
+
+/* ── FORM ── */
+.fg2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:10px }
+.fg3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:10px }
+.fg1 { margin-bottom:10px }
+label { display:block; font-size:.72rem; font-weight:600; color:var(--slate); margin-bottom:4px; text-transform:uppercase; letter-spacing:.04em }
+input[type=text], input[type=date], select, textarea {
+  width:100%; padding:7px 10px; border:1.5px solid #DDD5C5; border-radius:6px; font-size:.85rem; font-family:var(--fb); background:var(--ivory); transition:.18s; color:var(--ink)
+}
+textarea { resize:vertical; min-height:70px }
+input:focus, select:focus, textarea:focus { outline:none; border-color:var(--forest3); box-shadow:0 0 0 3px rgba(46,102,68,.12) }
+
+/* ── NIVEAU SELECTOR ── */
+.niv-row { display:flex; gap:8px; flex-wrap:wrap }
+.niv-btn { padding:7px 16px; border-radius:20px; border:1.5px solid var(--bdr); background:transparent; font-size:.8rem; font-weight:600; cursor:pointer; transition:.18s; font-family:var(--fb) }
+.niv-btn:hover { border-color:var(--sage) }
+.niv-btn.sel-F { background:var(--redbg); color:var(--red); border-color:var(--red) }
+.niv-btn.sel-M { background:var(--orabg); color:var(--orange); border-color:var(--orange) }
+.niv-btn.sel-B { background:var(--grnbg); color:var(--green); border-color:var(--green) }
+
+/* ── CRITÈRES GRILLE ── */
+.crit-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:10px; margin-bottom:6px }
+.crit-item { background:var(--ivory); border:1px solid var(--bdr); border-radius:var(--r); padding:10px 12px }
+.crit-item .ci-lbl { font-size:.72rem; font-weight:600; color:var(--forest); margin-bottom:6px }
+.crit-item .stars { display:flex; gap:4px }
+.star { width:22px; height:22px; border-radius:50%; border:1.5px solid var(--bdr); background:transparent; cursor:pointer; font-size:.8rem; display:flex; align-items:center; justify-content:center; transition:.15s }
+.star:hover { border-color:var(--forest3) }
+.star.on { background:var(--forest3); border-color:var(--forest3); color:#fff }
+
+/* ── MUSCLES ── */
+.muscle-grid { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:6px }
+.m-chip { padding:4px 11px; border-radius:20px; border:1.5px solid var(--bdr); font-size:.74rem; cursor:pointer; transition:.15s; background:transparent; color:var(--slate); font-family:var(--fb) }
+.m-chip:hover { border-color:var(--forest3) }
+.m-chip.on { background:var(--forest); color:var(--ivory); border-color:var(--forest) }
+.m-chip.warn { background:var(--redbg); color:var(--red); border-color:var(--red) }
+
+/* ── REMEDIATION CARDS ── */
+.rem-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:10px }
+.rem-card { border:1px solid var(--bdr); border-radius:var(--r); overflow:hidden }
+.rem-card .rh { padding:8px 12px; font-size:.76rem; font-weight:600; display:flex; align-items:center; gap:6px }
+.rem-card .rh.A { background:var(--redbg); color:var(--red) }
+.rem-card .rh.B { background:var(--orabg); color:var(--orange) }
+.rem-card .rh.C { background:var(--grnbg); color:var(--green) }
+.rem-card .rb { padding:10px 12px; background:#fff }
+.rem-ex { margin-bottom:7px }
+.rem-ex .ex-nm { font-size:.76rem; font-weight:600; color:var(--ink) }
+.rem-ex .ex-dt { font-size:.72rem; color:var(--slate); margin-top:2px; line-height:1.5 }
+.rem-ex .ex-cr { font-size:.7rem; color:var(--forest3); font-style:italic; margin-top:2px }
+
+/* ── SYNTHESIS ── */
+.syn-row { display:grid; grid-template-columns:1fr 1fr; gap:12px }
+.syn-box { border:1px solid var(--bdr); border-radius:var(--r); padding:12px 14px }
+.syn-box.plus { border-color:rgba(30,107,62,.3); background:var(--grnbg) }
+.syn-box.moins { border-color:rgba(155,44,44,.3); background:var(--redbg) }
+.syn-box h4 { font-size:.76rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px }
+.syn-box.plus h4 { color:var(--green) }
+.syn-box.moins h4 { color:var(--red) }
+.syn-list { list-style:none }
+.syn-list li { font-size:.8rem; color:var(--ink2); padding:3px 0; border-bottom:1px solid rgba(0,0,0,.05); line-height:1.5 }
+.syn-list li::before { content:"→ "; opacity:.5 }
+
+/* ── DNB LINK ── */
+.dnb-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:6px }
+.dnb-card { border:1px solid var(--bdr); border-radius:var(--r); padding:10px 12px; text-align:center }
+.dnb-card .dnb-v { font-family:var(--fh); font-size:1.6rem; font-weight:600; line-height:1 }
+.dnb-card .dnb-l { font-size:.68rem; color:var(--slate); margin-top:3px; text-transform:uppercase; letter-spacing:.04em }
+.dnb-card.c1 .dnb-v { color:var(--forest) }
+.dnb-card.c2 .dnb-v { color:var(--sage) }
+.dnb-card.c3 .dnb-v { color:var(--orange) }
+
+/* ── BUTTONS ── */
+.btn { display:inline-flex; align-items:center; gap:5px; padding:8px 16px; border:none; border-radius:var(--r); font-size:.8rem; font-weight:600; cursor:pointer; font-family:var(--fb); transition:.18s }
+.btn-forest { background:var(--forest); color:var(--ivory) }
+.btn-forest:hover { background:var(--forest2) }
+.btn-out { background:transparent; color:var(--forest); border:1.5px solid var(--bdr) }
+.btn-out:hover { background:var(--ivory2) }
+.btn-sm { padding:5px 11px; font-size:.74rem }
+.btn-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:16px; padding-top:12px; border-top:1px solid var(--bdr) }
+
+/* ── FICHES LIST ── */
+.fiches-list { display:grid; gap:10px }
+.fiche-preview { background:#fff; border:1.5px solid var(--bdr); border-radius:var(--r); padding:12px 16px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:.18s }
+.fiche-preview:hover { border-color:var(--forest3); box-shadow:var(--sh) }
+.fp-badge { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:.9rem; flex-shrink:0 }
+.fp-F { background:var(--redbg); color:var(--red) }
+.fp-M { background:var(--orabg); color:var(--orange) }
+.fp-B { background:var(--grnbg); color:var(--green) }
+.fp-info { flex:1 }
+.fp-info h3 { font-size:.9rem; font-weight:600; color:var(--ink) }
+.fp-info p { font-size:.74rem; color:var(--slate); margin-top:2px }
+.fp-tags { display:flex; gap:5px; flex-wrap:wrap; margin-top:4px }
+.fp-tag { font-size:.66rem; padding:1px 7px; border-radius:10px; background:var(--ivory2); border:1px solid var(--bdr); color:var(--slate) }
+.empty-state { text-align:center; padding:32px; color:var(--slate); font-size:.85rem }
+
+/* ── PROGRESS BAR ── */
+.pb-row { display:flex; align-items:center; gap:8px; margin:5px 0 }
+.pb-lbl { width:140px; font-size:.72rem; font-weight:600; flex-shrink:0 }
+.pb-track { flex:1; height:8px; background:var(--ivory2); border-radius:4px; overflow:hidden }
+.pb-fill { height:100%; border-radius:4px; transition:width .5s ease }
+.pb-val { width:30px; font-size:.72rem; color:var(--slate); text-align:right }
+
+/* ── PRINT ── */
+@media print {
+  .hdr-btn, .tabs, .btn-row, .btn { display:none!important }
+  .panel { display:block!important }
+  body { background:#fff; font-size:11px }
+  .card { box-shadow:none; border:1px solid #ccc; page-break-inside:avoid }
+  .hdr { background:var(--forest)!important; -webkit-print-color-adjust:exact; print-color-adjust:exact }
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px) {
+  .fg2, .fg3 { grid-template-columns:1fr }
+  .syn-row, .dnb-row { grid-template-columns:1fr }
+  .main { padding:12px 10px }
+  .hdr { padding:14px 14px 12px }
+}
+
+/* ── ALERT ── */
+.alrt { padding:9px 13px; border-radius:6px; font-size:.78rem; margin:8px 0 }
+.aok { background:var(--grnbg); border-left:3px solid var(--green); color:var(--green) }
+.awarn { background:var(--orabg); border-left:3px solid var(--orange); color:var(--orange) }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-inner">
+    <div>
+      <h1>Fiche d&rsquo;Observation EPS &mdash; Renforcement Musculaire Gymnique</h1>
+      <div class="sub">Gymnastiqu Artistique &middot; ADP 2026 &middot; CRMEF Inezgane &middot; BOUARGANE &middot; Section EPS</div>
+      <div class="hdr-pills">
+        <span class="pill hi">10 crit&egrave;res d&rsquo;observation</span>
+        <span class="pill">Reli&eacute; au r&eacute;f&eacute;rentiel DNB</span>
+        <span class="pill">OBS-01 &middot; OBS-02 &middot; OBS-03</span>
+        <span class="pill">Export PDF / Impression</span>
+      </div>
+    </div>
+    <div class="hdr-btn">
+      <button class="btn btn-out btn-sm" style="color:var(--ivory);border-color:rgba(140,184,154,.3)" onclick="window.print()">&#128424; Imprimer</button>
+      <button class="btn btn-out btn-sm" style="color:var(--ivory);border-color:rgba(140,184,154,.3)" onclick="exportAll()">&#128190; Exporter</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAVIGATION -->
+<div class="main">
+  <div class="tabs">
+    <button class="tab on" onclick="showTab('new')">&#43; Nouvelle fiche</button>
+    <button class="tab" onclick="showTab('list')">&#128196; Mes fiches (<span id="cnt">0</span>)</button>
+    <button class="tab" onclick="showTab('bilan')">&#128202; Bilan de classe</button>
+    <button class="tab" onclick="showTab('guide')">&#128218; Guide terrain</button>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PANEL 1 — NOUVELLE FICHE
+       ══════════════════════════════════════════ -->
+  <div class="panel on" id="p-new">
+
+    <!-- IDENTITÉ -->
+    <div class="card">
+      <div class="card-hd"><span class="ico">&#128100;</span>Identit&eacute; &mdash; &Eacute;l&egrave;ve et contexte</div>
+      <div class="fg2">
+        <div><label>Pr&eacute;nom de l&rsquo;&eacute;l&egrave;ve *</label><input type="text" id="f-prenom" placeholder="Pr&eacute;nom"></div>
+        <div><label>Classe</label><input type="text" id="f-classe" placeholder="3&egrave;me B"></div>
+      </div>
+      <div class="fg3">
+        <div><label>Date</label><input type="date" id="f-date"></div>
+        <div><label>S&eacute;ance N&deg;</label><input type="text" id="f-seance" placeholder="S1"></div>
+        <div><label>Observateur</label><input type="text" id="f-obs" placeholder="Nom de l&rsquo;enseignant"></div>
+      </div>
+    </div>
+
+    <!-- 1. ÉLÉMENT GYMNIQUE -->
+    <div class="card">
+      <div class="card-hd"><span class="ico">&#127939;</span>1 &mdash; &Eacute;l&eacute;ment gymnique observ&eacute;</div>
+      <div class="fg2">
+        <div>
+          <label>Famille gymnique</label>
+          <select id="f-famille" onchange="updateElement()">
+            <option value="">-- S&eacute;lectionner --</option>
+            <option value="F1">F1 &mdash; Renversements (ATR, roulade, roue)</option>
+            <option value="F2">F2 &mdash; Rotations (salto, vrille)</option>
+            <option value="F3">F3 &mdash; Sauts / Bonds (grand &eacute;cart, sissonne)</option>
+            <option value="F4">F4 &mdash; Acrobaties sol (flip, s&eacute;ries)</option>
+            <option value="F5">F5 &mdash; Ma&icirc;trise corporelle (&eacute;quilibres, ondulations)</option>
+          </select>
+        </div>
+        <div>
+          <label>El&eacute;ment pr&eacute;cis</label>
+          <select id="f-element">
+            <option value="">-- Choisir la famille d&rsquo;abord --</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg1">
+        <label>Description libre de l&rsquo;ex&eacute;cution observ&eacute;e</label>
+        <textarea id="f-desc" placeholder="D&eacute;crivez ce que vous avez vu : placement du corps, vitesse d&rsquo;ex&eacute;cution, qualit&eacute; de la r&eacute;alisation..."></textarea>
+      </div>
+    </div>
+
+    <!-- 2. NIVEAU DE MAÎTRISE -->
+    <div class="card">
+      <div class="card-hd"><span class="ico">&#127775;</span>2 &mdash; Niveau de ma&icirc;trise global</div>
+      <div class="niv-row" id="niv-row">
+        <button class="niv-btn" onclick="setNiv('F',this)">&#9711; Faible &mdash; Ex&eacute;cute (Degr&eacute; A)</button>
+        <button class="niv-btn" onclick="setNiv('M',this)">&#9651; Moyen &mdash; Ma&icirc;trise (Degr&eacute; B)</button>
+        <button class="niv-btn" onclick="setNiv('B',this)">&#11088; Bon &mdash; Anticipe (Degr&eacute; C)</button>
+      </div>
+      <div id="niv-desc" class="alrt awarn" style="display:none;margin-top:10px"></div>
+    </div>
+
+    <!-- 3+4+5+6 — CRITÈRES TECHNIQUES -->
+    <div class="card">
+      <div class="card-hd"><span class="ico">&#128269;</span>3-6 &mdash; Analyse technique d&eacute;taill&eacute;e</div>
+
+      <div class="section-lbl">3 &mdash; Gainage et stabilit&eacute; du tronc</div>
+      <div class="crit-grid" id="cg-gainage">
+        <div class="crit-item"><div class="ci-lbl">Activation abdominaux</div><div class="stars" data-crit="g-abdo"></div></div>
+        <div class="crit-item"><div class="ci-lbl">Gainage lombaire</div><div class="stars" data-crit="g-lomb"></div></div>
+        <div class="crit-item"><div class="ci-lbl">Stabilit&eacute; bassin</div><div class="stars" data-crit="g-bass"></div></div>
+        <div class="crit-item"><div class="ci-lbl">Maintien sur dur&eacute;e</div><div class="stars" data-crit="g-dur"></div></div>
+      </div>
+      <div class="fg1"><label>Observations gainage</label><textarea id="f-gainage" placeholder="Ex : cambrure lombaire marqu&eacute;e en ATR, bassin en ant&eacute;version..."></textarea></div>
+
+      <div class="section-lbl">4 &mdash; Appuis et alignement corporel</div>
+      <div class="crit-grid">
+        <div class="crit-item"><div class="ci-lbl">Qualit&eacute; des appuis manuels</div><div class="stars" data-crit="a-main"></div></div>
+        <div class="crit-item"><div class="ci-lbl">Alignement t&ecirc;te-&eacute;paules-hanche</div><div class="stars" data-crit="a-alig"></div></div>
+        <div class="crit-item"><div class="ci-lbl">Amplitude des segments distaux</div><div class="stars" data-crit="a-dist"></div></div>
+        <div class="crit-item"><div class="ci-lbl">R&eacute;ception / atterrissage</div><div class="stars" data-crit="a-recp"></div></div>
+      </div>
+      <div class="fg1"><label>Observations alignement</label><textarea id="f-align" placeholder="Ex : genoux en valgus &agrave; la r&eacute;ception, &eacute;paules non stabilis&eacute;es..."></textarea></div>
+
+      <div class="section-lbl">5 &mdash; Contr&ocirc;le musculaire</div>
+      <div class="crit-grid">
+        <div class="crit-item"><div class="ci-lbl">Force membres sup&eacute;rieurs</div><div class="stars" data-crit="c-ms"></div></div>
+        <div class="crit-item"><div class="ci-lbl">Force membres inf&eacute;rieurs</div><div class="stars" data-crit="c-mi"></div></div>
+        <div class="crit-item"><div class="ci-lbl">Explosivit&eacute; / d&eacute;tente</div><div class="stars" data-crit="c-exp"></div></div>
+        <div class="crit-item"><div class="ci-lbl">Contr&ocirc;le excentrique</div><div class="stars" data-crit="c-exc"></div></div>
+      </div>
+      <div class="fg1"><label>Observations contr&ocirc;le musculaire</label><textarea id="f-ctrl" placeholder="Ex : membres sup&eacute;rieurs qui fl&eacute;chissent sous le poids, d&eacute;tente insuffisante..."></textarea></div>
+
+      <div class="section-lbl">6 &mdash; Coordination et &eacute;quilibre</div>
+      <div class="crit-grid">
+        <div class="crit-item"><div class="ci-lbl">Coordination inter-segmentaire</div><div class="stars" data-crit="e-coord"></div></div>
+        <div class="crit-item"><div class="ci-lbl">&Eacute;quilibre statique</div><div class="stars" data-crit="e-stat"></div></div>
+        <div class="crit-item"><div class="ci-lbl">Propioception</div><div class="stars" data-crit="e-prop"></div></div>
+        <div class="crit-item"><div class="ci-lbl">Rythme de l&rsquo;enchaînement</div><div class="stars" data-crit="e-ryt"></div></div>
+      </div>
+      <div class="fg1"><label>Observations coordination</label><textarea id="f-coord" placeholder="Ex : segments utilis&eacute;s ind&eacute;pendamment, aucune anticipation du suivant..."></textarea></div>
+    </div>
+
+    <!-- 7+8 — FORCES / DIFFICULTÉS -->
+    <div class="card">
+      <div class="card-hd"><span class="ico">&#9878;&#65039;</span>7-8 &mdash; Synth&egrave;se : forces et difficult&eacute;s</div>
+      <div class="syn-row">
+        <div class="syn-box plus">
+          <h4>&#10003; 7 &mdash; Points forts observ&eacute;s</h4>
+          <textarea id="f-forces" style="background:transparent;border:1px solid rgba(30,107,62,.25)" placeholder="Ex : bonne coordination inter-segmentaire, r&eacute;ception contr&ocirc;l&eacute;e, amplitude des sauts..."></textarea>
+        </div>
+        <div class="syn-box moins">
+          <h4>&#9888; 8 &mdash; Difficult&eacute;s observ&eacute;es</h4>
+          <textarea id="f-diff" style="background:transparent;border:1px solid rgba(155,44,44,.25)" placeholder="Ex : cambrure lombaire syst&eacute;matique, faiblesse MS pour l&rsquo;ATR, peur du renversement..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9 — BESOINS RENFORCEMENT -->
+    <div class="card">
+      <div class="card-hd"><span class="ico">&#128170;</span>9 &mdash; Besoins en renforcement musculaire identifi&eacute;s</div>
+      <div class="section-lbl">Groupes musculaires lacunaires &mdash; Cliquer pour s&eacute;lectionner</div>
+      <div class="muscle-grid" id="muscle-grid">
+        <button class="m-chip" onclick="toggleMuscle(this,'Abdominaux profonds (transverse)')">Abdominaux profonds</button>
+        <button class="m-chip" onclick="toggleMuscle(this,'&Eacute;recteurs du rachis')">Érecteurs rachis</button>
+        <button class="m-chip" onclick="toggleMuscle(this,'Stabilisateurs &eacute;paule (coiffe)')">Stabilisateurs épaule</button>
+        <button class="m-chip" onclick="toggleMuscle(this,'Triceps brachial')">Triceps brachial</button>
+        <button class="m-chip" onclick="toggleMuscle(this,'Grand pectoral')">Grand pectoral</button>
+        <button class="m-chip" onclick="toggleMuscle(this,'Quadriceps')">Quadriceps</button>
+        <button class="m-chip" onclick="toggleMuscle(this,'Ischio-jambiers')">Ischio-jambiers</button>
+        <button class="m-chip" onclick="toggleMuscle(this,'Fessiers')">Fessiers</button>
+        <button class="m-chip" onclick="toggleMuscle(this,'Mollets / Soléaires')">Mollets / Soléaires</button>
+        <button class="m-chip" onclick="toggleMuscle(this,'Stabilisateurs cheville')">Stabilisateurs cheville</button>
+        <button class="m-chip" onclick="toggleMuscle(this,'Fl&eacute;chisseurs hanche (psoas)')">Fléchisseurs hanche</button>
+        <button class="m-chip" onclick="toggleMuscle(this,'Stabilisateurs profonds lombaires')">Lombaires profonds</button>
+        <button class="m-chip" onclick="toggleMuscle(this,'Carr&eacute; des lombes')">Carré des lombes</button>
+        <button class="m-chip" onclick="toggleMuscle(this,'Grand dorsal')">Grand dorsal</button>
+        <button class="m-chip" onclick="toggleMuscle(this,'Trapèzes')">Trapèzes</button>
+        <button class="m-chip" onclick="toggleMuscle(this,'Adducteurs')">Adducteurs</button>
+      </div>
+      <div class="fg1" style="margin-top:10px">
+        <label>Commentaire &mdash; besoins sp&eacute;cifiques identifi&eacute;s</label>
+        <textarea id="f-besoins" placeholder="Ex : priorit&eacute; gainage tronc avant tout travail de renversement, seuil de force MS insuffisant pour ATR..."></textarea>
+      </div>
+    </div>
+
+    <!-- 10 — REMÉDIATIONS -->
+    <div class="card">
+      <div class="card-hd"><span class="ico">&#127919;</span>10 &mdash; R&eacute;m&eacute;diations et exercices correctifs propos&eacute;s</div>
+
+      <div class="section-lbl">Exercices par niveau de pratique</div>
+      <div class="rem-grid">
+
+        <div class="rem-card">
+          <div class="rh A">&#9711; Profil D&eacute;butant (Degr&eacute; A &mdash; Ex&eacute;cute)</div>
+          <div class="rb">
+            <div class="rem-ex">
+              <div class="ex-nm">Planche isométrique progressive</div>
+              <div class="ex-dt">3 &times; 10 s &rarr; 20 s &rarr; 30 s &middot; Gainage frontal, bras tendus</div>
+              <div class="ex-cr">&#10003; Dos plat, bassin neutre, pas de cambrure lombaire</div>
+            </div>
+            <div class="rem-ex">
+              <div class="ex-nm">Superman au sol</div>
+              <div class="ex-dt">3 &times; 10 rep &middot; Bras et jambes oppos&eacute;s lev&eacute;s alternativement</div>
+              <div class="ex-cr">&#10003; T&ecirc;te dans le prolongement du rachis, no rotation</div>
+            </div>
+            <div class="rem-ex">
+              <div class="ex-nm">ATR contre mur &mdash; phase tenue</div>
+              <div class="ex-dt">5 &times; 3 s &middot; Dos au mur, pieds d&eacute;coll&eacute;s progressivement</div>
+              <div class="ex-cr">&#10003; Axe t&ecirc;te-&eacute;paules-hanche align&eacute; sans appui mural</div>
+            </div>
+            <div class="rem-ex">
+              <div class="ex-nm">Squat assisté au mur</div>
+              <div class="ex-dt">3 &times; 10 rep &middot; Dos contre mur, descente en 3 secondes</div>
+              <div class="ex-cr">&#10003; Genoux dans l&rsquo;axe des pieds, pas de valgus</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rem-card">
+          <div class="rh B">&#9651; Profil Interm&eacute;diaire (Degr&eacute; B &mdash; Ma&icirc;trise)</div>
+          <div class="rb">
+            <div class="rem-ex">
+              <div class="ex-nm">Planche dynamique avec lever de jambe</div>
+              <div class="ex-dt">3 &times; 12 rep &middot; Gainage maintenu, jambes altern&eacute;es</div>
+              <div class="ex-cr">&#10003; Hanches ne basculent pas au lever de jambe</div>
+            </div>
+            <div class="rem-ex">
+              <div class="ex-nm">Pompes &eacute;cart&eacute;es &mdash; gainage actif</div>
+              <div class="ex-dt">3 &times; 8-10 rep &middot; Descente contr&ocirc;l&eacute;e 3 s, corps gainé</div>
+              <div class="ex-cr">&#10003; Poitrine touche le sol, coudes &agrave; 45&deg;, no cambrure</div>
+            </div>
+            <div class="rem-ex">
+              <div class="ex-nm">Gainage lat&eacute;ral dynamique</div>
+              <div class="ex-dt">3 &times; 10 rep &middot; Appui avant-bras, lever hanche r&eacute;p&eacute;t&eacute;</div>
+              <div class="ex-cr">&#10003; Hanches align&eacute;es avec les &eacute;paules &mdash; no rotation</div>
+            </div>
+            <div class="rem-ex">
+              <div class="ex-nm">Squat saut&eacute; contr&ocirc;l&eacute;</div>
+              <div class="ex-dt">3 &times; 8 rep &middot; Impulsion explosive, r&eacute;ception amortie</div>
+              <div class="ex-cr">&#10003; R&eacute;ception silencieuse, genoux f&eacute;ch&iacute;s, &eacute;quilibre imm&eacute;diat</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rem-card">
+          <div class="rh C">&#11088; Profil Avanc&eacute; (Degr&eacute; C &mdash; Anticipe)</div>
+          <div class="rb">
+            <div class="rem-ex">
+              <div class="ex-nm">Gainage anti-rotation (Pallof press)</div>
+              <div class="ex-dt">3 &times; 10 rep &middot; R&eacute;sistance &eacute;lastique, corps stable</div>
+              <div class="ex-cr">&#10003; Aucune rotation du tronc lors de l&rsquo;extension</div>
+            </div>
+            <div class="rem-ex">
+              <div class="ex-nm">Pompes explosives avec claquement</div>
+              <div class="ex-dt">3 &times; 6-8 rep &middot; Impulsion max, r&eacute;ception amortie</div>
+              <div class="ex-cr">&#10003; Corps gainé du d&eacute;col au retour, no cambrure</div>
+            </div>
+            <div class="rem-ex">
+              <div class="ex-nm">Fente bulgare &mdash; charge corporelle</div>
+              <div class="ex-dt">3 &times; 8 rep/jambe &middot; Pied arri&egrave;re sur banc</div>
+              <div class="ex-cr">&#10003; Genou avant ne d&eacute;passe pas le pied, tronc vertical</div>
+            </div>
+            <div class="rem-ex">
+              <div class="ex-nm">ATR tenu libre &mdash; corrections partenaire</div>
+              <div class="ex-dt">5 &times; 5 s &middot; Pair observe et corrige alignement</div>
+              <div class="ex-cr">&#10003; ATR tenu 5 s, axe parfait, segment distaux tendus</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fg1" style="margin-top:14px">
+        <label>Exercices correctifs sp&eacute;cifiques &mdash; adapt&eacute;s aux lacunes identifi&eacute;es ci-dessus</label>
+        <textarea id="f-rem" placeholder="Ex : pour la cambrure lombaire en ATR &rarr; gainage isométrique quotidien 3&times;20s avant chaque séance + rappel postural par partenaire..."></textarea>
+      </div>
+    </div>
+
+    <!-- LIEN RÉFÉRENTIEL DNB -->
+    <div class="card">
+      <div class="card-hd"><span class="ico">&#128203;</span>Lien r&eacute;f&eacute;rentiel &mdash; Scores DNB simul&eacute;s</div>
+      <div class="alrt awarn">
+        Ces scores sont indicatifs &mdash; ils servent &agrave; situer l&rsquo;&eacute;l&egrave;ve dans le r&eacute;f&eacute;rentiel. Ils ne constituent pas une note.
+      </div>
+      <div class="dnb-row" id="dnb-row">
+        <div class="dnb-card c1"><div class="dnb-v" id="dnb-c1">—</div><div class="dnb-l">C1 &mdash; Enchaînement<br><small>/8 pts</small></div></div>
+        <div class="dnb-card c2"><div class="dnb-v" id="dnb-c2">—</div><div class="dnb-l">C2 &mdash; Ex&eacute;cution<br><small>/8 pts</small></div></div>
+        <div class="dnb-card c3"><div class="dnb-v" id="dnb-c3">—</div><div class="dnb-l">C3 &mdash; Jugement<br><small>/4 pts</small></div></div>
+      </div>
+      <div id="dnb-text" style="font-size:.8rem;color:var(--slate);margin-top:10px;line-height:1.7"></div>
+    </div>
+
+    <!-- SAUVEGARDER -->
+    <div class="btn-row">
+      <button class="btn btn-forest" onclick="saveFiche()">&#10003; Sauvegarder la fiche</button>
+      <button class="btn btn-out" onclick="resetForm()">&#8635; Nouvelle fiche vierge</button>
+      <button class="btn btn-out" onclick="window.print()">&#128424; Imprimer cette fiche</button>
+    </div>
+
+    <div id="save-msg" style="display:none;margin-top:10px" class="alrt aok"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PANEL 2 — MES FICHES
+       ══════════════════════════════════════════ -->
+  <div class="panel" id="p-list">
+    <div class="card">
+      <div class="card-hd"><span class="ico">&#128196;</span>Fiches enregistr&eacute;es</div>
+      <div id="fiches-list" class="fiches-list">
+        <div class="empty-state">Aucune fiche enregistr&eacute;e. Cr&eacute;ez votre premi&egrave;re fiche ci-dessus.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PANEL 3 — BILAN DE CLASSE
+       ══════════════════════════════════════════ -->
+  <div class="panel" id="p-bilan">
+    <div class="card">
+      <div class="card-hd"><span class="ico">&#128202;</span>Bilan de classe &mdash; Renforcement musculaire</div>
+      <div id="bilan-content">
+        <div class="empty-state">Enregistrez au moins 2 fiches pour afficher le bilan de classe.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PANEL 4 — GUIDE TERRAIN
+       ══════════════════════════════════════════ -->
+  <div class="panel" id="p-guide">
+    <div class="card">
+      <div class="card-hd"><span class="ico">&#128218;</span>Guide d&rsquo;observation terrain</div>
+
+      <div class="section-lbl">Protocole d&rsquo;observation en s&eacute;ance (5 &eacute;tapes)</div>
+
+      <div style="display:grid;gap:10px;margin-bottom:14px">
+        <div style="background:var(--ivory2);border-radius:var(--r);padding:12px 14px;border-left:3px solid var(--forest3)">
+          <strong style="color:var(--forest);font-size:.82rem">ÉTAPE 1 &mdash; Avant la s&eacute;ance (2 min)</strong>
+          <p style="font-size:.78rem;color:var(--ink2);margin-top:4px;line-height:1.6">Ouvrir la fiche. Renseigner l&rsquo;identit&eacute; de l&rsquo;&eacute;l&egrave;ve et l&rsquo;&eacute;l&eacute;ment gymnique pr&eacute;vu. Avoir le r&eacute;f&eacute;rentiel sous les yeux (codes PT / GM / CL).</p>
+        </div>
+        <div style="background:var(--ivory2);border-radius:var(--r);padding:12px 14px;border-left:3px solid var(--forest3)">
+          <strong style="color:var(--forest);font-size:.82rem">ÉTAPE 2 &mdash; Observation de la 1re tentative (30 s)</strong>
+          <p style="font-size:.78rem;color:var(--ink2);margin-top:4px;line-height:1.6">Observer sans intervenir. Coder le niveau global (Faible / Moyen / Bon). Identifier la lacune la plus visible. Cocher les groupes musculaires concern&eacute;s.</p>
+        </div>
+        <div style="background:var(--ivory2);border-radius:var(--r);padding:12px 14px;border-left:3px solid var(--forest3)">
+          <strong style="color:var(--forest);font-size:.82rem">ÉTAPE 3 &mdash; Observation de la 2e tentative (30 s)</strong>
+          <p style="font-size:.78rem;color:var(--ink2);margin-top:4px;line-height:1.6">Compléter les crit&egrave;res techniques (gainage, alignement, contr&ocirc;le, coordination). Scorer chaque dimension sur 3 &eacute;toiles. Comparer avec la 1re tentative.</p>
+        </div>
+        <div style="background:var(--ivory2);border-radius:var(--r);padding:12px 14px;border-left:3px solid var(--forest3)">
+          <strong style="color:var(--forest);font-size:.82rem">ÉTAPE 4 &mdash; Après la s&eacute;ance (5 min)</strong>
+          <p style="font-size:.78rem;color:var(--ink2);margin-top:4px;line-height:1.6">Renseigner les zones textuelles (forces, difficult&eacute;s, besoins). S&eacute;lectionner les exercices correctifs adapt&eacute;s au profil. Lier au r&eacute;f&eacute;rentiel DNB (C1/C2/C3).</p>
+        </div>
+        <div style="background:var(--ivory2);border-radius:var(--r);padding:12px 14px;border-left:3px solid var(--forest3)">
+          <strong style="color:var(--forest);font-size:.82rem">ÉTAPE 5 &mdash; Retour vers l&rsquo;&eacute;l&egrave;ve (2 min)</strong>
+          <p style="font-size:.78rem;color:var(--ink2);margin-top:4px;line-height:1.6">Formuler un feedback en 3 points : 1 point fort, 1 lacune prioritaire, 1 exercice correctif &agrave; travailler en autonomie guidée.</p>
+        </div>
+      </div>
+
+      <div class="section-lbl">Correspondance codes grille &harr; familles gymniques &harr; muscles cibles</div>
+      <div style="overflow-x:auto">
+        <table style="font-size:.76rem;width:100%">
+          <thead>
+            <tr>
+              <th style="background:var(--forest);color:var(--ivory);padding:7px 10px">Code</th>
+              <th style="background:var(--forest);color:var(--ivory);padding:7px 10px">Observable</th>
+              <th style="background:var(--forest);color:var(--ivory);padding:7px 10px">Famille</th>
+              <th style="background:var(--forest);color:var(--ivory);padding:7px 10px">Muscles prioritaires</th>
+              <th style="background:var(--forest);color:var(--ivory);padding:7px 10px">Signal de lacune</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:var(--redbg)"><td><strong>PT&minus;</strong></td><td>OBS-01 Degr&eacute; A</td><td>F1 &middot; F5</td><td>Transverse, multifides, grand dorsal</td><td>Corps mou, ruptures posturales &gt;3</td></tr>
+            <tr style="background:var(--orabg)"><td><strong>PT~</strong></td><td>OBS-01 Degr&eacute; B</td><td>F1 &middot; F5</td><td>Érecteurs, obliques, stabilisateurs prof.</td><td>Rel&acirc;chement sur dernier tiers</td></tr>
+            <tr style="background:var(--grnbg)"><td><strong>PT+</strong></td><td>OBS-01 Degr&eacute; C</td><td>F1 &middot; F5</td><td>Toute la cha&icirc;ne posturale automatisée</td><td>Gainage continu 100%</td></tr>
+            <tr style="background:var(--redbg)"><td><strong>GM&minus;</strong></td><td>OBS-02 Degr&eacute; A</td><td>F1 &middot; F2</td><td>Triceps, d&eacute;lto&iuml;des, stabilisateurs &eacute;paule</td><td>ATR refus&eacute; ou aide syst&eacute;matique</td></tr>
+            <tr style="background:var(--orabg)"><td><strong>GM~</strong></td><td>OBS-02 Degr&eacute; B</td><td>F1 &middot; F2</td><td>Coiffe rotateurs, trapezes, rhombo&iuml;des</td><td>Axe perturb&eacute;, renversement impr&eacute;cis</td></tr>
+            <tr style="background:var(--grnbg)"><td><strong>GM+</strong></td><td>OBS-02 Degr&eacute; C</td><td>F1 &middot; F2</td><td>Cha&icirc;ne MS enti&egrave;re, proprioception</td><td>ATR align&eacute; 3s, directement encha&icirc;n&eacute;</td></tr>
+            <tr style="background:var(--redbg)"><td><strong>CL&minus;</strong></td><td>OBS-03 Degr&eacute; A</td><td>F1-F5</td><td>Fl&eacute;chisseurs hanche, cha&icirc;ne cin&eacute;tique MI</td><td>Juxtaposition, 1 famille, arr&ecirc;ts</td></tr>
+            <tr style="background:var(--orabg)"><td><strong>CL~</strong></td><td>OBS-03 Degr&eacute; B</td><td>F1-F5</td><td>Coordination inter-segmentaire, ischio-jamb.</td><td>2 familles, transitions h&eacute;sitantes</td></tr>
+            <tr style="background:var(--grnbg)"><td><strong>CL+</strong></td><td>OBS-03 Degr&eacute; C</td><td>F1-F5</td><td>Toute la cha&icirc;ne, r&eacute;sistance de gainage</td><td>&ge;3 familles, liaisons fluides, 0 rupture</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-lbl" style="margin-top:16px">Protocole de renforcement recommand&eacute; par phase de cycle</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:6px">
+        <div style="background:var(--ivory2);border-radius:var(--r);padding:10px 12px">
+          <strong style="color:var(--forest);font-size:.78rem">BLOC 1 — S1-S3 &mdash; Adaptation anatomique</strong>
+          <p style="font-size:.74rem;color:var(--ink2);margin-top:5px;line-height:1.6">Gainage isométrique &middot; Mobilité articulaire &middot; Conscience corporelle &middot; Volume léger &middot; Charge : poids du corps uniquement</p>
+        </div>
+        <div style="background:var(--ivory2);border-radius:var(--r);padding:10px 12px">
+          <strong style="color:var(--forest);font-size:.78rem">BLOC 2 — S4-S7 &mdash; Renforcement fonctionnel</strong>
+          <p style="font-size:.74rem;color:var(--ink2);margin-top:5px;line-height:1.6">Gainage dynamique &middot; Cha&icirc;nes musculaires gymniques &middot; Coordination &middot; Charge progressive &middot; Auto-correction</p>
+        </div>
+        <div style="background:var(--ivory2);border-radius:var(--r);padding:10px 12px">
+          <strong style="color:var(--forest);font-size:.78rem">BLOC 3 — S8-S10 &mdash; Int&eacute;gration technique</strong>
+          <p style="font-size:.74rem;color:var(--ink2);margin-top:5px;line-height:1.6">Explosivit&eacute; &middot; Propri&eacute;ception &middot; Renforcement sp&eacute;cifique &eacute;l&eacute;ment gymnique &middot; Cha&icirc;ne compl&egrave;te</p>
+        </div>
+        <div style="background:var(--ivory2);border-radius:var(--r);padding:10px 12px">
+          <strong style="color:var(--forest);font-size:.78rem">BLOC 4 — S11-S12 &mdash; Évaluation DNB</strong>
+          <p style="font-size:.74rem;color:var(--ink2);margin-top:5px;line-height:1.6">Maintien &middot; Routine compl&egrave;te &middot; Endurance de la prestation &middot; Gestion de l&rsquo;effort DNB</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+/* ─────────────────────────────────────────────
+   STATE
+   ───────────────────────────────────────────── */
+var fiches = [];
+var currentNiv = "";
+var criteresScores = {};
+var selectedMuscles = [];
+var editIdx = -1;
+
+/* ─────────────────────────────────────────────
+   TABS
+   ───────────────────────────────────────────── */
+function showTab(id) {
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("on"); });
+  document.querySelectorAll(".panel").forEach(function(p){ p.classList.remove("on"); });
+  var panels = { "new":"p-new", "list":"p-list", "bilan":"p-bilan", "guide":"p-guide" };
+  document.getElementById(panels[id]).classList.add("on");
+  var tabs = document.querySelectorAll(".tab");
+  var idx = {"new":0,"list":1,"bilan":2,"guide":3}[id];
+  tabs[idx].classList.add("on");
+  if (id === "list") renderList();
+  if (id === "bilan") renderBilan();
+}
+
+/* ─────────────────────────────────────────────
+   ÉLÉMENTS PAR FAMILLE
+   ───────────────────────────────────────────── */
+var ELEMENTS = {
+  F1: ["ATR (Appui Tendu Renvers\u00e9)","Roulade avant group\u00e9e","Roulade arri\u00e8re group\u00e9e","Roue","ATR-roulade enchaîn\u00e9","Renversement lateral"],
+  F2: ["Salto avant group\u00e9","Salto arri\u00e8re group\u00e9","Vrille 360\u00b0","Tour d'appui","Pirouette"],
+  F3: ["Grand \u00e9cart saut\u00e9","Sissonne","Ciseau","Tour jet\u00e9","Saut carpé","Cabriole"],
+  F4: ["Roue","Flip avant","Flip arri\u00e8re","S\u00e9rie acrobatique (2 \u00e9l\u00e9ments)","Tour de carpe"],
+  F5: ["Arabesque","Ondulation compl\u00e8te","Grand \u00e9cart","Balance","Pont","Équilibre bipodal"]
+};
+
+function updateElement() {
+  var fam = document.getElementById("f-famille").value;
+  var sel = document.getElementById("f-element");
+  sel.innerHTML = "";
+  if (!fam) { sel.innerHTML = '<option value="">-- Choisir la famille d\'abord --</option>'; return; }
+  var els = ELEMENTS[fam] || [];
+  els.forEach(function(e) {
+    var opt = document.createElement("option");
+    opt.value = e; opt.textContent = e;
+    sel.appendChild(opt);
+  });
+}
+
+/* ─────────────────────────────────────────────
+   NIVEAU
+   ───────────────────────────────────────────── */
+var NIV_DESC = {
+  F: "Degr\u00e9 A \u2014 Ex\u00e9cute : l'\u00e9l\u00e8ve r\u00e9alise partiellement avec aide ou de nombreuses ruptures. Priorit\u00e9 : construire les gabarits moteurs de base et la tonicité posturale.",
+  M: "Degr\u00e9 B \u2014 Ma\u00eetrise : l'\u00e9l\u00e8ve r\u00e9alise l'\u00e9l\u00e9ment mais avec des déficits de gainage, d'amplitude ou de coordination. Priorit\u00e9 : consolidation et liaisons.",
+  B: "Degr\u00e9 C \u2014 Anticipe : l'\u00e9l\u00e8ve ma\u00eetrise l'\u00e9l\u00e9ment et anticipe le suivant. Priorit\u00e9 : complexification, amplitude et composition multi-familles."
+};
+
+function setNiv(v, btn) {
+  currentNiv = v;
+  document.querySelectorAll(".niv-btn").forEach(function(b) {
+    b.classList.remove("sel-F","sel-M","sel-B");
+  });
+  btn.classList.add("sel-" + v);
+  var d = document.getElementById("niv-desc");
+  d.style.display = "block";
+  d.className = "alrt " + (v==="F"?"aerr":v==="M"?"awarn":"aok");
+  d.textContent = NIV_DESC[v] || "";
+  updateDNB();
+}
+
+/* ─────────────────────────────────────────────
+   STARS
+   ───────────────────────────────────────────── */
+document.querySelectorAll(".stars").forEach(function(container) {
+  var crit = container.dataset.crit;
+  criteresScores[crit] = 0;
+  for (var i = 1; i <= 3; i++) {
+    var s = document.createElement("button");
+    s.className = "star";
+    s.textContent = "★";
+    s.dataset.val = i;
+    s.dataset.crit = crit;
+    s.addEventListener("click", (function(c,v,stars){
+      return function() {
+        criteresScores[c] = v;
+        stars.querySelectorAll(".star").forEach(function(st) {
+          st.classList.toggle("on", parseInt(st.dataset.val) <= v);
+        });
+        updateDNB();
+      };
+    })(crit, i, container));
+    container.appendChild(s);
+  }
+});
+
+/* ─────────────────────────────────────────────
+   MUSCLES
+   ───────────────────────────────────────────── */
+function toggleMuscle(btn, name) {
+  var idx = selectedMuscles.indexOf(name);
+  if (idx > -1) {
+    selectedMuscles.splice(idx, 1);
+    btn.classList.remove("on","warn");
+  } else {
+    selectedMuscles.push(name);
+    btn.classList.add("on");
+  }
+}
+
+/* ─────────────────────────────────────────────
+   DNB SIMULATION
+   ───────────────────────────────────────────── */
+function updateDNB() {
+  var nivMap = { F:0, M:1, B:2, "":0.5 };
+  var nivN = nivMap[currentNiv] !== undefined ? nivMap[currentNiv] : 0.5;
+
+  var g = ["g-abdo","g-lomb","g-bass","g-dur"];
+  var a = ["a-main","a-alig","a-dist","a-recp"];
+  var c = ["c-ms","c-mi","c-exp","c-exc"];
+  var e = ["e-coord","e-stat","e-prop","e-ryt"];
+
+  function avg(keys) {
+    var tot = 0, cnt = 0;
+    keys.forEach(function(k) { if (criteresScores[k]) { tot += criteresScores[k]; cnt++; } });
+    return cnt > 0 ? tot/cnt : 0;
+  }
+
+  var avgG = avg(g), avgA = avg(a), avgC = avg(c), avgE = avg(e);
+
+  var c1 = ((avgG + avgA)/2 * 2.67 * (nivN * 0.5 + 0.5)).toFixed(1);
+  var c2 = ((avgC + avgE)/2 * 2.67).toFixed(1);
+  var c3 = (nivN * 4).toFixed(1);
+
+  c1 = Math.min(8, parseFloat(c1)).toFixed(1);
+  c2 = Math.min(8, parseFloat(c2)).toFixed(1);
+  c3 = Math.min(4, parseFloat(c3)).toFixed(1);
+
+  document.getElementById("dnb-c1").textContent = avgG > 0 ? c1 + "/8" : "—";
+  document.getElementById("dnb-c2").textContent = avgC > 0 ? c2 + "/8" : "—";
+  document.getElementById("dnb-c3").textContent = currentNiv ? c3 + "/4" : "—";
+
+  var texts = {
+    F: "C1 \u2014 Enchainement minimal (0\u20134). C2 \u2014 Le gymnaste ex\u00e9cute. C3 \u2014 Jugement partiel.",
+    M: "C1 \u2014 Enchainement construit (4,5\u20136). C2 \u2014 Le gymnaste ma\u00eetrise. C3 \u2014 Jugement argument\u00e9.",
+    B: "C1 \u2014 Enchainement riche et original (6,5\u20138). C2 \u2014 Le gymnaste anticipe. C3 \u2014 Jugement pertinent."
+  };
+  document.getElementById("dnb-text").textContent = texts[currentNiv] || "";
+}
+
+/* ─────────────────────────────────────────────
+   SAVE / LOAD
+   ───────────────────────────────────────────── */
+function saveFiche() {
+  var prenom = document.getElementById("f-prenom").value.trim();
+  if (!prenom) { alert("Le pr\u00e9nom est obligatoire."); return; }
+
+  var fiche = {
+    id: Date.now(),
+    prenom: prenom,
+    classe: document.getElementById("f-classe").value,
+    date: document.getElementById("f-date").value,
+    seance: document.getElementById("f-seance").value,
+    obs: document.getElementById("f-obs").value,
+    famille: document.getElementById("f-famille").value,
+    element: document.getElementById("f-element").value,
+    desc: document.getElementById("f-desc").value,
+    niv: currentNiv,
+    criteresScores: JSON.parse(JSON.stringify(criteresScores)),
+    gainage: document.getElementById("f-gainage").value,
+    align: document.getElementById("f-align").value,
+    ctrl: document.getElementById("f-ctrl").value,
+    coord: document.getElementById("f-coord").value,
+    forces: document.getElementById("f-forces").value,
+    diff: document.getElementById("f-diff").value,
+    muscles: selectedMuscles.slice(),
+    besoins: document.getElementById("f-besoins").value,
+    rem: document.getElementById("f-rem").value,
+    dnb: {
+      c1: document.getElementById("dnb-c1").textContent,
+      c2: document.getElementById("dnb-c2").textContent,
+      c3: document.getElementById("dnb-c3").textContent
+    }
+  };
+
+  if (editIdx > -1) {
+    fiches[editIdx] = fiche;
+    editIdx = -1;
+  } else {
+    fiches.push(fiche);
+  }
+
+  document.getElementById("cnt").textContent = fiches.length;
+  var msg = document.getElementById("save-msg");
+  msg.style.display = "block";
+  msg.textContent = "Fiche de " + prenom + " sauvegard\u00e9e avec succ\u00e8s (" + fiches.length + " fiche" + (fiches.length > 1 ? "s" : "") + " au total).";
+  setTimeout(function() { msg.style.display = "none"; }, 3000);
+}
+
+function resetForm() {
+  document.querySelectorAll("#p-new input[type=text], #p-new textarea, #p-new select").forEach(function(el) {
+    el.value = "";
+  });
+  currentNiv = "";
+  criteresScores = {};
+  selectedMuscles = [];
+  editIdx = -1;
+  document.querySelectorAll(".niv-btn").forEach(function(b) { b.classList.remove("sel-F","sel-M","sel-B"); });
+  document.getElementById("niv-desc").style.display = "none";
+  document.querySelectorAll(".star").forEach(function(s) { s.classList.remove("on"); });
+  document.querySelectorAll(".m-chip").forEach(function(c) { c.classList.remove("on","warn"); });
+  document.getElementById("dnb-c1").textContent = "—";
+  document.getElementById("dnb-c2").textContent = "—";
+  document.getElementById("dnb-c3").textContent = "—";
+  document.getElementById("dnb-text").textContent = "";
+  updateElement();
+}
+
+/* ─────────────────────────────────────────────
+   RENDER LIST
+   ───────────────────────────────────────────── */
+function renderList() {
+  var c = document.getElementById("fiches-list");
+  if (!fiches.length) {
+    c.innerHTML = '<div class="empty-state">Aucune fiche enregistr\u00e9e.</div>';
+    return;
+  }
+  c.innerHTML = "";
+  fiches.forEach(function(f, i) {
+    var div = document.createElement("div");
+    div.className = "fiche-preview";
+    var nivLabels = { F:"Faible", M:"Moyen", B:"Bon", "":"?" };
+    var muscStr = f.muscles.length ? f.muscles.slice(0,3).join(", ") + (f.muscles.length > 3 ? " +" + (f.muscles.length-3) : "") : "Non renseign\u00e9";
+    div.innerHTML =
+      '<div class="fp-badge fp-' + (f.niv||"M") + '">' + (f.niv||"?") + '</div>' +
+      '<div class="fp-info">' +
+      '<h3>' + f.prenom + (f.classe ? " \u2014 " + f.classe : "") + '</h3>' +
+      '<p>' + (f.element||"Élément non renseign\u00e9") + " \u00b7 " + (f.date||"Date non renseign\u00e9e") + "</p>" +
+      '<div class="fp-tags">' +
+      '<span class="fp-tag">Niveau : ' + (nivLabels[f.niv]||"?") + '</span>' +
+      '<span class="fp-tag">S\u00e9ance ' + (f.seance||"?") + '</span>' +
+      '<span class="fp-tag">Muscles : ' + muscStr + '</span>' +
+      '</div></div>' +
+      '<div style="display:flex;gap:6px;flex-shrink:0">' +
+      '<button class="btn btn-out btn-sm" onclick="loadFiche(' + i + ')">&#9998; Modifier</button>' +
+      '<button class="btn btn-out btn-sm" style="color:var(--red);border-color:var(--red)" onclick="deleteFiche(' + i + ')">&#10005;</button>' +
+      '</div>';
+    c.appendChild(div);
+  });
+}
+
+function loadFiche(i) {
+  var f = fiches[i];
+  editIdx = i;
+  document.getElementById("f-prenom").value = f.prenom || "";
+  document.getElementById("f-classe").value = f.classe || "";
+  document.getElementById("f-date").value = f.date || "";
+  document.getElementById("f-seance").value = f.seance || "";
+  document.getElementById("f-obs").value = f.obs || "";
+  document.getElementById("f-famille").value = f.famille || "";
+  updateElement();
+  document.getElementById("f-element").value = f.element || "";
+  document.getElementById("f-desc").value = f.desc || "";
+  document.getElementById("f-gainage").value = f.gainage || "";
+  document.getElementById("f-align").value = f.align || "";
+  document.getElementById("f-ctrl").value = f.ctrl || "";
+  document.getElementById("f-coord").value = f.coord || "";
+  document.getElementById("f-forces").value = f.forces || "";
+  document.getElementById("f-diff").value = f.diff || "";
+  document.getElementById("f-besoins").value = f.besoins || "";
+  document.getElementById("f-rem").value = f.rem || "";
+
+  criteresScores = JSON.parse(JSON.stringify(f.criteresScores || {}));
+  document.querySelectorAll(".star").forEach(function(s) {
+    var crit = s.dataset.crit;
+    var val = parseInt(s.dataset.val);
+    s.classList.toggle("on", criteresScores[crit] >= val);
+  });
+
+  selectedMuscles = (f.muscles || []).slice();
+  document.querySelectorAll(".m-chip").forEach(function(chip) {
+    chip.classList.remove("on","warn");
+    if (selectedMuscles.indexOf(chip.getAttribute("onclick").match(/"([^"]+)"/)?.[1]) > -1) {
+      chip.classList.add("on");
+    }
+  });
+
+  currentNiv = f.niv || "";
+  document.querySelectorAll(".niv-btn").forEach(function(b) { b.classList.remove("sel-F","sel-M","sel-B"); });
+  if (currentNiv) {
+    var btns = document.querySelectorAll(".niv-btn");
+    var idx = {F:0,M:1,B:2}[currentNiv];
+    if (idx !== undefined) btns[idx].classList.add("sel-" + currentNiv);
+    var d = document.getElementById("niv-desc");
+    d.style.display = "block";
+    d.className = "alrt " + (currentNiv==="F"?"aerr":currentNiv==="M"?"awarn":"aok");
+    d.textContent = NIV_DESC[currentNiv] || "";
+  }
+
+  updateDNB();
+  showTab("new");
+  window.scrollTo(0,0);
+}
+
+function deleteFiche(i) {
+  if (!confirm("Supprimer la fiche de " + fiches[i].prenom + " ?")) return;
+  fiches.splice(i, 1);
+  document.getElementById("cnt").textContent = fiches.length;
+  renderList();
+}
+
+/* ─────────────────────────────────────────────
+   BILAN DE CLASSE
+   ───────────────────────────────────────────── */
+function renderBilan() {
+  var c = document.getElementById("bilan-content");
+  if (fiches.length < 2) {
+    c.innerHTML = '<div class="empty-state">Enregistrez au moins 2 fiches pour afficher le bilan.</div>';
+    return;
+  }
+
+  var cnt = { F:0, M:0, B:0 };
+  fiches.forEach(function(f) { if (f.niv) cnt[f.niv]++; });
+  var tot = fiches.length;
+
+  /* Muscles les plus fréquents */
+  var muscCnt = {};
+  fiches.forEach(function(f) {
+    (f.muscles||[]).forEach(function(m) { muscCnt[m] = (muscCnt[m]||0)+1; });
+  });
+  var muscSort = Object.keys(muscCnt).sort(function(a,b){return muscCnt[b]-muscCnt[a];}).slice(0,6);
+
+  var html = '<div class="stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:16px">' +
+    '<div style="background:var(--redbg);border:1px solid rgba(155,44,44,.3);border-radius:8px;padding:12px;text-align:center"><div style="font-size:1.8rem;font-weight:600;color:var(--red);font-family:var(--fh)">' + cnt.F + '</div><div style="font-size:.68rem;color:var(--slate)">Faibles (A)</div></div>' +
+    '<div style="background:var(--orabg);border:1px solid rgba(192,90,0,.3);border-radius:8px;padding:12px;text-align:center"><div style="font-size:1.8rem;font-weight:600;color:var(--orange);font-family:var(--fh)">' + cnt.M + '</div><div style="font-size:.68rem;color:var(--slate)">Moyens (B)</div></div>' +
+    '<div style="background:var(--grnbg);border:1px solid rgba(30,107,62,.3);border-radius:8px;padding:12px;text-align:center"><div style="font-size:1.8rem;font-weight:600;color:var(--green);font-family:var(--fh)">' + cnt.B + '</div><div style="font-size:.68rem;color:var(--slate)">Bons (C)</div></div>' +
+    '<div style="background:var(--ivory2);border:1px solid var(--bdr);border-radius:8px;padding:12px;text-align:center"><div style="font-size:1.8rem;font-weight:600;color:var(--forest);font-family:var(--fh)">' + tot + '</div><div style="font-size:.68rem;color:var(--slate)">Fiches totales</div></div>' +
+    '</div>';
+
+  if (muscSort.length) {
+    html += '<div style="margin-top:4px"><div class="section-lbl">Groupes musculaires les plus lacunaires (classe)</div>';
+    muscSort.forEach(function(m) {
+      var pct = Math.round(muscCnt[m]/tot*100);
+      html += '<div class="pb-row"><div class="pb-lbl">' + m + '</div>' +
+        '<div class="pb-track"><div class="pb-fill" style="width:' + pct + '%;background:var(--forest3)"></div></div>' +
+        '<div class="pb-val">' + pct + '%</div></div>';
+    });
+    html += '</div>';
+  }
+
+  /* Liste élèves */
+  html += '<div style="margin-top:14px"><div class="section-lbl">R\u00e9capitulatif par \u00e9l\u00e8ve</div><div class="twrap"><table style="font-size:.76rem;width:100%"><thead><tr><th style="background:var(--forest);color:var(--ivory);padding:7px 9px">Pr\u00e9nom</th><th style="background:var(--forest);color:var(--ivory);padding:7px 9px">El\u00e9ment</th><th style="background:var(--forest);color:var(--ivory);padding:7px 9px">Niveau</th><th style="background:var(--forest);color:var(--ivory);padding:7px 9px">Muscles lacunaires</th><th style="background:var(--forest);color:var(--ivory);padding:7px 9px">Point prioritaire</th></tr></thead><tbody>';
+  fiches.forEach(function(f) {
+    var nivL = {F:"Faible (A)",M:"Moyen (B)",B:"Bon (C)","":"?"};
+    var bg = {F:"var(--redbg)",M:"var(--orabg)",B:"var(--grnbg)","":"transparent"};
+    html += '<tr style="background:'+bg[f.niv||""]+'"><td><strong>'+f.prenom+'</strong></td>'+
+      '<td>'+(f.element||"—")+'</td>'+
+      '<td>'+nivL[f.niv||""]+'</td>'+
+      '<td style="font-size:.72rem">'+(f.muscles||[]).slice(0,3).join(", ")+(f.muscles&&f.muscles.length>3?"...":"")+'</td>'+
+      '<td style="font-size:.72rem">'+(f.diff?f.diff.substring(0,80)+(f.diff.length>80?"...":""):"—")+'</td></tr>';
+  });
+  html += '</tbody></table></div></div>';
+
+  c.innerHTML = html;
+}
+
+/* ─────────────────────────────────────────────
+   EXPORT
+   ───────────────────────────────────────────── */
+function exportAll() {
+  if (!fiches.length) { alert("Aucune fiche \u00e0 exporter."); return; }
+  var bom = "\uFEFF";
+  var hdr = "Pr\u00e9nom;Classe;Date;S\u00e9ance;El\u00e9ment gymnique;Famille;Niveau;Muscles lacunaires;Points forts;Difficult\u00e9s;Besoins;Rem\u00e9diations;DNB C1;DNB C2;DNB C3\n";
+  var rows = fiches.map(function(f) {
+    return [
+      f.prenom, f.classe, f.date, f.seance,
+      f.element, f.famille,
+      {F:"Faible",M:"Moyen",B:"Bon","":"?"}[f.niv||""],
+      (f.muscles||[]).join(" | "),
+      (f.forces||"").replace(/;/g,","),
+      (f.diff||"").replace(/;/g,","),
+      (f.besoins||"").replace(/;/g,","),
+      (f.rem||"").replace(/;/g,","),
+      (f.dnb||{}).c1||"", (f.dnb||{}).c2||"", (f.dnb||{}).c3||""
+    ].join(";");
+  }).join("\n");
+  var d = new Date();
+  var blob = new Blob([bom+hdr+rows], {type:"text/csv;charset=utf-8"});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url;
+  a.download = "obs_rm_gym_" + d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate() + ".csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ─────────────────────────────────────────────
+   INIT
+   ───────────────────────────────────────────── */
+document.getElementById("f-date").value = new Date().toISOString().split("T")[0];
+</script>
+</body>
+</html>
