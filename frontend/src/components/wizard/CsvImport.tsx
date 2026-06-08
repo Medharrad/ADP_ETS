@@ -18,7 +18,7 @@ export interface CsvImportProps {
   onImport: (students: { prenom: string; vs: [string, string, string] }[]) => void;
 }
 
-const OBS = ["OBS-01", "OBS-02", "OBS-03"] as const;
+const OBS = ["Force", "Souplesse", "Équilibre"] as const;
 
 export function CsvImport({ onImport }: CsvImportProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -39,7 +39,7 @@ export function CsvImport({ onImport }: CsvImportProps) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "modele_eleves_ADP-GYM.csv";
+    a.download = "modele_eleves_ADP-RM.csv";
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -124,8 +124,8 @@ export function CsvImport({ onImport }: CsvImportProps) {
             <span className="text-[#2563EB] underline-offset-2 hover:underline">parcourir</span>
           </p>
           <p className="mt-1 text-xs text-[#64748B]">
-            Colonnes : <strong>Prénom · OBS-01 · OBS-02 · OBS-03</strong> — scores 0–10 ou codes
-            métier (PT~ · GM− · CL+)
+            Colonnes : <strong>Prénom · Force · Souplesse · Équilibre</strong> — scores 0–10 ou
+            codes métier (FO~ · SO− · EQ+)
           </p>
         </div>
       )}

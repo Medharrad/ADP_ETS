@@ -69,9 +69,9 @@ export function lacunes(vs: number[]): Lacune[] {
 }
 
 const AXE_PRIO_LABELS = [
-  "Gainage et tonicité posturale — construire l'axe corporel",
-  "Gabarit moteur du renversement — ATR sans aide",
-  "Composition et liaisons — 2 familles sans arrêt",
+  "Force musculaire — renforcer le tronc, les membres supérieurs et inférieurs",
+  "Souplesse — gagner en amplitude des jambes et du dos",
+  "Équilibre & coordination — stabiliser et affiner la proprioception",
 ];
 
 /** Priority-axis label derived from the weakest lacune. */
@@ -104,9 +104,9 @@ export interface ClassAnalysis {
 }
 
 const DECISIONS: Record<Niveau, string> = {
-  A: "Classe débutante — Priorité fondamentaux : gainage et renversement",
-  B: "Classe intermédiaire — Différenciation A/B : consolider posture, développer composition",
-  C: "Classe avancée — Approfondissement et tutorat : composition multi-familles",
+  A: "Classe débutante — Priorité renforcement de base : gainage du tronc, force MS et MI",
+  B: "Classe intermédiaire — Différenciation A/B : consolider la force, développer la souplesse",
+  C: "Classe avancée — Approfondissement : souplesse fonctionnelle, équilibre et coordination",
 };
 
 /**
@@ -253,7 +253,7 @@ export function genPlan(
       const numero = cursor + 1 + s;
       const isLast = si === dist.length - 1 && s === ns - 1;
       const objectif = isLast
-        ? "Bilan et évaluation formative de l'enchaînement gymnique"
+        ? "Bilan et évaluation des capacités musculaires (retest terrain)"
         : `Développer : ${axe.titre}`;
       seances.push({
         numero,
@@ -299,21 +299,21 @@ export function genPlan(
 
 /**
  * Convert a raw CSV cell to a 0–10 score. Accepts métier codes
- * (PT−/PT~/PT+, GM…, CL…), plain A/B/C, or a numeric value.
+ * (FO−/FO~/FO+, SO…, EQ…), plain A/B/C, or a numeric value.
  * Returns null when the cell can't be interpreted. Mirrors the gs() closure.
  */
 export function codeToScore(raw: string): number | null {
   const r = (raw || "").trim().toUpperCase();
   if (!r) return null;
-  if (r.indexOf("PT-") > -1 || r === "PT−") return DS.A;
-  if (r === "PT~") return DS.B;
-  if (r === "PT+") return DS.C;
-  if (r.indexOf("GM-") > -1 || r === "GM−") return DS.A;
-  if (r === "GM~") return DS.B;
-  if (r === "GM+") return DS.C;
-  if (r.indexOf("CL-") > -1 || r === "CL−") return DS.A;
-  if (r === "CL~") return DS.B;
-  if (r === "CL+") return DS.C;
+  if (r.indexOf("FO-") > -1 || r === "FO−") return DS.A;
+  if (r === "FO~") return DS.B;
+  if (r === "FO+") return DS.C;
+  if (r.indexOf("SO-") > -1 || r === "SO−") return DS.A;
+  if (r === "SO~") return DS.B;
+  if (r === "SO+") return DS.C;
+  if (r.indexOf("EQ-") > -1 || r === "EQ−") return DS.A;
+  if (r === "EQ~") return DS.B;
+  if (r === "EQ+") return DS.C;
   if (r === "A") return DS.A;
   if (r === "B") return DS.B;
   if (r === "C") return DS.C;

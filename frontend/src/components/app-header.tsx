@@ -45,7 +45,7 @@ export function AppHeader() {
             </span>
             <span className="leading-tight">
               <span className="block text-base font-semibold tracking-tight text-[#0C1E3C]">
-                ADP-GYM
+                ADP-RM
               </span>
               <span className="hidden text-[10px] font-medium uppercase tracking-[0.18em] text-[#64748B] sm:block">
                 ADP 2026

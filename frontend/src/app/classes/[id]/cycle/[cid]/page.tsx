@@ -225,6 +225,33 @@ export default function CyclePage() {
                       ))}
                     </tbody>
                   </table>
+                  {((seq.axe.exG?.length ?? 0) > 0 || (seq.axe.exF?.length ?? 0) > 0) && (
+                    <div className={styles.exPanel}>
+                      <div className={styles.exGrid}>
+                        <div className={`${styles.exCol} ${styles.exBoys}`}>
+                          <h4>🧒 Exercices Garçons</h4>
+                          <ul>
+                            {(seq.axe.exG ?? []).map((ex, i) => (
+                              <li key={i}>{ex}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className={`${styles.exCol} ${styles.exGirls}`}>
+                          <h4>👧 Exercices Filles</h4>
+                          <ul>
+                            {(seq.axe.exF ?? []).map((ex, i) => (
+                              <li key={i}>{ex}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                      {seq.axe.prog && (
+                        <div className={styles.exProg}>
+                          <strong>Programme :</strong> {seq.axe.prog}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               ))}
 

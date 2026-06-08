@@ -94,9 +94,9 @@ export function AdpAuth({ initialMode = "sign-in" }: { initialMode?: "sign-in" |
             G
           </span>
           <div>
-            <div className="text-xl font-semibold tracking-wide">ADP-GYM</div>
+            <div className="text-xl font-semibold tracking-wide">ADP-RM</div>
             <div className="text-[0.7rem] uppercase tracking-[0.2em] text-[#93C5FD]/90">
-              ADP 2026 · DI-GYM
+              ADP 2026 · RM6
             </div>
           </div>
         </div>
@@ -140,7 +140,7 @@ export function AdpAuth({ initialMode = "sign-in" }: { initialMode?: "sign-in" |
               <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-[#2563EB] to-[#0EA5E9] font-bold text-white">
                 G
               </span>
-              <span className="text-lg font-semibold text-[#0C1E3C]">ADP-GYM</span>
+              <span className="text-lg font-semibold text-[#0C1E3C]">ADP-RM</span>
             </div>
             <button
               type="button"

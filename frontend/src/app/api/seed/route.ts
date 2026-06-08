@@ -44,7 +44,7 @@ export async function POST(request: Request) {
     return Response.json({ created: false, reason: "Vous avez déjà des classes." });
   }
 
-  const klass = await createClass(auth.id, "3ème B — Démo", "3ème");
+  const klass = await createClass(auth.id, "Tronc commun — Démo RM & Souplesse", "Tronc commun");
 
   const toStudents = (rows: typeof ROSTER_S1) =>
     rows.map(([prenom, a, b, c]) => ({ prenom, vs: [a, b, c] as [number, number, number] }));

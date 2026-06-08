@@ -38,10 +38,12 @@ export async function getUserApiKey(userId: number): Promise<string | null> {
 }
 
 // Stable, cacheable system grounding — the tool's philosophy + référentiel frame.
-const SYSTEM = `Tu es un assistant pédagogique pour des enseignant·e·s d'EPS (Éducation Physique et Sportive) au Maroc, spécialisé en Gymnastique Artistique, dans le cadre du dispositif DI-GYM / ADP 2026.
+const SYSTEM = `Tu es un assistant pédagogique pour des enseignant·e·s d'EPS (Éducation Physique et Sportive) au Maroc, spécialisé en Renforcement Musculaire et Souplesse, dans le cadre du référentiel ADP 2026.
 
 Contexte de l'outil :
-- 3 observables : OBS-01 (Posture et tonicité globale en appui), OBS-02 (Gabarit moteur du renversement — ATR/Roulade), OBS-03 (Composition et liaisons entre éléments). Chacun noté sur 10.
+- Référentiel des 6 critères terrain : RM-01 force du tronc/gainage (planche), RM-02 force des membres supérieurs (pompes), RM-03 force des membres inférieurs (squats), RM-04 souplesse des jambes (distance doigts-sol), RM-05 souplesse du dos (test du pont), RM-06 équilibre et coordination (unipodal yeux fermés).
+- 3 familles notées sur 10 : Force (RM-01/02/03), Souplesse (RM-04/05), Équilibre (RM-06).
+- Différenciation Garçons / Filles pour les exercices proposés.
 - Profils : A = débutant (<4,5), B = intermédiaire (4,5–7,5), C = avancé (≥7,5).
 - L'outil est SANS NOTE : il aide la décision, il ne juge pas. La décision finale revient toujours à l'enseignant.
 
@@ -99,7 +101,7 @@ Données :
 - Effectif : ${d.total} élèves
 - Répartition des profils : A=${d.counts.A}, B=${d.counts.B}, C=${d.counts.C}
 - Moyenne de classe : ${d.moyClasse.toFixed(1)}/10
-- Moyennes par observable : OBS-01=${d.moyObservables[0].toFixed(1)}, OBS-02=${d.moyObservables[1].toFixed(1)}, OBS-03=${d.moyObservables[2].toFixed(1)}
+- Moyennes par famille : Force=${d.moyObservables[0].toFixed(1)}, Souplesse=${d.moyObservables[1].toFixed(1)}, Équilibre=${d.moyObservables[2].toFixed(1)}
 - Décision dominante détectée : ${d.decision}
 
 Mets en évidence les points forts, les lacunes collectives et l'orientation pédagogique. Termine en rappelant que la décision finale revient à l'enseignant.`;
@@ -135,7 +137,7 @@ export interface EnrichInput {
 
 export function runEnrich(apiKey: string, d: EnrichInput) {
   const labels = { A: "débutants", B: "intermédiaires", C: "avancés" };
-  const text = `Propose 3 variantes ou progressions d'exercice concrètes pour enrichir la situation d'apprentissage suivante, destinées au groupe ${d.niveau} (${labels[d.niveau]}) en Gymnastique Artistique.
+  const text = `Propose 3 variantes ou progressions d'exercice concrètes pour enrichir la situation d'apprentissage suivante, destinées au groupe ${d.niveau} (${labels[d.niveau]}) en renforcement musculaire et souplesse.
 
 Axe : ${d.axeTitre}
 Consigne actuelle : ${d.consigne}

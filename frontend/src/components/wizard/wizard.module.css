@@ -759,6 +759,61 @@
   display: block;
 }
 
+/* Exercices différenciés Garçons / Filles -----------------------------------*/
+.exPanel {
+  margin-top: 8px;
+  border: 1px solid var(--bd, #e2e8f0);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+}
+.exGrid {
+  display: block;
+}
+.exCol {
+  padding: 0 0 8px;
+}
+.exCol + .exCol {
+  border-top: 1px solid var(--bd, #e2e8f0);
+}
+.exBoys {
+  background: #eff6ff;
+}
+.exGirls {
+  background: #fdf2f8;
+}
+.exCol h4 {
+  margin: 0 0 6px;
+  padding: 6px 12px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+}
+.exBoys h4 {
+  background: #2563eb;
+}
+.exGirls h4 {
+  background: #db2777;
+}
+.exCol ul {
+  margin: 0;
+  padding: 0 12px 0 28px;
+}
+.exCol li {
+  font-size: 0.69rem;
+  line-height: 1.6;
+  color: #334155;
+}
+.exProg {
+  padding: 7px 12px;
+  font-size: 0.66rem;
+  color: #475569;
+  border-top: 1px solid var(--bd, #e2e8f0);
+  background: #f8fafc;
+}
+
 /* Responsive ----------------------------------------------------------------*/
 @media (max-width: 560px) {
   .fg {

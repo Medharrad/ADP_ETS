@@ -1,8 +1,8 @@
 // =============================================================================
-// CSV parsing for the student roster import. Handles the ADP-2026 field format
-// (Nom_Eleve + métier codes) and a simple "Prénom;OBS-01;OBS-02;OBS-03" sheet,
-// with header detection, separator detection (; , or tab), quoted cells, BOM,
-// and métier-code → score mapping. Pure / no DOM.
+// CSV parsing for the student roster import. Handles the ADP-RM field format
+// (Nom_Eleve + métier codes FO/SO/EQ) and a simple "Prénom;Force;Souplesse;
+// Équilibre" sheet, with header detection, separator detection (; , or tab),
+// quoted cells, BOM, and métier-code → score mapping. Pure / no DOM.
 // =============================================================================
 
 import { codeToScore } from "./calc";
@@ -28,9 +28,9 @@ export interface ParseResult {
 
 const NAME_PATTERNS = ["PRENOM", "PRÉNOM", "NOM_ELEVE", "ELEVE", "ÉLÈVE", "STUDENT", "NOM"];
 const OBS_PATTERNS: string[][] = [
-  ["OBS01", "OBS-01", "OBS_1", "OBS1", "POSTURE", "PT"],
-  ["OBS02", "OBS-02", "OBS_2", "OBS2", "RENVERS", "ATR", "GM"],
-  ["OBS03", "OBS-03", "OBS_3", "OBS3", "COMPOS", "LIAISON", "CL"],
+  ["OBS01", "OBS-01", "OBS_1", "OBS1", "FORCE", "FO", "POMPE", "SQUAT", "PLANCHE", "GAINAGE"],
+  ["OBS02", "OBS-02", "OBS_2", "OBS2", "SOUPLESSE", "SOUPL", "SO", "ETIRE", "ÉTIRE", "PONT"],
+  ["OBS03", "OBS-03", "OBS_3", "OBS3", "EQUILIBRE", "ÉQUIL", "EQUIL", "EQ", "UNIPODAL", "PROPRIO"],
 ];
 
 function detectSep(line: string): string {
@@ -151,10 +151,10 @@ export function parseStudentsCsv(text: string): ParseResult {
 export function buildTemplateCsv(): string {
   return (
     "﻿" +
-    "Prénom;OBS-01;OBS-02;OBS-03\n" +
+    "Prénom;Force;Souplesse;Équilibre\n" +
     "Sara;9;8;7\n" +
     "Yacine;3;2;4\n" +
     "Imane;6;5;6\n" +
-    "Nour;PT~;GM-;CL+\n"
+    "Nour;FO~;SO-;EQ+\n"
   );
 }

@@ -1,7 +1,10 @@
 // =============================================================================
-// RÉFÉRENTIEL — ADP-GYM (Gymnastique Artistique · DI-GYM · ADP 2026)
-// Ported verbatim from outil_v0_GYM-ART_DI-GYM.html (référentiel + grille_v2 +
-// ADP2026_DI_GYM). Fixed global reference data — same for every teacher.
+// RÉFÉRENTIEL — ADP-RM (Renforcement Musculaire ET Souplesse · ADP 2026)
+// Built from Referentiel_RM_Souplesse_ADP2026.md (CRMEF Inezgane · BOUARGANE).
+// Six critères RM-01…RM-06 (force tronc/MS/MI · souplesse jambes/dos · équilibre)
+// regroupés en 3 familles notées /10 : Force · Souplesse · Équilibre.
+// Différenciation Garçons / Filles dans les listes d'exercices (exG / exF).
+// Fixed global reference data — same for every teacher.
 // =============================================================================
 
 /** A/B/C profile level. A = débutant, B = intermédiaire, C = avancé. */
@@ -11,7 +14,7 @@ export interface Observable {
   id: string;
   nom: string;
   famille: string;
-  /** métier code per level, e.g. PT−/PT~/PT+ */
+  /** métier code per level, e.g. FO−/FO~/FO+ */
   codes: Record<Niveau, string>;
   /** observed-conduct descriptor per level */
   conduites: Record<Niveau, string>;
@@ -40,6 +43,12 @@ export interface Axe {
   ind: string;
   /** consignes per level */
   csg: Record<Niveau, Consigne>;
+  /** exercices différenciés — garçons */
+  exG: string[];
+  /** exercices différenciés — filles */
+  exF: string[];
+  /** programme d'entraînement progressif (S1–S9) */
+  prog: string;
 }
 
 export interface SituationApprentissage {
@@ -52,50 +61,50 @@ export interface SituationApprentissage {
 export const OBS: Observable[] = [
   {
     id: "OBS-01",
-    nom: "Posture et tonicité globale en appui",
-    famille: "F1·F5",
-    codes: { A: "PT−", B: "PT~", C: "PT+" },
+    nom: "Force musculaire (tronc · MS · MI)",
+    famille: "RM-01 · RM-02 · RM-03",
+    codes: { A: "FO−", B: "FO~", C: "FO+" },
     conduites: {
-      A: "Corps mou, chutes de bassin, ruptures > 3 éléments",
-      B: "Relâchement sur dernier tiers",
-      C: "Gainage continu 100% enchaînement",
+      A: "Planche < 20s · pompes 0–3 · squats < 6 — force insuffisante",
+      B: "Planche 20–44s · pompes 4–8 · squats 6–13 — en construction",
+      C: "Planche ≥ 45s · pompes ≥ 9 · squats ≥ 14 — force stable",
     },
     motrice: {
-      A: "l'élève maintient le gainage sur 3 éléments consécutifs sans rupture",
-      B: "l'élève maintient la tonicité sur plus de la moitié de l'enchaînement",
-      C: "l'élève maintient un gainage continu sur la totalité de l'enchaînement",
+      A: "l'élève réalise quelques répétitions mais sans maintenir le gainage",
+      B: "l'élève réalise des séries complètes avec une forme correcte",
+      C: "l'élève réalise des séries longues, amplitude totale et gainage maintenu",
     },
   },
   {
     id: "OBS-02",
-    nom: "Gabarit moteur du renversement — ATR / Roulade",
-    famille: "F1",
-    codes: { A: "GM−", B: "GM~", C: "GM+" },
+    nom: "Souplesse (jambes · dos)",
+    famille: "RM-04 · RM-05",
+    codes: { A: "SO−", B: "SO~", C: "SO+" },
     conduites: {
-      A: "Renversement absent ou aide systématique",
-      B: "Renversement réalisé, axe perturbé",
-      C: "ATR aligné 3s, roulade enchaînée sans aide",
+      A: "Doigts loin du sol (+10cm) · pont impossible — amplitude limitée",
+      B: "Doigts près du sol · pont bras fléchis — souplesse en cours",
+      C: "Doigts au sol · pont bras tendus / roue — souplesse fonctionnelle",
     },
     motrice: {
-      A: "l'élève réalise l'ATR sans aide pendant 2 secondes",
-      B: "l'élève réalise un renversement autonome axe aligné",
-      C: "l'élève enchaîne ATR et roulade sans pause",
+      A: "l'élève est bloqué avant l'horizontale, articulations raides",
+      B: "l'élève atteint une amplitude moyenne, assistée ou partielle",
+      C: "l'élève mobilise une amplitude complète, fluide et contrôlée",
     },
   },
   {
     id: "OBS-03",
-    nom: "Composition et liaisons entre éléments",
-    famille: "F1-F5",
-    codes: { A: "CL−", B: "CL~", C: "CL+" },
+    nom: "Équilibre & coordination",
+    famille: "RM-06",
+    codes: { A: "EQ−", B: "EQ~", C: "EQ+" },
     conduites: {
-      A: "Juxtaposition 1 famille, arrêts fréquents",
-      B: "2 familles, transitions hésitantes",
-      C: "Liaison fluide ≥3 familles, 0 arrêt",
+      A: "Unipodal yeux fermés < 5s · chute immédiate · aucune correction",
+      B: "Unipodal 5–14s · oscillations récupérées · corrections conscientes",
+      C: "Unipodal ≥ 15s · micro-corrections automatiques · aucune oscillation < 10s",
     },
     motrice: {
-      A: "l'élève enchaîne 2 éléments de familles différentes sans arrêt complet",
-      B: "l'élève produit un enchaînement 2 familles avec au max 1 rupture",
-      C: "l'élève réalise un enchaînement 3 familles minimum sans rupture",
+      A: "l'élève chute vite, compense massivement avec les bras",
+      B: "l'élève tient avec des corrections visibles et conscientes",
+      C: "l'élève stabilise par des micro-corrections proprioceptives automatiques",
     },
   },
 ];
@@ -111,9 +120,9 @@ export const DS: Record<Niveau, number> = { A: 3, B: 6, C: 9 };
 // -- Situations d'apprentissage -----------------------------------------------
 
 export const SA: Record<Niveau, SituationApprentissage> = {
-  A: { nom: "SA-A1", lib: "Adaptation anatomique posturale" },
-  B: { nom: "SA-B1", lib: "Renforcement fonctionnel gymnique" },
-  C: { nom: "SA-C1", lib: "Intégration technique et composition" },
+  A: { nom: "SA-A1", lib: "Construction et mobilisation de base" },
+  B: { nom: "SA-B1", lib: "Consolidation et développement" },
+  C: { nom: "SA-C1", lib: "Complexification et progression" },
 };
 
 // -- Axes prioritaires --------------------------------------------------------
@@ -122,86 +131,104 @@ export const AX: Axe[] = [
   {
     id: 1,
     oi: 0,
-    titre: "Gainage et tonicité posturale globale",
-    desc: "Construction et maintien de l'axe corporel sur la durée de l'enchaînement",
-    prereq: "N1-5 · Tonus et gestion de l'effort",
-    impact: "N2-6 · N2-8 · N2-9",
-    ind: "l'élève maintient sa tonicité sur 4 éléments consécutifs sans rupture visible",
+    titre: "RM-01 · Force du tronc — Gainage (planche)",
+    desc: "Maintien de l'axe corporel (tête-épaules-hanches-talons) en isométrie · Test : planche frontale isométrique — durée de tenue (s), appui avant-bras + pointes de pieds, dos plat",
+    prereq: "Conscience du bassin neutre · respiration en gainage",
+    impact: "Transmission des forces · protection du rachis · maintien postural",
+    ind: "l'élève tient la planche ≥ 45 s, alignement parfait, aucune compensation",
     csg: {
-      A: { sa: "SA-A1", c: "Tenir la planche 10 secondes, dos droit, lombaires neutres", cr: "Dos aligné tête-talons pendant toute la durée" },
-      B: { sa: "SA-B1", c: "3 planches dynamiques enchaînées avec lever de jambe alterné", cr: "Hanches stables lors de chaque lever de jambe" },
-      C: { sa: "SA-C1", c: "Maintenir le gainage sur un enchaînement de 5 éléments", cr: "Aucune rupture posturale du premier au dernier élément" },
+      A: { sa: "SA-A1", c: "Construction : planche sur genoux puis complète", cr: "Tenir ≥ 20 s sans effondrement ni dos creux" },
+      B: { sa: "SA-B1", c: "Consolidation : endurance musculaire du gainage", cr: "Tenir 45 s sans compensation lombaire" },
+      C: { sa: "SA-C1", c: "Complexifier : planche dynamique, charge ajoutée", cr: "Alignement parfait maintenu, même en dynamique" },
     },
+    exG: ["Planche ventrale 3×20s", "Planche latérale 3×15s/côté", "Mountain climbers 3×15", "Superman 3×12"],
+    exF: ["Planche ventrale 3×15s", "Hollow hold 3×15s", "Gainage dynamique bras 3×12", "Dead bug 3×10"],
+    prog: "S1-S3 : planche genoux → complète · S4-S6 : planche + déstabilisation · S7-S9 : planche dynamique · +10s/semaine",
   },
   {
     id: 2,
-    oi: 1,
-    titre: "Gabarit moteur du renversement — ATR et roulade",
-    desc: "Construction et stabilisation de l'ATR et de la roulade sans aide",
-    prereq: "N1-2 · N1-3 · Réalisation et liaison du renversement",
-    impact: "N2-3 · N2-4 · N2-6",
-    ind: "l'élève réalise un ATR 3 secondes sans aide lors de 2 tentatives consécutives",
+    oi: 0,
+    titre: "RM-02 · Force des membres supérieurs — Pompes",
+    desc: "Porter / pousser le poids du corps sur les bras, amplitude complète, gainage maintenu · Test : pompes au sol — max de répétitions complètes, coudes 45°, front à 3 cm du sol",
+    prereq: "Gainage de base · alignement tête-hanches-pieds",
+    impact: "Poussée · maintien postural en appui · transferts de charge",
+    ind: "l'élève réalise ≥ 9 pompes (G) / ≥ 7 (F), amplitude totale, gainage maintenu",
     csg: {
-      A: { sa: "SA-A1", c: "5 tentatives ATR contre mur, tenir 3 secondes puis lâcher le mur", cr: "Corps aligné tête-épaules-hanches 3 secondes sans appui" },
-      B: { sa: "SA-B1", c: "Enchaîner ATR libre et roulade avant groupée sans pause", cr: "ATR tenu 2 secondes, roulade repart sans arrêt" },
-      C: { sa: "SA-C1", c: "Réaliser ATR + roulade + élément F2 ou F4", cr: "3 éléments enchaînés sans aide, axe maintenu" },
+      A: { sa: "SA-A1", c: "Construction : pompes contre mur → inclinées → genoux", cr: "Atteindre 4 pompes (G) / 3 (F) corps aligné" },
+      B: { sa: "SA-B1", c: "Développement : volume + tempo 2-0-2", cr: "Atteindre 9 pompes (G) / 7 (F), gainage tenu" },
+      C: { sa: "SA-C1", c: "Progression : pompes déclinées, dips, chargées", cr: "Amplitude totale, remontée explosive, gainage du début à la fin" },
     },
+    exG: ["Pompes classiques 3×8", "Dips sur banc 3×10", "Maintien ATR contre mur 4×5s", "Pompes déclinées 3×8"],
+    exF: ["Pompes sur genoux 3×10", "Appuis statiques sol 3×10s", "ATR assisté 4×5s", "Pompes inclinées sur banc 3×10"],
+    prog: "S1-S3 : pompes inclinées/genoux · S4-S6 : pompes classiques 3×6 tempo 3-0-1 · S7-S9 : volume + variantes · +1 rep/séance",
   },
   {
     id: 3,
-    oi: 2,
-    titre: "Composition et liaisons multi-familles",
-    desc: "Construction d'un enchaînement avec transitions intentionnelles",
-    prereq: "N1-4 · N1-1 · Coordonner et choisir",
-    impact: "N2-2 · N2-5 · N2-7 · N2-8",
-    ind: "l'élève choisit spontanément 2 familles différentes en composition libre",
+    oi: 0,
+    titre: "RM-03 · Force des membres inférieurs — Squats",
+    desc: "Puissance d'impulsion + contrôle excentrique à la réception, amplitude, alignement genoux · Test : squat au poids du corps — max de répétitions (cuisses // sol), 1 série max",
+    prereq: "Mobilité de cheville · descente contrôlée sans valgus",
+    impact: "Poussée des jambes · stabilité du bassin · puissance MI",
+    ind: "l'élève réalise ≥ 14 squats complets, amplitude totale, genoux alignés",
     csg: {
-      A: { sa: "SA-A1", c: "Composer 3 éléments de 2 familles différentes, exécuter 2 fois", cr: "2 familles identifiables, pas d'arrêt entre elles" },
-      B: { sa: "SA-B1", c: "Composer 5 éléments avec 2 transitions préparées", cr: "Transitions intentionnelles, sans perte d'équilibre" },
-      C: { sa: "SA-C1", c: "Présenter un enchaînement de 8 éléments de 3 familles minimum", cr: "Fluide, 3 familles identifiées, zéro rupture" },
+      A: { sa: "SA-A1", c: "Construction : squat sur chaise → goblet squat", cr: "Atteindre 6 squats cuisses // sol, sans valgus" },
+      B: { sa: "SA-B1", c: "Développement : squat 3×10 tempo 3-1-1 + fentes", cr: "Atteindre 14 squats, remontée contrôlée" },
+      C: { sa: "SA-C1", c: "Progression : squat bulgare, sauts, pistol assisté", cr: "Amplitude totale, remontée explosive, aucune perte de qualité" },
     },
+    exG: ["Squats complets 3×12", "Fentes avant 3×10/jambe", "Sauts explosifs 3×8", "Nordic curl assisté 3×6"],
+    exF: ["Squats 3×12", "Fentes avant 3×10/jambe", "Step-up sur banc 3×10/jambe", "Fentes latérales 3×10"],
+    prog: "S1-S3 : squat sur chaise · S4-S6 : squat complet + fentes 3×10 · S7-S9 : squat sauté + step-up · +1 rep/semaine",
   },
   {
     id: 4,
     oi: 1,
-    titre: "Coordination tourner — voler — se renverser",
-    desc: "Réalisation d'éléments complexes combinant rotation et renversement (N2-3)",
-    prereq: "N1-2 consolidé — Axe 2 prérequis",
-    impact: "N2-3 · N2-4 · N2-8",
-    ind: "l'élève enchaîne une rotation et un renversement sans pause lors de 2 tentatives sur 3",
+    titre: "RM-04 · Souplesse des jambes",
+    desc: "Amplitude ischio-jambiers, adducteurs, psoas (statique et dynamique) · Test : distance doigts-sol debout, jambes tendues, flexion max du tronc (− sous le sol, + au-dessus)",
+    prereq: "Échauffement articulaire · mobilité de hanche",
+    impact: "Grand écart · flexion du tronc · amplitude gestuelle",
+    ind: "doigts touchent ou dépassent le sol (0 cm ou dessous), grand écart 170-180°",
     csg: {
-      A: { sa: "SA-A1", c: "Roulade avant + arrêt debout + roulade arrière : 3 rotations consécutives", cr: "3 rotations sans aide, directions différentes" },
-      B: { sa: "SA-B1", c: "ATR suivi d'une roue, passage sans pause", cr: "Passage ATR-roue sans arrêt, gainage maintenu" },
-      C: { sa: "SA-C1", c: "Série acrobatique : 2 renversements + 1 rotation en vol", cr: "Série fluide, éléments enchaînés sans rupture" },
+      A: { sa: "SA-A1", c: "Mobilisation progressive : étirements 2×30s quotidiens", cr: "Descendre le tronc jusqu'à l'horizontale" },
+      B: { sa: "SA-B1", c: "Consolidation : étirements actifs et dynamiques", cr: "Doigts près du sol, grand écart ~150° assisté" },
+      C: { sa: "SA-C1", c: "Maintien : routine mobilité + gainage excentrique", cr: "Doigts au sol, grand écart 170-180° fonctionnel" },
     },
+    exG: ["Étirement ischio-jambiers debout 2×30s", "Étirement adducteurs assis 2×30s", "Fente avant statique 2×30s/jambe", "Flexion tronc avec bâton 2×20s"],
+    exF: ["Grand écart progressif 3×30-45s", "Papillon adducteurs 3×30s", "Étirement ischio sol 2×30s/jambe", "Fente basse dynamique 2×15"],
+    prog: "Après chaque séance : 3 étirements 30s ×2 · PNF recommandé S4+ · associer renforcement excentrique ischio-jambiers",
   },
   {
     id: 5,
-    oi: 0,
-    titre: "Enchaîner sans rupture avec alignement segmentaire",
-    desc: "Amplitude, correction et alignement maintenus sur tout l'enchaînement (N2-8)",
-    prereq: "N1-2 · N1-4 · N1-5 consolidés — Axes 1-2-3 prérequis",
-    impact: "N2-8 · N2-9",
-    ind: "l'élève ne présente aucune rupture d'alignement sur les 3 derniers éléments",
+    oi: 1,
+    titre: "RM-05 · Souplesse du dos",
+    desc: "Mobilité rachidienne en extension/flexion, dissociation des ceintures, ondulation segmentaire · Test : test du pont — réalisation et qualité (allongé dos au sol, mains sous épaules, pousser bras + jambes)",
+    prereq: "Mobilité dorsale · échauffement de la colonne",
+    impact: "Pont · roue · qualité d'ondulation segmentaire",
+    ind: "pont bras tendus / roue réalisée, cobra 80°+, ondulation fluide et segmentée",
     csg: {
-      A: { sa: "SA-A1", c: "Réaliser l'enchaînement avec une correction de posture indiquée", cr: "Correction visible sur au moins 3 éléments" },
-      B: { sa: "SA-B1", c: "Réaliser 2 fois et noter les éléments où la posture défaille", cr: "L'élève identifie 1 élément à corriger au 2e passage" },
-      C: { sa: "SA-C1", c: "Présenter devant un jury de pairs avec code simplifié", cr: "Note maximale sur le critère alignement du code" },
+      A: { sa: "SA-A1", c: "Mobilisation : cobra + chat-vache + extension dorsale", cr: "Réaliser le pont au sol (bras fléchis)" },
+      B: { sa: "SA-B1", c: "Développement : pont + roue assistée + cobra actif", cr: "Pont bras tendus, cobra ~60°" },
+      C: { sa: "SA-C1", c: "Entretien : roue libre + bridges dynamiques", cr: "Roue seul, ondulation fluide et segmentée" },
     },
+    exG: ["Cobra stretch 3×25s", "Extension dorsale superman 3×12", "Pont assisté 3×20s", "Chat-vache 3×10"],
+    exF: ["Cobra stretch 3×25s", "Pont 3×25s", "Roue assistée 3×5s", "Ondulation segmentaire 3×10"],
+    prog: "3 min mobilité dorsale avant chaque séance · combo extension + flexion · progresser vers la roue S5-S6 pour les avancés",
   },
   {
     id: 6,
-    oi: 0,
-    titre: "Gestion de l'effort et du rythme sur la prestation",
-    desc: "Maintien de la qualité tonique et du rythme jusqu'au dernier élément (N2-9)",
-    prereq: "N1-5 consolidé — Axe 1 prérequis",
-    impact: "N2-9",
-    ind: "l'élève maintient une qualité d'exécution constante entre le premier et le dernier élément",
+    oi: 2,
+    titre: "RM-06 · Équilibre et coordination",
+    desc: "Stabilité statique unipodale, corrections proprioceptives, coordination segmentaire · Test : équilibre unipodal yeux fermés — durée de maintien (s), chrono arrêté dès que le pied d'appui bouge",
+    prereq: "Tonus postural de base",
+    impact: "Stabilité · proprioception · postures gymniques tenues",
+    ind: "l'élève tient ≥ 15 s sans appui correcteur, micro-corrections automatiques",
     csg: {
-      A: { sa: "SA-A1", c: "3 passages complets avec 1 minute de récupération", cr: "Qualité du 3e passage égale ou supérieure au 1er" },
-      B: { sa: "SA-B1", c: "Réaliser l'enchaînement sur musique avec temps forts", cr: "Actions coïncident avec au moins 3 temps forts musicaux" },
-      C: { sa: "SA-C1", c: "Donner du rythme par variations d'amplitude et de vitesse", cr: "2 moments de contraste dynamique identifiés par l'observateur" },
+      A: { sa: "SA-A1", c: "Construction : appui bi → uni, yeux ouverts → fermés", cr: "Tenir 5 s en appui unipodal" },
+      B: { sa: "SA-B1", c: "Développement : appui uni surface instable, arabesque", cr: "Tenir 15 s, oscillations récupérées" },
+      C: { sa: "SA-C1", c: "Complexifier : surface instable + charge, yeux fermés", cr: "Aucune oscillation avant 10 s, corrections automatiques" },
     },
+    exG: ["Équilibre unipodal yeux ouverts/fermés 3×20s", "Marche sur ligne 3×10m", "Proprioception coussin 3×30s", "Arabesque tenue 3×10s"],
+    exF: ["Équilibre unipodal arabesque 3×15s", "Maintien posture gymnique 4×10s", "Proprioception yeux fermés 3×30s", "Enchaînement équilibre 3×5"],
+    prog: "5 min proprioception en fin de séance · stable → instable → instable yeux fermés · objectif +5s/semaine",
   },
 ];
 

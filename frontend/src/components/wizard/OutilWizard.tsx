@@ -11,7 +11,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import styles from "./wizard.module.css";
-import { AX, AXES_RANGE, OBS, SA, SEANCES, SH, type Niveau } from "@/lib/referentiel";
+import { AX, AXES_RANGE, OBS, SA, SEANCES, SH, type Axe, type Niveau } from "@/lib/referentiel";
 import {
   analyser,
   codeFor,
@@ -342,7 +342,7 @@ export function OutilWizard({
     }
     const bom = "﻿";
     const hdr =
-      "Prénom;Code OBS-01;OBS-01;Code OBS-02;OBS-02;Code OBS-03;OBS-03;Moyenne;/20;Rang;Profil global;Profil détaillé;Lacune 1;SA recommandée\n";
+      "Prénom;Code Force;Force;Code Souplesse;Souplesse;Code Équilibre;Équilibre;Moyenne;/20;Rang;Profil global;Profil détaillé;Lacune 1;SA recommandée\n";
     const body = analysis.results
       .map((r) =>
         [
@@ -371,7 +371,7 @@ export function OutilWizard({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `ADP-GYM_${dt}.csv`;
+    a.download = `ADP-RM_${dt}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -385,10 +385,10 @@ export function OutilWizard({
           <div>
             <h1>Outil d&rsquo;aide à la décision pédagogique — EPS</h1>
             <div className={cx("sub")}>
-              Gymnastique Artistique · DI-GYM · ADP 2026 · CRMEF Inezgane · BOUARGANE
+              Renforcement Musculaire &amp; Souplesse · ADP 2026 · CRMEF Inezgane · BOUARGANE
             </div>
             <div className={cx("hdrB")}>
-              <span className={cx("hb hbg")}>GAF / GAM</span>
+              <span className={cx("hb hbg")}>RM-01 → RM-06</span>
               {classMeta ? (
                 <span className={cx("hb hbg")}>
                   {classMeta.nom}
@@ -542,10 +542,10 @@ function Step1(props: {
           </span>
           {OBS.map((o, i) => (
             <span key={o.id} className={cx("fgh")}>
-              {o.id}
+              {["Force", "Souplesse", "Équilibre"][i]}
               <br />
               <small style={{ fontWeight: 400, fontSize: ".62rem" }}>
-                {["Posture /10", "Renversmt /10", "Compos. /10"][i]}
+                {["planche·pompes·squats /10", "doigts-sol·pont /10", "unipodal /10"][i]}
               </small>
             </span>
           ))}
@@ -629,9 +629,9 @@ function Step1(props: {
                   <tr>
                     <th>Rang</th>
                     <th>Prénom</th>
-                    <th>OBS-01</th>
-                    <th>OBS-02</th>
-                    <th>OBS-03</th>
+                    <th>Force</th>
+                    <th>Souples.</th>
+                    <th>Équil.</th>
                     <th>Moy /10</th>
                     <th>/20</th>
                     <th>Profil</th>
@@ -783,14 +783,14 @@ function ClassBilan({ a }: { a: ClassAnalysis }) {
         </div>
       </div>
 
-      <h3 style={{ marginTop: 11, marginBottom: 6 }}>Analyse par observable</h3>
+      <h3 style={{ marginTop: 11, marginBottom: 6 }}>Analyse par famille musculaire</h3>
       <div>
         {a.moyObservables.map((m, i) => {
           const meta = obsMeta(m);
           const pc = Math.round((m / 10) * 100);
           return (
             <div key={i} className={cx("obr")}>
-              <div className={cx("obrl")}>{OBS[i].id}</div>
+              <div className={cx("obrl")}>{OBS[i].nom}</div>
               <div className={cx("obrt")}>
                 <div className={cx("obrf")} style={{ width: `${pc}%`, background: meta.bc }} />
               </div>
@@ -889,7 +889,7 @@ function Step2(props: {
                       Pertinence : {pertinence}% concernés
                     </span>
                     <span>
-                      Observable : {obs.id} · Moy : {moy.toFixed(1)}/10
+                      Famille : {obs.nom} · Moy : {moy.toFixed(1)}/10
                     </span>
                     <span>SA : {axe.csg.A.sa}</span>
                   </div>
@@ -1034,6 +1034,7 @@ function Step4(props: {
                     ))}
                   </tbody>
                 </table>
+                <ExercisePanel axe={seq.axe} />
                 {props.enableAi && (
                   <div className="noPrint">
                     <AiPanel
@@ -1129,5 +1130,34 @@ function GroupRows({
         </tr>
       )}
     </>
+  );
+}
+
+/** Differentiated exercise lists (Garçons / Filles) + training programme for an axis. */
+function ExercisePanel({ axe }: { axe: Axe }) {
+  return (
+    <div className={cx("exPanel")}>
+      <div className={cx("exGrid")}>
+        <div className={cx("exCol", "exBoys")}>
+          <h4>🧒 Exercices Garçons</h4>
+          <ul>
+            {axe.exG.map((ex, i) => (
+              <li key={i}>{ex}</li>
+            ))}
+          </ul>
+        </div>
+        <div className={cx("exCol", "exGirls")}>
+          <h4>👧 Exercices Filles</h4>
+          <ul>
+            {axe.exF.map((ex, i) => (
+              <li key={i}>{ex}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <div className={cx("exProg")}>
+        <strong>Programme :</strong> {axe.prog}
+      </div>
+    </div>
   );
 }

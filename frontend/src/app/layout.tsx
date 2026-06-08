@@ -21,9 +21,9 @@ const notoArabic = Noto_Sans_Arabic({
 });
 
 export const metadata: Metadata = {
-  title: "ADP-GYM — Outil ADP 2026",
+  title: "ADP-RM — Outil ADP 2026",
   description:
-    "Outil d'aide à la décision pédagogique — Gymnastique Artistique (DI-GYM, ADP 2026). Diagnostic, axes prioritaires et planification différenciée du cycle.",
+    "Outil d'aide à la décision pédagogique — Renforcement Musculaire (RM6, ADP 2026). Diagnostic, axes prioritaires et planification différenciée du cycle.",
 };
 
 export default function RootLayout({
