@@ -123,6 +123,39 @@ export function getStudents(classId: number) {
   );
 }
 
+// -- niveaux (custom grade levels, per teacher) -------------------------------
+
+export interface NiveauRow {
+  id: number;
+  label: string;
+  ordre: number;
+}
+
+export function listNiveaux(userId: number) {
+  return query<NiveauRow>(
+    "SELECT id, label, ordre FROM niveaux WHERE user_id = ? ORDER BY ordre, id",
+    [userId],
+  );
+}
+
+/** Create a custom niveau. Idempotent: reuses an existing one with the same
+ *  label (case-insensitive) for that teacher rather than duplicating. */
+export async function createNiveau(userId: number, label: string) {
+  const existing = await get<NiveauRow>(
+    "SELECT id, label, ordre FROM niveaux WHERE user_id = ? AND lower(label) = lower(?)",
+    [userId, label],
+  );
+  if (existing) return existing;
+  const info = await run("INSERT INTO niveaux (user_id, label) VALUES (?, ?)", [userId, label]);
+  return (await get<NiveauRow>("SELECT id, label, ordre FROM niveaux WHERE id = ?", [
+    info.lastInsertRowid,
+  ]))!;
+}
+
+export async function deleteNiveau(userId: number, id: number) {
+  await run("DELETE FROM niveaux WHERE id = ? AND user_id = ?", [id, userId]);
+}
+
 // -- diagnostics --------------------------------------------------------------
 
 export function listDiagnostics(classId: number) {

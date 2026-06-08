@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -8,9 +8,11 @@ import {
   CalendarRange,
   ClipboardCheck,
   GraduationCap,
+  Plus,
   Sparkles,
   Trash2,
   Users,
+  X,
 } from "lucide-react";
 
 import { AppHeader } from "@/components/app-header";
@@ -20,15 +22,21 @@ import { useRevalidate } from "@/lib/use-revalidate";
 import { useI18n } from "@/lib/i18n";
 import {
   createClass,
+  createNiveau,
   deleteClass,
+  deleteNiveau,
   listClasses,
+  listNiveaux,
   listRecentCycles,
   seedDemo,
   type ClassSummary,
+  type Niveau as NiveauItem,
   type RecentCycle,
 } from "@/lib/api";
 
-const NIVEAUX = ["4ème", "3ème", "Tronc commun", "1ère Bac", "2ème Bac"];
+// Built-in defaults — always offered, not deletable. Teacher's own custom
+// niveaux (from /api/niveaux) are merged in and can be added/removed.
+const DEFAULT_NIVEAUX = ["4ème", "3ème", "Tronc commun", "1ère Bac", "2ème Bac"];
 
 export default function DashboardPage() {
   const ready = useRequireAuth();
@@ -38,20 +46,73 @@ export default function DashboardPage() {
   const [cycles, setCycles] = useState<RecentCycle[]>([]);
   const [loading, setLoading] = useState(true);
   const [nom, setNom] = useState("");
-  const [niveau, setNiveau] = useState(NIVEAUX[1]);
+  const [niveau, setNiveau] = useState(DEFAULT_NIVEAUX[1]);
   const [creating, setCreating] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<ClassSummary | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [niveaux, setNiveaux] = useState<NiveauItem[]>([]);
+  const [newNiveau, setNewNiveau] = useState("");
+  const [addingNiveau, setAddingNiveau] = useState(false);
+
+  // Defaults + the teacher's custom niveaux, de-duplicated (case-insensitive).
+  const niveauOptions = useMemo(() => {
+    const seen = new Set<string>();
+    const out: { id: number | null; label: string }[] = [];
+    for (const label of DEFAULT_NIVEAUX) {
+      const k = label.toLowerCase();
+      if (!seen.has(k)) {
+        seen.add(k);
+        out.push({ id: null, label });
+      }
+    }
+    for (const n of niveaux) {
+      const k = n.label.toLowerCase();
+      if (!seen.has(k)) {
+        seen.add(k);
+        out.push({ id: n.id, label: n.label });
+      }
+    }
+    return out;
+  }, [niveaux]);
 
   const refresh = useCallback(() => {
-    return Promise.all([listClasses(), listRecentCycles()])
-      .then(([c, cy]) => {
+    return Promise.all([listClasses(), listRecentCycles(), listNiveaux()])
+      .then(([c, cy, nv]) => {
         setClasses(c.classes);
         setCycles(cy.cycles);
+        setNiveaux(nv.niveaux);
       })
       .catch((e) => toast.error(e instanceof Error ? e.message : "Erreur de chargement"))
       .finally(() => setLoading(false));
   }, []);
+
+  async function handleAddNiveau() {
+    const label = newNiveau.trim();
+    if (!label) return;
+    setAddingNiveau(true);
+    try {
+      const { niveau: created } = await createNiveau(label);
+      setNiveaux((prev) => (prev.some((n) => n.id === created.id) ? prev : [...prev, created]));
+      setNiveau(created.label);
+      setNewNiveau("");
+      toast.success(`Niveau « ${created.label} » ajouté`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Échec de l'ajout");
+    } finally {
+      setAddingNiveau(false);
+    }
+  }
+
+  async function handleDeleteNiveau(n: NiveauItem) {
+    try {
+      await deleteNiveau(n.id);
+      setNiveaux((prev) => prev.filter((x) => x.id !== n.id));
+      if (niveau === n.label) setNiveau(DEFAULT_NIVEAUX[1]);
+      toast.success("Niveau supprimé");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Échec de la suppression");
+    }
+  }
 
   useEffect(() => {
     if (ready) refresh();
@@ -213,12 +274,61 @@ export default function DashboardPage() {
               <select
                 value={niveau}
                 onChange={(e) => setNiveau(e.target.value)}
-                className="mb-5 w-full rounded-xl border border-[#E2E8F0] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#2563EB]/12"
+                className="mb-2.5 w-full rounded-xl border border-[#E2E8F0] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#2563EB]/12"
               >
-                {NIVEAUX.map((n) => (
-                  <option key={n}>{n}</option>
+                {niveauOptions.map((n) => (
+                  <option key={n.label}>{n.label}</option>
                 ))}
               </select>
+
+              {/* Add a custom niveau */}
+              <div className="mb-2 flex gap-2">
+                <input
+                  value={newNiveau}
+                  onChange={(e) => setNewNiveau(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddNiveau();
+                    }
+                  }}
+                  placeholder="Nouveau niveau…"
+                  className="w-full rounded-xl border border-[#E2E8F0] bg-white px-3 py-2 text-sm outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#2563EB]/12"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddNiveau}
+                  disabled={addingNiveau || !newNiveau.trim()}
+                  aria-label="Ajouter le niveau"
+                  className="inline-flex shrink-0 items-center justify-center rounded-xl border border-[#E2E8F0] bg-white px-3 text-[#2563EB] transition hover:border-[#2563EB] hover:bg-[#EFF6FF] disabled:opacity-40"
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+              </div>
+
+              {/* Custom niveaux — removable */}
+              {niveaux.length > 0 && (
+                <div className="mb-5 flex flex-wrap gap-1.5">
+                  {niveaux.map((n) => (
+                    <span
+                      key={n.id}
+                      className="inline-flex items-center gap-1 rounded-full bg-[#EFF6FF] px-2.5 py-1 text-xs font-medium text-[#1D4ED8] ring-1 ring-[#2563EB]/15"
+                    >
+                      {n.label}
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteNiveau(n)}
+                        aria-label={`Supprimer ${n.label}`}
+                        className="text-[#1D4ED8]/60 transition hover:text-[#DC2626]"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+              {niveaux.length === 0 && <div className="mb-5" />}
+
               <button
                 type="submit"
                 disabled={creating || !nom.trim()}

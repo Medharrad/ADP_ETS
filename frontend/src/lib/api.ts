@@ -133,6 +133,29 @@ export function deleteClass(id: number) {
   return apiFetch<{ ok: true }>(`/api/classes/${id}`, { method: "DELETE" });
 }
 
+// -- niveaux (custom grade levels) --------------------------------------------
+
+export interface Niveau {
+  id: number;
+  label: string;
+  ordre: number;
+}
+
+export function listNiveaux() {
+  return apiFetch<{ niveaux: Niveau[] }>("/api/niveaux");
+}
+
+export function createNiveau(label: string) {
+  return apiFetch<{ niveau: Niveau }>("/api/niveaux", {
+    method: "POST",
+    body: JSON.stringify({ label }),
+  });
+}
+
+export function deleteNiveau(id: number) {
+  return apiFetch<{ ok: true }>(`/api/niveaux/${id}`, { method: "DELETE" });
+}
+
 // -- diagnostics --------------------------------------------------------------
 
 export interface DiagnosticInput {

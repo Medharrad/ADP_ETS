@@ -26,6 +26,13 @@ CREATE TABLE IF NOT EXISTS classes (
   niveau TEXT,
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE IF NOT EXISTS niveaux (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  label TEXT NOT NULL,
+  ordre INTEGER DEFAULT 0,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
 CREATE TABLE IF NOT EXISTS students (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   class_id INTEGER NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
@@ -58,6 +65,7 @@ CREATE TABLE IF NOT EXISTS cycles (
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX IF NOT EXISTS idx_classes_user ON classes(user_id);
+CREATE INDEX IF NOT EXISTS idx_niveaux_user ON niveaux(user_id);
 CREATE INDEX IF NOT EXISTS idx_students_class ON students(class_id);
 CREATE INDEX IF NOT EXISTS idx_diagnostics_class ON diagnostics(class_id);
 CREATE INDEX IF NOT EXISTS idx_scores_diag ON scores(diagnostic_id);
