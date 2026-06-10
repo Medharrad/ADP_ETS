@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -9,22 +9,21 @@ import {
   ClipboardCheck,
   GraduationCap,
   Plus,
+  SlidersHorizontal,
   Sparkles,
   Trash2,
   Users,
-  X,
 } from "lucide-react";
 
 import { AppHeader } from "@/components/app-header";
 import { ConfirmDialog } from "@/components/confirm-dialog";
+import { NiveauManager } from "@/components/niveau-manager";
 import { useRequireAuth } from "@/lib/use-require-auth";
 import { useRevalidate } from "@/lib/use-revalidate";
 import { useI18n } from "@/lib/i18n";
 import {
   createClass,
-  createNiveau,
   deleteClass,
-  deleteNiveau,
   listClasses,
   listNiveaux,
   listRecentCycles,
@@ -34,10 +33,6 @@ import {
   type RecentCycle,
 } from "@/lib/api";
 
-// Built-in defaults — always offered, not deletable. Teacher's own custom
-// niveaux (from /api/niveaux) are merged in and can be added/removed.
-const DEFAULT_NIVEAUX = ["4ème", "3ème", "Tronc commun", "1ère Bac", "2ème Bac"];
-
 export default function DashboardPage() {
   const ready = useRequireAuth();
   const router = useRouter();
@@ -46,34 +41,14 @@ export default function DashboardPage() {
   const [cycles, setCycles] = useState<RecentCycle[]>([]);
   const [loading, setLoading] = useState(true);
   const [nom, setNom] = useState("");
-  const [niveau, setNiveau] = useState(DEFAULT_NIVEAUX[1]);
+  // There are no built-in levels — each teacher creates their own. Empty until
+  // they add one (or pick from the levels they've created).
+  const [niveau, setNiveau] = useState("");
   const [creating, setCreating] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<ClassSummary | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [niveaux, setNiveaux] = useState<NiveauItem[]>([]);
-  const [newNiveau, setNewNiveau] = useState("");
-  const [addingNiveau, setAddingNiveau] = useState(false);
-
-  // Defaults + the teacher's custom niveaux, de-duplicated (case-insensitive).
-  const niveauOptions = useMemo(() => {
-    const seen = new Set<string>();
-    const out: { id: number | null; label: string }[] = [];
-    for (const label of DEFAULT_NIVEAUX) {
-      const k = label.toLowerCase();
-      if (!seen.has(k)) {
-        seen.add(k);
-        out.push({ id: null, label });
-      }
-    }
-    for (const n of niveaux) {
-      const k = n.label.toLowerCase();
-      if (!seen.has(k)) {
-        seen.add(k);
-        out.push({ id: n.id, label: n.label });
-      }
-    }
-    return out;
-  }, [niveaux]);
+  const [niveauManagerOpen, setNiveauManagerOpen] = useState(false);
 
   const refresh = useCallback(() => {
     return Promise.all([listClasses(), listRecentCycles(), listNiveaux()])
@@ -81,37 +56,27 @@ export default function DashboardPage() {
         setClasses(c.classes);
         setCycles(cy.cycles);
         setNiveaux(nv.niveaux);
+        // Default the form's level to the first one the teacher has, without
+        // clobbering an existing choice.
+        setNiveau((cur) => cur || nv.niveaux[0]?.label || "");
       })
       .catch((e) => toast.error(e instanceof Error ? e.message : "Erreur de chargement"))
       .finally(() => setLoading(false));
   }, []);
 
-  async function handleAddNiveau() {
-    const label = newNiveau.trim();
-    if (!label) return;
-    setAddingNiveau(true);
-    try {
-      const { niveau: created } = await createNiveau(label);
-      setNiveaux((prev) => (prev.some((n) => n.id === created.id) ? prev : [...prev, created]));
-      setNiveau(created.label);
-      setNewNiveau("");
-      toast.success(`Niveau « ${created.label} » ajouté`);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Échec de l'ajout");
-    } finally {
-      setAddingNiveau(false);
-    }
+  // The NiveauManager persists add/delete; we only sync local state + selection.
+  function handleNiveauAdded(created: NiveauItem) {
+    setNiveaux((prev) => (prev.some((n) => n.id === created.id) ? prev : [...prev, created]));
+    setNiveau(created.label); // newly added level becomes the form's selection
   }
 
-  async function handleDeleteNiveau(n: NiveauItem) {
-    try {
-      await deleteNiveau(n.id);
-      setNiveaux((prev) => prev.filter((x) => x.id !== n.id));
-      if (niveau === n.label) setNiveau(DEFAULT_NIVEAUX[1]);
-      toast.success("Niveau supprimé");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Échec de la suppression");
-    }
+  function handleNiveauDeleted(removed: NiveauItem) {
+    setNiveaux((prev) => {
+      const next = prev.filter((x) => x.id !== removed.id);
+      // If the deleted level was selected, fall back to the first remaining one.
+      setNiveau((cur) => (cur === removed.label ? next[0]?.label ?? "" : cur));
+      return next;
+    });
   }
 
   useEffect(() => {
@@ -127,7 +92,7 @@ export default function DashboardPage() {
     if (!nom.trim()) return;
     setCreating(true);
     try {
-      const { class: created } = await createClass(nom.trim(), niveau);
+      const { class: created } = await createClass(nom.trim(), niveau || undefined);
       toast.success(`Classe « ${created.nom} » créée`);
       router.push(`/classes/${created.id}`);
     } catch (err) {
@@ -268,66 +233,40 @@ export default function DashboardPage() {
                 placeholder="Ex : 3ème B"
                 className="mb-4 w-full rounded-xl border border-[#E2E8F0] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#2563EB]/12"
               />
-              <label className="mb-1.5 block text-xs font-semibold text-[#64748B]">
-                {t("dash.level")}
-              </label>
-              <select
-                value={niveau}
-                onChange={(e) => setNiveau(e.target.value)}
-                className="mb-2.5 w-full rounded-xl border border-[#E2E8F0] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#2563EB]/12"
-              >
-                {niveauOptions.map((n) => (
-                  <option key={n.label}>{n.label}</option>
-                ))}
-              </select>
-
-              {/* Add a custom niveau */}
-              <div className="mb-2 flex gap-2">
-                <input
-                  value={newNiveau}
-                  onChange={(e) => setNewNiveau(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddNiveau();
-                    }
-                  }}
-                  placeholder="Nouveau niveau…"
-                  className="w-full rounded-xl border border-[#E2E8F0] bg-white px-3 py-2 text-sm outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#2563EB]/12"
-                />
+              <div className="mb-1.5 flex items-center justify-between gap-2">
+                <label htmlFor="niveau-select" className="text-xs font-semibold text-[#64748B]">
+                  {t("dash.level")}
+                </label>
                 <button
                   type="button"
-                  onClick={handleAddNiveau}
-                  disabled={addingNiveau || !newNiveau.trim()}
-                  aria-label="Ajouter le niveau"
-                  className="inline-flex shrink-0 items-center justify-center rounded-xl border border-[#E2E8F0] bg-white px-3 text-[#2563EB] transition hover:border-[#2563EB] hover:bg-[#EFF6FF] disabled:opacity-40"
+                  onClick={() => setNiveauManagerOpen(true)}
+                  className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-semibold text-[#2563EB] transition hover:bg-[#EFF6FF] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/30"
                 >
-                  <Plus className="h-4 w-4" />
+                  <SlidersHorizontal className="h-3.5 w-3.5" />
+                  {t("niveau.manage")}
                 </button>
               </div>
-
-              {/* Custom niveaux — removable */}
-              {niveaux.length > 0 && (
-                <div className="mb-5 flex flex-wrap gap-1.5">
+              {niveaux.length === 0 ? (
+                <button
+                  type="button"
+                  onClick={() => setNiveauManagerOpen(true)}
+                  className="mb-5 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-[#2563EB]/30 bg-[#EFF6FF]/40 px-3 py-2.5 text-sm font-semibold text-[#2563EB] transition hover:border-[#2563EB] hover:bg-[#EFF6FF]"
+                >
+                  <Plus className="h-4 w-4" />
+                  {t("niveau.createFirst")}
+                </button>
+              ) : (
+                <select
+                  id="niveau-select"
+                  value={niveau}
+                  onChange={(e) => setNiveau(e.target.value)}
+                  className="mb-5 w-full rounded-xl border border-[#E2E8F0] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#2563EB]/12"
+                >
                   {niveaux.map((n) => (
-                    <span
-                      key={n.id}
-                      className="inline-flex items-center gap-1 rounded-full bg-[#EFF6FF] px-2.5 py-1 text-xs font-medium text-[#1D4ED8] ring-1 ring-[#2563EB]/15"
-                    >
-                      {n.label}
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteNiveau(n)}
-                        aria-label={`Supprimer ${n.label}`}
-                        className="text-[#1D4ED8]/60 transition hover:text-[#DC2626]"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </span>
+                    <option key={n.id}>{n.label}</option>
                   ))}
-                </div>
+                </select>
               )}
-              {niveaux.length === 0 && <div className="mb-5" />}
 
               <button
                 type="submit"
@@ -367,6 +306,14 @@ export default function DashboardPage() {
           </aside>
         </div>
       </div>
+
+      <NiveauManager
+        open={niveauManagerOpen}
+        niveaux={niveaux}
+        onClose={() => setNiveauManagerOpen(false)}
+        onAdded={handleNiveauAdded}
+        onDeleted={handleNiveauDeleted}
+      />
 
       <ConfirmDialog
         open={!!deleteTarget}

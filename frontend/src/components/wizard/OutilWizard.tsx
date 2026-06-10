@@ -55,6 +55,20 @@ function emptyRow(id: number): Row {
   return { id, prenom: "", vs: ["", "", ""], errs: [false, false, false] };
 }
 
+/**
+ * Clamp a typed score into the valid 0–10 range as the teacher types. Empty and
+ * partial entries (e.g. "" or "9.") pass through untouched so decimals can still
+ * be keyed in; only a parseable number outside the range is corrected.
+ */
+function clampScore(raw: string): string {
+  if (raw === "") return raw;
+  const n = parseFloat(raw);
+  if (isNaN(n)) return raw;
+  if (n > 10) return "10";
+  if (n < 0) return "0";
+  return raw;
+}
+
 const badge = (level: Niveau) => (
   <span className={cx("b" + level.toLowerCase())}>{level}</span>
 );
@@ -160,7 +174,7 @@ export function OutilWizard({
       rs.map((r) => {
         if (r.id !== id) return r;
         const vs = [...r.vs] as [string, string, string];
-        vs[i] = v;
+        vs[i] = clampScore(v);
         const errs = [...r.errs] as [boolean, boolean, boolean];
         errs[i] = false;
         return { ...r, vs, errs };

@@ -89,10 +89,18 @@ function rawClient(): Client {
   return g.__adpClient;
 }
 
-/** Returns the libSQL client, ensuring the schema exists (runs once). */
+/** Returns the libSQL client, ensuring the schema exists (runs once per
+ *  process). The SCHEMA is idempotent (every statement is IF NOT EXISTS), so a
+ *  failed init clears the cached promise and retries on the next call rather
+ *  than poisoning every subsequent query with a stale rejection. */
 export async function getDb(): Promise<Client> {
   const c = rawClient();
-  if (!g.__adpInit) g.__adpInit = c.executeMultiple(SCHEMA);
+  if (!g.__adpInit) {
+    g.__adpInit = c.executeMultiple(SCHEMA).catch((e) => {
+      g.__adpInit = undefined;
+      throw e;
+    });
+  }
   await g.__adpInit;
   return c;
 }

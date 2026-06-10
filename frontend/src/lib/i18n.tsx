@@ -62,6 +62,24 @@ const FR: Dict = {
   "dash.recentCycles": "Cycles récents",
   "dash.noCycles": "Aucun cycle enregistré.",
   "dash.lastDiag": "Dernier diagnostic",
+
+  "niveau.manage": "Gérer les niveaux",
+  "niveau.createFirst": "Créez votre premier niveau",
+  "niveau.title": "Gérer les niveaux",
+  "niveau.subtitle":
+    "Créez vos propres niveaux pour les réutiliser à la création d'une classe.",
+  "niveau.mine": "Mes niveaux",
+  "niveau.addPlaceholder": "Ex : 6ème année",
+  "niveau.add": "Ajouter",
+  "niveau.adding": "Ajout…",
+  "niveau.empty": "Aucun niveau personnalisé pour l'instant.",
+  "niveau.done": "Terminé",
+  "niveau.added": "Niveau ajouté",
+  "niveau.deleted": "Niveau supprimé",
+  "niveau.exists": "Ce niveau existe déjà.",
+  "niveau.addFail": "Échec de l'ajout du niveau.",
+  "niveau.deleteFail": "Échec de la suppression du niveau.",
+  "niveau.close": "Fermer",
 };
 
 const AR: Dict = {
@@ -116,6 +134,23 @@ const AR: Dict = {
   "dash.recentCycles": "الدورات الأخيرة",
   "dash.noCycles": "لا توجد دورة مسجّلة.",
   "dash.lastDiag": "آخر تشخيص",
+
+  "niveau.manage": "إدارة المستويات",
+  "niveau.createFirst": "أنشئ مستواك الأول",
+  "niveau.title": "إدارة المستويات",
+  "niveau.subtitle": "أنشئ مستوياتك الخاصة لإعادة استعمالها عند إنشاء قسم.",
+  "niveau.mine": "مستوياتي",
+  "niveau.addPlaceholder": "مثال: السنة السادسة",
+  "niveau.add": "إضافة",
+  "niveau.adding": "جارٍ الإضافة…",
+  "niveau.empty": "لا يوجد مستوى مخصّص بعد.",
+  "niveau.done": "تم",
+  "niveau.added": "تمت إضافة المستوى",
+  "niveau.deleted": "تم حذف المستوى",
+  "niveau.exists": "هذا المستوى موجود بالفعل.",
+  "niveau.addFail": "تعذّرت إضافة المستوى.",
+  "niveau.deleteFail": "تعذّر حذف المستوى.",
+  "niveau.close": "إغلاق",
 };
 
 const DICTS: Record<Lang, Dict> = { fr: FR, ar: AR };
