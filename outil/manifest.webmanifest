@@ -1,0 +1,12 @@
+{
+  "name": "Outil ADP 2026 — RM & Souplesse",
+  "short_name": "ADP-RM",
+  "description": "Outil EPS d'aide à la décision pédagogique — 100% local et hors-ligne.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0c1e3c",
+  "lang": "fr",
+  "icons": []
+}
