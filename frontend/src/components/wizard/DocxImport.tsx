@@ -6,42 +6,73 @@ import {
   AlertTriangle,
   CheckCircle2,
   Download,
-  FileSpreadsheet,
+  FileText,
   Upload,
   X,
 } from "lucide-react";
 
-import { buildTemplateCsv, parseStudentsCsv, type ParseResult } from "@/lib/csv";
+import { buildGrilleBlob, parseStudentsDocx, type ParseResult } from "@/lib/docx";
 
-export interface CsvImportProps {
+export interface DocxImportProps {
   /** Receives the parsed roster (scores as strings; "" when missing). */
   onImport: (students: { prenom: string; vs: [string, string, string] }[]) => void;
+  /** Current class roster (names) — the model download is built from this. */
+  roster: { prenom: string }[];
 }
 
 const OBS = ["Force", "Souplesse", "Équilibre"] as const;
 
-export function CsvImport({ onImport }: CsvImportProps) {
+export function DocxImport({ onImport, roster = [] }: DocxImportProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const [fileName, setFileName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [building, setBuilding] = useState(false);
   const [result, setResult] = useState<ParseResult | null>(null);
 
+  const hasRoster = roster.length > 0;
+
   function readFile(file: File) {
+    if (!file.name.toLowerCase().endsWith(".docx")) {
+      toast.error("Veuillez sélectionner un fichier Word (.docx)");
+      return;
+    }
     setFileName(file.name);
+    setLoading(true);
     const reader = new FileReader();
-    reader.onload = (e) => setResult(parseStudentsCsv(String(e.target?.result ?? "")));
-    reader.onerror = () => toast.error("Lecture du fichier impossible");
-    reader.readAsText(file, "UTF-8");
+    reader.onload = async (e) => {
+      const buf = e.target?.result;
+      if (buf instanceof ArrayBuffer) {
+        setResult(await parseStudentsDocx(buf));
+      }
+      setLoading(false);
+    };
+    reader.onerror = () => {
+      toast.error("Lecture du fichier impossible");
+      setLoading(false);
+    };
+    reader.readAsArrayBuffer(file);
   }
 
-  function downloadTemplate() {
-    const blob = new Blob([buildTemplateCsv()], { type: "text/csv;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "modele_eleves_ADP-RM.csv";
-    a.click();
-    URL.revokeObjectURL(url);
+  async function downloadModel() {
+    if (!hasRoster) {
+      toast.error("Ajoutez d'abord la liste des élèves de la classe");
+      return;
+    }
+    setBuilding(true);
+    try {
+      const blob = await buildGrilleBlob(roster.map((r) => ({ prenom: r.prenom })));
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "Grille_classe.docx";
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Génération du modèle impossible");
+    } finally {
+      setBuilding(false);
+    }
   }
 
   function apply() {
@@ -62,6 +93,7 @@ export function CsvImport({ onImport }: CsvImportProps) {
   function reset() {
     setResult(null);
     setFileName("");
+    setLoading(false);
     if (inputRef.current) inputRef.current.value = "";
   }
 
@@ -71,22 +103,33 @@ export function CsvImport({ onImport }: CsvImportProps) {
     <div className="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-4">
       <div className="mb-3 flex items-center justify-between gap-3">
         <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-[#475569]">
-          <FileSpreadsheet className="h-4 w-4 text-[#2563EB]" />
-          Importer une liste d&rsquo;élèves (CSV)
+          <FileText className="h-4 w-4 text-[#2563EB]" />
+          Importer la grille d&rsquo;élèves (Word)
         </h3>
         <button
           type="button"
-          onClick={downloadTemplate}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#2563EB] transition hover:border-[#2563EB] hover:bg-[#EFF6FF]"
+          onClick={downloadModel}
+          disabled={building}
+          aria-disabled={!hasRoster}
+          title={
+            hasRoster
+              ? "Télécharger la grille pré-remplie avec les élèves de la classe"
+              : "Ajoutez d'abord la liste des élèves de la classe"
+          }
+          className={`inline-flex items-center gap-1.5 rounded-lg border bg-white px-2.5 py-1.5 text-xs font-semibold text-[#2563EB] transition ${
+            hasRoster
+              ? "border-[#E2E8F0] hover:border-[#2563EB] hover:bg-[#EFF6FF]"
+              : "cursor-not-allowed border-[#E2E8F0] opacity-50"
+          }`}
         >
-          <Download className="h-3.5 w-3.5" /> Modèle
+          <Download className="h-3.5 w-3.5" /> {building ? "Génération…" : "Modèle classe"}
         </button>
       </div>
 
       <input
         ref={inputRef}
         type="file"
-        accept=".csv,.txt"
+        accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         className="hidden"
         onChange={(e) => {
           if (e.target.files?.[0]) readFile(e.target.files[0]);
@@ -94,7 +137,7 @@ export function CsvImport({ onImport }: CsvImportProps) {
       />
 
       {/* ---------- Dropzone (no file yet) ---------- */}
-      {!result && (
+      {!result && !loading && (
         <div
           role="button"
           tabIndex={0}
@@ -120,13 +163,21 @@ export function CsvImport({ onImport }: CsvImportProps) {
             <Upload className="h-5 w-5" />
           </span>
           <p className="mt-3 text-sm font-medium text-[#0C1E3C]">
-            Glisser-déposer un fichier CSV, ou{" "}
+            Glisser-déposer la grille <strong>.docx</strong> remplie, ou{" "}
             <span className="text-[#2563EB] underline-offset-2 hover:underline">parcourir</span>
           </p>
           <p className="mt-1 text-xs text-[#64748B]">
-            Colonnes : <strong>Prénom · Force · Souplesse · Équilibre</strong> — scores 0–10 ou
-            codes métier (FO~ · SO− · EQ+)
+            Colonnes lues : <strong>NOM PRÉNOM · Force · Souplesse · Équilibre</strong> — notes 0
+            à 10 saisies dans chaque case
           </p>
+        </div>
+      )}
+
+      {/* ---------- Loading ---------- */}
+      {loading && (
+        <div className="flex items-center gap-2 rounded-xl border border-[#E2E8F0] bg-white px-3 py-3 text-sm text-[#475569]">
+          <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#CBD5E1] border-t-[#2563EB]" />
+          Lecture de {fileName || "la grille"}…
         </div>
       )}
 
@@ -166,14 +217,14 @@ export function CsvImport({ onImport }: CsvImportProps) {
           {result.students.length === 0 ? (
             <div className="flex items-center gap-2 rounded-xl border border-[#FDE68A] bg-[#FFFBEB] px-3 py-2.5 text-sm text-[#92400E]">
               <AlertTriangle className="h-4 w-4 shrink-0" />
-              Aucun élève valide trouvé dans le fichier.
+              Aucun élève valide trouvé dans le document.
             </div>
           ) : (
             <div className="max-h-64 overflow-auto rounded-xl border border-[#E2E8F0] bg-white">
               <table className="w-full border-collapse text-sm">
                 <thead className="sticky top-0 bg-[#F1F5F9] text-xs text-[#475569]">
                   <tr>
-                    <th className="px-3 py-2 text-left font-semibold">Prénom</th>
+                    <th className="px-3 py-2 text-left font-semibold">Nom / Prénom</th>
                     {OBS.map((o) => (
                       <th key={o} className="px-2 py-2 text-center font-semibold">
                         {o}
@@ -238,8 +289,8 @@ export function CsvImport({ onImport }: CsvImportProps) {
             </button>
           </div>
           <p className="mt-2 text-xs text-[#64748B]">
-            Les élèves sont ajoutés à la liste ci-dessus. Les scores manquants pourront être
-            complétés à la main avant l&rsquo;analyse.
+            Les élèves sont ajoutés à la liste ci-dessus. Les notes manquantes pourront être
+            complétées à la main avant l&rsquo;analyse.
           </p>
         </div>
       )}
@@ -261,9 +312,7 @@ function Chip({
     muted: "bg-[#F1F5F9] text-[#64748B] ring-[#E2E8F0]",
   };
   return (
-    <span
-      className={`rounded-lg px-2.5 py-1 text-xs font-semibold ring-1 ${styles[tone]}`}
-    >
+    <span className={`rounded-lg px-2.5 py-1 text-xs font-semibold ring-1 ${styles[tone]}`}>
       {children}
     </span>
   );

@@ -23,7 +23,7 @@ import {
   type StudentInput,
 } from "@/lib/calc";
 import { aiEnrich, aiJustify, aiSummary } from "@/lib/api";
-import { CsvImport } from "./CsvImport";
+import { DocxImport } from "./DocxImport";
 
 // -- helpers ------------------------------------------------------------------
 
@@ -137,6 +137,7 @@ export function OutilWizard({
 }: OutilWizardProps = {}) {
   const idRef = useRef(0);
   const nextId = () => ++idRef.current;
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   const [step, setStep] = useState(1);
   const [classe, setClasse] = useState(classMeta?.nom ?? "");
@@ -220,6 +221,11 @@ export function OutilWizard({
     }
     setS1error(null);
     setAnalysis(analyser(students));
+    // Let the results render, then bring them into view.
+    setTimeout(
+      () => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+      60,
+    );
   }
 
   // -- navigation -------------------------------------------------------------
@@ -333,11 +339,12 @@ export function OutilWizard({
     }
   }
 
-  // -- CSV import -------------------------------------------------------------
-  /** Apply a CSV-parsed roster: drop empty placeholder rows, append imported. */
-  function applyCsvImport(students: { prenom: string; vs: [string, string, string] }[]) {
+  // -- Roster import (.docx) --------------------------------------------------
+  /** Apply a parsed roster: drop pre-existing empty / ungraded placeholder rows
+   *  (incl. name-only roster pre-fills, to avoid duplicates), append imported. */
+  function applyDocxImport(students: { prenom: string; vs: [string, string, string] }[]) {
     setRows((rs) => {
-      const kept = rs.filter((r) => r.prenom.trim() || r.vs.some((v) => v.trim()));
+      const kept = rs.filter((r) => r.vs.some((v) => v.trim()));
       const imported: Row[] = students.map((s) => ({
         id: nextId(),
         prenom: s.prenom,
@@ -451,9 +458,10 @@ export function OutilWizard({
             addRows={addRows}
             removeRow={removeRow}
             runAnalyse={runAnalyse}
+            resultsRef={resultsRef}
             analysis={analysis}
             s1error={s1error}
-            applyCsvImport={applyCsvImport}
+            applyDocxImport={applyDocxImport}
             exportCsv={exportCsv}
             goStep={goStep}
             canSave={!!onSaveDiagnostic}
@@ -514,9 +522,10 @@ function Step1(props: {
   addRows: (n: number) => void;
   removeRow: (id: number) => void;
   runAnalyse: () => void;
+  resultsRef: React.RefObject<HTMLDivElement | null>;
   analysis: ClassAnalysis | null;
   s1error: string | null;
-  applyCsvImport: (students: { prenom: string; vs: [string, string, string] }[]) => void;
+  applyDocxImport: (students: { prenom: string; vs: [string, string, string] }[]) => void;
   exportCsv: () => void;
   goStep: (n: number) => void;
   canSave: boolean;
@@ -612,9 +621,14 @@ function Step1(props: {
           </button>
         </div>
 
-        {/* CSV import */}
+        {/* Word (.docx) roster import */}
         <div style={{ marginTop: 14, paddingTop: 12, borderTop: "1px solid var(--bd)" }}>
-          <CsvImport onImport={props.applyCsvImport} />
+          <DocxImport
+            onImport={props.applyDocxImport}
+            roster={props.rows
+              .map((r) => ({ prenom: r.prenom.trim() }))
+              .filter((r) => r.prenom)}
+          />
         </div>
 
         {props.s1error && <div className={cx("al ale")}>{props.s1error}</div>}
@@ -635,7 +649,7 @@ function Step1(props: {
       {/* Results */}
       {a && (
         <>
-          <div className={cx("card")}>
+          <div className={cx("card")} ref={props.resultsRef}>
             <h2>📊 Tableau individuel</h2>
             <div className={cx("tw")}>
               <table>

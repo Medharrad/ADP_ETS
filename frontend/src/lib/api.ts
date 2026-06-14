@@ -66,9 +66,12 @@ export interface ClassSummary {
   last_diagnostic: string | null;
 }
 
+export type Genre = "G" | "F" | null;
+
 export interface Student {
   id: number;
   prenom: string;
+  genre: Genre;
   ordre: number;
 }
 
@@ -120,6 +123,19 @@ export function createClass(nom: string, niveau?: string) {
 
 export function getClass(id: number) {
   return apiFetch<ClassDetail>(`/api/classes/${id}`);
+}
+
+export interface RosterEntry {
+  id?: number;
+  prenom: string;
+  genre: Genre;
+}
+
+export function saveRoster(classId: number, students: RosterEntry[]) {
+  return apiFetch<{ students: Student[] }>(`/api/classes/${classId}/roster`, {
+    method: "PUT",
+    body: JSON.stringify({ students }),
+  });
 }
 
 export function updateClass(id: number, nom: string, niveau?: string) {

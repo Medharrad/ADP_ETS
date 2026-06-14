@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { AppHeader } from "@/components/app-header";
+import { RosterManager } from "@/components/roster-manager";
 import { useRequireAuth } from "@/lib/use-require-auth";
 import { useRevalidate } from "@/lib/use-revalidate";
 import { analyser } from "@/lib/calc";
@@ -145,21 +146,14 @@ export default function ClassDetailPage() {
             </section>
           </div>
 
-          {/* Roster */}
+          {/* Roster (editable) */}
           <aside className="rounded-xl border border-[#2563EB]/20 bg-white p-4 shadow-sm">
-            <h2 className="mb-3 font-serif text-lg">Liste de classe</h2>
-            {students.length === 0 ? (
-              <p className="text-sm text-[#64748B]">Roster vide.</p>
-            ) : (
-              <ol className="space-y-1 text-sm">
-                {students.map((s, i) => (
-                  <li key={s.id} className="flex gap-2">
-                    <span className="w-5 text-right text-[#64748B]">{i + 1}.</span>
-                    <span>{s.prenom}</span>
-                  </li>
-                ))}
-              </ol>
-            )}
+            <RosterManager
+              classId={classId}
+              className={klass.nom}
+              students={students}
+              onSaved={refresh}
+            />
           </aside>
         </div>
       </div>
