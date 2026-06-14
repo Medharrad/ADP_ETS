@@ -61,9 +61,9 @@ export default function ClassDetailPage() {
 
   if (!ready || loading) {
     return (
-      <main className="min-h-screen bg-[#F8FAFC]">
+      <main className="min-h-screen bg-[var(--c-bg)]">
         <AppHeader />
-        <p className="mx-auto max-w-[1280px] px-4 py-6 text-sm text-[#64748B]">Chargement…</p>
+        <p className="mx-auto max-w-[1280px] px-4 py-6 text-sm text-[var(--c-muted)]">Chargement…</p>
       </main>
     );
   }
@@ -73,30 +73,30 @@ export default function ClassDetailPage() {
   const hasRoster = students.length > 0;
 
   return (
-    <main className="min-h-screen bg-[#F8FAFC] text-[#0C1E3C]">
+    <main className="min-h-screen bg-[var(--c-bg)] text-[var(--c-ink)]">
       <AppHeader />
       <div className="mx-auto max-w-[1280px] px-4 py-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <Link href="/dashboard" className="text-xs text-[#64748B] hover:underline">
+            <Link href="/dashboard" className="text-xs text-[var(--c-muted)] hover:underline">
               ← Tableau de bord
             </Link>
             <h1 className="font-serif text-2xl">
               {klass.nom}
               {klass.niveau && (
-                <span className="ml-2 rounded-full border border-[#2563EB]/20 bg-[#EFF6FF] px-2.5 py-0.5 align-middle text-xs font-bold text-[#2563EB]">
+                <span className="ml-2 rounded-full border border-[var(--c-primary)]/20 bg-[var(--c-soft)] px-2.5 py-0.5 align-middle text-xs font-bold text-[var(--c-primary)]">
                   {klass.niveau}
                 </span>
               )}
             </h1>
-            <p className="mt-1 text-sm text-[#64748B]">
+            <p className="mt-1 text-sm text-[var(--c-muted)]">
               {students.length} élève(s) · {sortedDiagnostics.length} diagnostic(s) ·{" "}
               {cycles.length} cycle(s)
             </p>
           </div>
           <Link
             href={`/classes/${classId}/evaluate`}
-            className="rounded-xl bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] px-4 py-2 text-sm font-bold text-white shadow-lg shadow-[#2563EB]/25 transition hover:brightness-105"
+            className="rounded-xl bg-gradient-to-r from-[var(--c-primary)] to-[var(--c-primary2)] px-4 py-2 text-sm font-bold text-white shadow-lg shadow-[var(--c-primary)]/25 transition hover:brightness-105"
           >
             {hasRoster ? "+ Nouvelle évaluation" : "+ Premier diagnostic"}
           </Link>
@@ -105,10 +105,10 @@ export default function ClassDetailPage() {
         <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_300px]">
           <div className="space-y-6">
             {/* Progress */}
-            <section className="rounded-xl border border-[#2563EB]/20 bg-white p-4 shadow-sm">
+            <section className="rounded-xl border border-[var(--c-primary)]/20 bg-[var(--c-surface)] p-4 shadow-sm">
               <h2 className="mb-3 font-serif text-lg">Évolution de la classe</h2>
               {sortedDiagnostics.length === 0 ? (
-                <p className="text-sm text-[#64748B]">
+                <p className="text-sm text-[var(--c-muted)]">
                   Aucun diagnostic. Lancez une première évaluation pour suivre la progression.
                 </p>
               ) : (
@@ -117,10 +117,10 @@ export default function ClassDetailPage() {
             </section>
 
             {/* Cycles */}
-            <section className="rounded-xl border border-[#2563EB]/20 bg-white p-4 shadow-sm">
+            <section className="rounded-xl border border-[var(--c-primary)]/20 bg-[var(--c-surface)] p-4 shadow-sm">
               <h2 className="mb-3 font-serif text-lg">Cycles planifiés</h2>
               {cycles.length === 0 ? (
-                <p className="text-sm text-[#64748B]">
+                <p className="text-sm text-[var(--c-muted)]">
                   Aucun cycle. Terminez un diagnostic puis générez une planification.
                 </p>
               ) : (
@@ -129,13 +129,13 @@ export default function ClassDetailPage() {
                     <li key={cy.id}>
                       <Link
                         href={`/classes/${classId}/cycle/${cy.id}`}
-                        className="flex items-center justify-between rounded-md border border-[#E2E8F0] px-3 py-2 text-sm transition-colors hover:border-[#2563EB]"
+                        className="flex items-center justify-between rounded-md border border-[var(--c-border)] px-3 py-2 text-sm transition-colors hover:border-[var(--c-primary)]"
                       >
                         <span>
                           {JSON.parse(cy.axes_json).length} axes · {cy.n_seances} séances
                           {cy.edited ? " · modifié" : ""}
                         </span>
-                        <span className="text-xs text-[#64748B]">
+                        <span className="text-xs text-[var(--c-muted)]">
                           {new Date(cy.created_at).toLocaleDateString("fr-FR")}
                         </span>
                       </Link>
@@ -147,7 +147,7 @@ export default function ClassDetailPage() {
           </div>
 
           {/* Roster (editable) */}
-          <aside className="rounded-xl border border-[#2563EB]/20 bg-white p-4 shadow-sm">
+          <aside className="rounded-xl border border-[var(--c-primary)]/20 bg-[var(--c-surface)] p-4 shadow-sm">
             <RosterManager
               classId={classId}
               className={klass.nom}
@@ -175,11 +175,11 @@ function ProgressTable({ diagnostics }: { diagnostics: Diagnostic[] }) {
   const delta = (cur: number, prev: number | undefined) => {
     if (prev === undefined) return null;
     const d = cur - prev;
-    if (Math.abs(d) < 0.05) return <span className="text-[#64748B]"> →</span>;
+    if (Math.abs(d) < 0.05) return <span className="text-[var(--c-muted)]"> →</span>;
     return d > 0 ? (
-      <span className="text-[#124A1E]"> ▲ {d.toFixed(1)}</span>
+      <span className="text-[var(--c-success-ink)]"> ▲ {d.toFixed(1)}</span>
     ) : (
-      <span className="text-[#7A1212]"> ▼ {Math.abs(d).toFixed(1)}</span>
+      <span className="text-[var(--c-danger-deep)]"> ▼ {Math.abs(d).toFixed(1)}</span>
     );
   };
 
@@ -188,12 +188,12 @@ function ProgressTable({ diagnostics }: { diagnostics: Diagnostic[] }) {
       <table className="w-full border-collapse text-sm">
         <thead>
           <tr>
-            <th className="border-b border-[#E2E8F0] p-2 text-left text-xs text-[#64748B]"></th>
+            <th className="border-b border-[var(--c-border)] p-2 text-left text-xs text-[var(--c-muted)]"></th>
             {cols.map((c, i) => (
-              <th key={i} className="border-b border-[#E2E8F0] p-2 text-center text-xs">
+              <th key={i} className="border-b border-[var(--c-border)] p-2 text-center text-xs">
                 {c.label}
                 <br />
-                <span className="font-normal text-[#64748B]">{c.total} élèves</span>
+                <span className="font-normal text-[var(--c-muted)]">{c.total} élèves</span>
               </th>
             ))}
           </tr>
@@ -201,9 +201,9 @@ function ProgressTable({ diagnostics }: { diagnostics: Diagnostic[] }) {
         <tbody>
           {rows.map((r) => (
             <tr key={r.key}>
-              <td className="border-b border-[#F1F5F9] p-2 font-semibold">{r.key}</td>
+              <td className="border-b border-[var(--c-border2)] p-2 font-semibold">{r.key}</td>
               {cols.map((c, i) => (
-                <td key={i} className="border-b border-[#F1F5F9] p-2 text-center">
+                <td key={i} className="border-b border-[var(--c-border2)] p-2 text-center">
                   {r.get(c).toFixed(1)}
                   {delta(r.get(c), i > 0 ? r.get(cols[i - 1]) : undefined)}
                 </td>

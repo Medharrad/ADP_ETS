@@ -12,7 +12,7 @@ export default function Home() {
   }, [router]);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950">
+    <main className="flex min-h-screen items-center justify-center bg-[var(--c-bg)] dark:bg-slate-950">
       <p className="text-muted-foreground">Loading...</p>
     </main>
   );

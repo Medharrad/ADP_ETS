@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins, Geist_Mono, Noto_Sans_Arabic } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/theme-provider";
 import { I18nProvider } from "@/lib/i18n";
 
 const poppins = Poppins({
@@ -34,11 +35,14 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
+      suppressHydrationWarning
       className={`${poppins.variable} ${geistMono.variable} ${notoArabic.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <I18nProvider>{children}</I18nProvider>
-        <Toaster richColors position="top-center" />
+        <ThemeProvider>
+          <I18nProvider>{children}</I18nProvider>
+          <Toaster richColors position="top-center" />
+        </ThemeProvider>
       </body>
     </html>
   );

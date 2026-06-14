@@ -110,7 +110,7 @@ export function RosterManager({ classId, className, students, onSaved }: RosterM
     <div>
       <div className="mb-3 flex items-center justify-between">
         <h2 className="font-serif text-lg">Liste de classe</h2>
-        <span className="text-xs text-[#64748B]">
+        <span className="text-xs text-[var(--c-muted)]">
           {filled.length} élève(s) · {nbG} G · {nbF} F
         </span>
       </div>
@@ -118,17 +118,17 @@ export function RosterManager({ classId, className, students, onSaved }: RosterM
       <div className="max-h-[420px] space-y-1.5 overflow-auto pr-1">
         {rows.map((r, i) => (
           <div key={r.key} className="flex items-center gap-1.5">
-            <span className="w-5 shrink-0 text-right text-xs text-[#94A3B8]">{i + 1}.</span>
+            <span className="w-5 shrink-0 text-right text-xs text-[var(--c-faint)]">{i + 1}.</span>
             <input
               value={r.prenom}
               onChange={(e) => patch(r.key, { prenom: e.target.value })}
               placeholder="Nom Prénom"
-              className="min-w-0 flex-1 rounded-lg border border-[#E2E8F0] bg-white px-2.5 py-1.5 text-sm outline-none focus:border-[#2563EB]"
+              className="min-w-0 flex-1 rounded-lg border border-[var(--c-border)] bg-[var(--c-surface)] px-2.5 py-1.5 text-sm outline-none focus:border-[var(--c-primary)]"
             />
             <select
               value={r.genre ?? ""}
               onChange={(e) => patch(r.key, { genre: (e.target.value || null) as Genre })}
-              className="shrink-0 rounded-lg border border-[#E2E8F0] bg-white px-1.5 py-1.5 text-sm outline-none focus:border-[#2563EB]"
+              className="shrink-0 rounded-lg border border-[var(--c-border)] bg-[var(--c-surface)] px-1.5 py-1.5 text-sm outline-none focus:border-[var(--c-primary)]"
               title="Sexe"
             >
               <option value="">—</option>
@@ -138,7 +138,7 @@ export function RosterManager({ classId, className, students, onSaved }: RosterM
             <button
               type="button"
               onClick={() => removeRow(r.key)}
-              className="shrink-0 rounded-lg p-1.5 text-[#94A3B8] transition hover:bg-[#FEF2F2] hover:text-[#DC2626]"
+              className="shrink-0 rounded-lg p-1.5 text-[var(--c-faint)] transition hover:bg-[var(--c-danger-bg)] hover:text-[var(--c-danger)]"
               title="Supprimer"
             >
               <Trash2 className="h-3.5 w-3.5" />
@@ -150,17 +150,17 @@ export function RosterManager({ classId, className, students, onSaved }: RosterM
       <button
         type="button"
         onClick={addRow}
-        className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-dashed border-[#CBD5E1] px-2.5 py-1.5 text-xs font-semibold text-[#475569] transition hover:border-[#2563EB] hover:text-[#2563EB]"
+        className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-dashed border-[var(--c-border3)] px-2.5 py-1.5 text-xs font-semibold text-[var(--c-muted2)] transition hover:border-[var(--c-primary)] hover:text-[var(--c-primary)]"
       >
         <Plus className="h-3.5 w-3.5" /> Ajouter un élève
       </button>
 
-      <div className="mt-3 flex flex-col gap-2 border-t border-[#F1F5F9] pt-3">
+      <div className="mt-3 flex flex-col gap-2 border-t border-[var(--c-border2)] pt-3">
         <button
           type="button"
           onClick={save}
           disabled={saving}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] px-3 py-2 text-sm font-bold text-white shadow-lg shadow-[#2563EB]/25 transition hover:brightness-105 disabled:opacity-50"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[var(--c-primary)] to-[var(--c-primary2)] px-3 py-2 text-sm font-bold text-white shadow-lg shadow-[var(--c-primary)]/25 transition hover:brightness-105 disabled:opacity-50"
         >
           <Save className="h-4 w-4" /> {saving ? "Enregistrement…" : "Enregistrer la liste"}
         </button>
@@ -170,16 +170,16 @@ export function RosterManager({ classId, className, students, onSaved }: RosterM
           disabled={generating}
           aria-disabled={filled.length === 0}
           title={filled.length === 0 ? "Ajoutez d'abord des élèves à la liste" : undefined}
-          className={`inline-flex items-center justify-center gap-2 rounded-xl border border-[#2563EB]/30 bg-[#EFF6FF] px-3 py-2 text-sm font-semibold text-[#2563EB] transition disabled:opacity-50 ${
+          className={`inline-flex items-center justify-center gap-2 rounded-xl border border-[var(--c-primary)]/30 bg-[var(--c-soft)] px-3 py-2 text-sm font-semibold text-[var(--c-primary)] transition disabled:opacity-50 ${
             filled.length === 0
               ? "cursor-not-allowed opacity-50"
-              : "hover:bg-[#DBEAFE]"
+              : "hover:bg-[var(--c-soft2)]"
           }`}
         >
           <FileDown className="h-4 w-4" />
           {generating ? "Génération…" : "Générer la grille (.docx)"}
         </button>
-        <p className="text-xs text-[#64748B]">
+        <p className="text-xs text-[var(--c-muted)]">
           La grille Word reprend les noms de la classe — à imprimer, noter à la main, puis
           réimporter dans l&rsquo;évaluation.
         </p>

@@ -42,11 +42,11 @@ export default function CyclePage() {
 
   if (!plan.sequences?.length) {
     return (
-      <main className="min-h-screen bg-[#F8FAFC]">
+      <main className="min-h-screen bg-[var(--c-bg)]">
         <AppHeader />
-        <p className="mx-auto max-w-[1280px] px-4 py-6 text-sm text-[#64748B]">
+        <p className="mx-auto max-w-[1280px] px-4 py-6 text-sm text-[var(--c-muted)]">
           Ce cycle ne contient pas de planification détaillée.{" "}
-          <Link href={`/classes/${classId}`} className="text-[#2563EB] hover:underline">
+          <Link href={`/classes/${classId}`} className="text-[var(--c-primary)] hover:underline">
             Retour à la classe
           </Link>
         </p>
@@ -89,13 +89,13 @@ export default function CyclePage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#F8FAFC]">
+    <main className="min-h-screen bg-[var(--c-bg)]">
       <AppHeader />
       <div className="mx-auto max-w-[1280px] px-4 py-4">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <Link
             href={`/classes/${classId}`}
-            className="text-xs text-[#64748B] hover:underline"
+            className="text-xs text-[var(--c-muted)] hover:underline"
           >
             ← Retour à la classe
           </Link>
@@ -103,7 +103,7 @@ export default function CyclePage() {
             <button
               type="button"
               onClick={() => window.print()}
-              className="rounded-md border border-[#2563EB]/40 px-3 py-1.5 text-sm"
+              className="rounded-md border border-[var(--c-primary)]/40 px-3 py-1.5 text-sm"
             >
               🖨 Imprimer
             </button>
@@ -112,7 +112,7 @@ export default function CyclePage() {
                 type="button"
                 onClick={save}
                 disabled={saving}
-                className="rounded-xl bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] px-3.5 py-1.5 text-sm font-bold text-white shadow-md shadow-[#2563EB]/25 transition hover:brightness-105 disabled:opacity-40"
+                className="rounded-xl bg-gradient-to-r from-[var(--c-primary)] to-[var(--c-primary2)] px-3.5 py-1.5 text-sm font-bold text-white shadow-md shadow-[var(--c-primary)]/25 transition hover:brightness-105 disabled:opacity-40"
               >
                 {saving ? "Enregistrement…" : "✓ Enregistrer"}
               </button>
@@ -120,7 +120,7 @@ export default function CyclePage() {
               <button
                 type="button"
                 onClick={() => setEditing(true)}
-                className="rounded-xl bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] px-3.5 py-1.5 text-sm font-bold text-white shadow-md shadow-[#2563EB]/25 transition hover:brightness-105"
+                className="rounded-xl bg-gradient-to-r from-[var(--c-primary)] to-[var(--c-primary2)] px-3.5 py-1.5 text-sm font-bold text-white shadow-md shadow-[var(--c-primary)]/25 transition hover:brightness-105"
               >
                 ✎ Modifier
               </button>

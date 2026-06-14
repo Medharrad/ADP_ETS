@@ -56,14 +56,14 @@ export function AdpAuth({ initialMode = "sign-in" }: { initialMode?: "sign-in" |
   return (
     <main className="grid min-h-screen lg:grid-cols-[1.05fr_1fr]">
       {/* ---------------- Brand panel ---------------- */}
-      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-[#0C1E3C] via-[#15347a] to-[#1E3A8A] p-10 text-white lg:flex lg:flex-col lg:justify-between xl:p-14">
+      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-[var(--c-ink)] via-[var(--c-primary-ink)] to-[var(--c-primary-ink)] p-10 text-white lg:flex lg:flex-col lg:justify-between xl:p-14">
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -left-24 -top-24 h-80 w-80 rounded-full bg-[#2563EB]/30 blur-3xl" />
-          <div className="absolute -bottom-32 right-0 h-96 w-96 rounded-full bg-[#0EA5E9]/20 blur-3xl" />
-          <div className="absolute right-10 top-20 h-40 w-40 rounded-full bg-[#93C5FD]/10 blur-2xl" />
+          <div className="absolute -left-24 -top-24 h-80 w-80 rounded-full bg-[var(--c-primary)]/30 blur-3xl" />
+          <div className="absolute -bottom-32 right-0 h-96 w-96 rounded-full bg-[var(--c-accent)]/20 blur-3xl" />
+          <div className="absolute right-10 top-20 h-40 w-40 rounded-full bg-[var(--c-accent-light)]/10 blur-2xl" />
         </div>
         <svg
-          className="pointer-events-none absolute -right-24 top-1/2 h-[34rem] w-[34rem] -translate-y-1/2 text-[#2563EB]"
+          className="pointer-events-none absolute -right-24 top-1/2 h-[34rem] w-[34rem] -translate-y-1/2 text-[var(--c-primary)]"
           viewBox="0 0 400 400"
           fill="none"
           aria-hidden
@@ -90,24 +90,24 @@ export function AdpAuth({ initialMode = "sign-in" }: { initialMode?: "sign-in" |
         </svg>
 
         <div className="relative flex items-center gap-3">
-          <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-[#2563EB] to-[#0EA5E9] text-xl font-bold text-white shadow-lg shadow-[#2563EB]/30">
+          <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-[var(--c-primary)] to-[var(--c-accent)] text-xl font-bold text-white shadow-lg shadow-[var(--c-primary)]/30">
             G
           </span>
           <div>
             <div className="text-xl font-semibold tracking-wide">ADP-RM</div>
-            <div className="text-[0.7rem] uppercase tracking-[0.2em] text-[#93C5FD]/90">
+            <div className="text-[0.7rem] uppercase tracking-[0.2em] text-[var(--c-accent-light)]/90">
               ADP 2026 · RM6
             </div>
           </div>
         </div>
 
         <div className="relative max-w-md">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#2563EB]/50 bg-white/5 px-3 py-1 text-xs font-medium text-[#93C5FD] backdrop-blur">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--c-primary)]/50 bg-[var(--c-surface)]/5 px-3 py-1 text-xs font-medium text-[var(--c-accent-light)] backdrop-blur">
             <Sparkles className="h-3.5 w-3.5" /> {t("auth.badge")}
           </span>
           <h1 className="mt-5 text-4xl font-semibold leading-tight xl:text-[2.7rem]">
             {t("auth.headlineLead")}{" "}
-            <span className="bg-gradient-to-r from-[#93C5FD] to-[#7DD3FC] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[var(--c-accent-light)] to-[var(--c-accent2)] bg-clip-text text-transparent">
               {t("auth.headlineAccent")}
             </span>
             .
@@ -117,7 +117,7 @@ export function AdpAuth({ initialMode = "sign-in" }: { initialMode?: "sign-in" |
           <ul className="mt-8 space-y-4">
             {FEATURES.map(({ icon: Icon, tkey }) => (
               <li key={tkey} className="flex items-center gap-3">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white/5 text-[#93C5FD] ring-1 ring-[#2563EB]/30">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[var(--c-surface)]/5 text-[var(--c-accent-light)] ring-1 ring-[var(--c-primary)]/30">
                   <Icon className="h-[18px] w-[18px]" />
                 </span>
                 <span className="text-sm text-white/85">{t(tkey)}</span>
@@ -126,44 +126,44 @@ export function AdpAuth({ initialMode = "sign-in" }: { initialMode?: "sign-in" |
           </ul>
         </div>
 
-        <p className="relative text-xs text-[#93C5FD]/60">CRMEF Inezgane · BOUARGANE</p>
+        <p className="relative text-xs text-[var(--c-accent-light)]/60">CRMEF Inezgane · BOUARGANE</p>
       </aside>
 
       {/* ---------------- Form panel ---------------- */}
-      <section className="relative flex items-center justify-center overflow-hidden bg-[#F8FAFC] p-5 sm:p-8">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-[#2563EB]/10 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 -left-10 h-72 w-72 rounded-full bg-[#0EA5E9]/10 blur-3xl" />
+      <section className="relative flex items-center justify-center overflow-hidden bg-[var(--c-bg)] p-5 sm:p-8">
+        <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-[var(--c-primary)]/10 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -left-10 h-72 w-72 rounded-full bg-[var(--c-accent)]/10 blur-3xl" />
 
         <div className="relative w-full max-w-md animate-in fade-in-0 slide-in-from-bottom-3 duration-700">
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-2 lg:invisible">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-[#2563EB] to-[#0EA5E9] font-bold text-white">
+              <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-[var(--c-primary)] to-[var(--c-accent)] font-bold text-white">
                 G
               </span>
-              <span className="text-lg font-semibold text-[#0C1E3C]">ADP-RM</span>
+              <span className="text-lg font-semibold text-[var(--c-ink)]">ADP-RM</span>
             </div>
             <button
               type="button"
               onClick={() => setLang(lang === "fr" ? "ar" : "fr")}
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#E2E8F0] bg-white/70 px-3 py-1.5 text-xs font-semibold text-[#64748B] backdrop-blur transition hover:border-[#2563EB] hover:text-[#2563EB]"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[var(--c-border)] bg-[var(--c-surface)]/70 px-3 py-1.5 text-xs font-semibold text-[var(--c-muted)] backdrop-blur transition hover:border-[var(--c-primary)] hover:text-[var(--c-primary)]"
             >
               <Languages className="h-3.5 w-3.5" />
               {t("lang.name")}
             </button>
           </div>
 
-          <div className="rounded-3xl border border-white/70 bg-white/80 p-7 shadow-[0_24px_70px_-20px_rgba(37,99,235,0.30)] backdrop-blur-xl sm:p-9">
-            <h2 className="text-2xl font-semibold text-[#0C1E3C]">
+          <div className="rounded-3xl border border-white/70 bg-[var(--c-surface)]/80 p-7 shadow-[0_24px_70px_-20px_rgba(37,99,235,0.30)] backdrop-blur-xl sm:p-9">
+            <h2 className="text-2xl font-semibold text-[var(--c-ink)]">
               {isSignUp ? t("auth.signup") : t("auth.signin")}
             </h2>
-            <p className="mt-1 text-sm text-[#64748B]">
+            <p className="mt-1 text-sm text-[var(--c-muted)]">
               {isSignUp ? t("auth.signupSub") : t("auth.signinSub")}
             </p>
 
             {/* segmented toggle */}
-            <div className="relative mt-6 grid grid-cols-2 rounded-2xl bg-[#E2E8F0] p-1 text-sm font-semibold">
+            <div className="relative mt-6 grid grid-cols-2 rounded-2xl bg-[var(--c-border)] p-1 text-sm font-semibold">
               <span
-                className="absolute inset-y-1 rounded-xl bg-white shadow-sm transition-all duration-300 ease-out"
+                className="absolute inset-y-1 rounded-xl bg-[var(--c-surface)] shadow-sm transition-all duration-300 ease-out"
                 style={{
                   insetInlineStart: isSignUp ? "50%" : "0.25rem",
                   insetInlineEnd: isSignUp ? "0.25rem" : "50%",
@@ -173,7 +173,7 @@ export function AdpAuth({ initialMode = "sign-in" }: { initialMode?: "sign-in" |
                 type="button"
                 onClick={() => setMode("sign-in")}
                 className={`relative z-10 rounded-xl py-2 transition-colors ${
-                  !isSignUp ? "text-[#0C1E3C]" : "text-[#64748B]"
+                  !isSignUp ? "text-[var(--c-ink)]" : "text-[var(--c-muted)]"
                 }`}
               >
                 {t("auth.signin")}
@@ -182,7 +182,7 @@ export function AdpAuth({ initialMode = "sign-in" }: { initialMode?: "sign-in" |
                 type="button"
                 onClick={() => setMode("sign-up")}
                 className={`relative z-10 rounded-xl py-2 transition-colors ${
-                  isSignUp ? "text-[#0C1E3C]" : "text-[#64748B]"
+                  isSignUp ? "text-[var(--c-ink)]" : "text-[var(--c-muted)]"
                 }`}
               >
                 {t("auth.signup")}
@@ -191,11 +191,11 @@ export function AdpAuth({ initialMode = "sign-in" }: { initialMode?: "sign-in" |
 
             <form onSubmit={submit} className="mt-6 space-y-4">
               <div>
-                <label className="mb-1.5 block text-xs font-semibold text-[#64748B]">
+                <label className="mb-1.5 block text-xs font-semibold text-[var(--c-muted)]">
                   {t("auth.email")}
                 </label>
                 <div className="group relative">
-                  <Mail className="pointer-events-none absolute start-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#64748B] transition-colors group-focus-within:text-[#2563EB]" />
+                  <Mail className="pointer-events-none absolute start-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--c-muted)] transition-colors group-focus-within:text-[var(--c-primary)]" />
                   <input
                     type="email"
                     required
@@ -203,17 +203,17 @@ export function AdpAuth({ initialMode = "sign-in" }: { initialMode?: "sign-in" |
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder={t("auth.emailPlaceholder")}
-                    className="w-full rounded-xl border border-[#E2E8F0] bg-white py-2.5 ps-10 pe-3 text-sm text-[#0C1E3C] outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#2563EB]/15"
+                    className="w-full rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] py-2.5 ps-10 pe-3 text-sm text-[var(--c-ink)] outline-none transition focus:border-[var(--c-primary)] focus:ring-4 focus:ring-[var(--c-primary)]/15"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="mb-1.5 block text-xs font-semibold text-[#64748B]">
+                <label className="mb-1.5 block text-xs font-semibold text-[var(--c-muted)]">
                   {t("auth.password")}
                 </label>
                 <div className="group relative">
-                  <Lock className="pointer-events-none absolute start-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#64748B] transition-colors group-focus-within:text-[#2563EB]" />
+                  <Lock className="pointer-events-none absolute start-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--c-muted)] transition-colors group-focus-within:text-[var(--c-primary)]" />
                   <input
                     type={showPass ? "text" : "password"}
                     required
@@ -222,12 +222,12 @@ export function AdpAuth({ initialMode = "sign-in" }: { initialMode?: "sign-in" |
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder={isSignUp ? t("auth.passwordHint") : "••••••••"}
-                    className="w-full rounded-xl border border-[#E2E8F0] bg-white py-2.5 ps-10 pe-10 text-sm text-[#0C1E3C] outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#2563EB]/15"
+                    className="w-full rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] py-2.5 ps-10 pe-10 text-sm text-[var(--c-ink)] outline-none transition focus:border-[var(--c-primary)] focus:ring-4 focus:ring-[var(--c-primary)]/15"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPass((s) => !s)}
-                    className="absolute end-3 top-1/2 -translate-y-1/2 text-[#64748B] transition hover:text-[#0C1E3C]"
+                    className="absolute end-3 top-1/2 -translate-y-1/2 text-[var(--c-muted)] transition hover:text-[var(--c-ink)]"
                     aria-label={showPass ? t("auth.hide") : t("auth.show")}
                     tabIndex={-1}
                   >
@@ -239,7 +239,7 @@ export function AdpAuth({ initialMode = "sign-in" }: { initialMode?: "sign-in" |
               <button
                 type="submit"
                 disabled={busy}
-                className="group mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] py-3 text-sm font-bold text-white shadow-lg shadow-[#2563EB]/25 transition hover:shadow-xl hover:shadow-[#2563EB]/30 hover:brightness-105 disabled:opacity-50"
+                className="group mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[var(--c-primary)] to-[var(--c-primary2)] py-3 text-sm font-bold text-white shadow-lg shadow-[var(--c-primary)]/25 transition hover:shadow-xl hover:shadow-[var(--c-primary)]/30 hover:brightness-105 disabled:opacity-50"
               >
                 {busy
                   ? t("auth.wait")
@@ -253,12 +253,12 @@ export function AdpAuth({ initialMode = "sign-in" }: { initialMode?: "sign-in" |
             </form>
           </div>
 
-          <p className="mt-5 text-center text-xs text-[#64748B]">
+          <p className="mt-5 text-center text-xs text-[var(--c-muted)]">
             {isSignUp ? t("auth.haveAccount") + " " : t("auth.noAccount") + " "}
             <button
               type="button"
               onClick={() => setMode(isSignUp ? "sign-in" : "sign-up")}
-              className="font-semibold text-[#2563EB] hover:underline"
+              className="font-semibold text-[var(--c-primary)] hover:underline"
             >
               {isSignUp ? t("auth.signin") : t("auth.signup")}
             </button>

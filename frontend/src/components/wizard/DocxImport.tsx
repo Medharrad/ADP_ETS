@@ -100,10 +100,10 @@ export function DocxImport({ onImport, roster = [] }: DocxImportProps) {
   const complete = result?.students.filter((s) => s.complete).length ?? 0;
 
   return (
-    <div className="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-4">
+    <div className="rounded-2xl border border-[var(--c-border)] bg-[var(--c-bg)] p-4">
       <div className="mb-3 flex items-center justify-between gap-3">
-        <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-[#475569]">
-          <FileText className="h-4 w-4 text-[#2563EB]" />
+        <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-[var(--c-muted2)]">
+          <FileText className="h-4 w-4 text-[var(--c-primary)]" />
           Importer la grille d&rsquo;élèves (Word)
         </h3>
         <button
@@ -116,10 +116,10 @@ export function DocxImport({ onImport, roster = [] }: DocxImportProps) {
               ? "Télécharger la grille pré-remplie avec les élèves de la classe"
               : "Ajoutez d'abord la liste des élèves de la classe"
           }
-          className={`inline-flex items-center gap-1.5 rounded-lg border bg-white px-2.5 py-1.5 text-xs font-semibold text-[#2563EB] transition ${
+          className={`inline-flex items-center gap-1.5 rounded-lg border bg-[var(--c-surface)] px-2.5 py-1.5 text-xs font-semibold text-[var(--c-primary)] transition ${
             hasRoster
-              ? "border-[#E2E8F0] hover:border-[#2563EB] hover:bg-[#EFF6FF]"
-              : "cursor-not-allowed border-[#E2E8F0] opacity-50"
+              ? "border-[var(--c-border)] hover:border-[var(--c-primary)] hover:bg-[var(--c-soft)]"
+              : "cursor-not-allowed border-[var(--c-border)] opacity-50"
           }`}
         >
           <Download className="h-3.5 w-3.5" /> {building ? "Génération…" : "Modèle classe"}
@@ -155,18 +155,18 @@ export function DocxImport({ onImport, roster = [] }: DocxImportProps) {
           }}
           className={`flex cursor-pointer flex-col items-center rounded-xl border-2 border-dashed px-4 py-7 text-center transition ${
             dragOver
-              ? "border-[#2563EB] bg-[#EFF6FF]"
-              : "border-[#CBD5E1] bg-white hover:border-[#2563EB] hover:bg-[#EFF6FF]/50"
+              ? "border-[var(--c-primary)] bg-[var(--c-soft)]"
+              : "border-[var(--c-border3)] bg-[var(--c-surface)] hover:border-[var(--c-primary)] hover:bg-[var(--c-soft)]/50"
           }`}
         >
-          <span className="grid h-11 w-11 place-items-center rounded-full bg-[#EFF6FF] text-[#2563EB]">
+          <span className="grid h-11 w-11 place-items-center rounded-full bg-[var(--c-soft)] text-[var(--c-primary)]">
             <Upload className="h-5 w-5" />
           </span>
-          <p className="mt-3 text-sm font-medium text-[#0C1E3C]">
+          <p className="mt-3 text-sm font-medium text-[var(--c-ink)]">
             Glisser-déposer la grille <strong>.docx</strong> remplie, ou{" "}
-            <span className="text-[#2563EB] underline-offset-2 hover:underline">parcourir</span>
+            <span className="text-[var(--c-primary)] underline-offset-2 hover:underline">parcourir</span>
           </p>
-          <p className="mt-1 text-xs text-[#64748B]">
+          <p className="mt-1 text-xs text-[var(--c-muted)]">
             Colonnes lues : <strong>NOM PRÉNOM · Force · Souplesse · Équilibre</strong> — notes 0
             à 10 saisies dans chaque case
           </p>
@@ -175,8 +175,8 @@ export function DocxImport({ onImport, roster = [] }: DocxImportProps) {
 
       {/* ---------- Loading ---------- */}
       {loading && (
-        <div className="flex items-center gap-2 rounded-xl border border-[#E2E8F0] bg-white px-3 py-3 text-sm text-[#475569]">
-          <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#CBD5E1] border-t-[#2563EB]" />
+        <div className="flex items-center gap-2 rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] px-3 py-3 text-sm text-[var(--c-muted2)]">
+          <span className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--c-border3)] border-t-[var(--c-primary)]" />
           Lecture de {fileName || "la grille"}…
         </div>
       )}
@@ -184,14 +184,14 @@ export function DocxImport({ onImport, roster = [] }: DocxImportProps) {
       {/* ---------- Parse error ---------- */}
       {result?.error && (
         <div className="mt-1">
-          <div className="flex items-start gap-2 rounded-xl border border-[#FECACA] bg-[#FEF2F2] px-3 py-2.5 text-sm text-[#B91C1C]">
+          <div className="flex items-start gap-2 rounded-xl border border-[var(--c-danger-border)] bg-[var(--c-danger-bg)] px-3 py-2.5 text-sm text-[var(--c-danger-ink)]">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <span>{result.error}</span>
           </div>
           <button
             type="button"
             onClick={reset}
-            className="mt-2 text-xs font-semibold text-[#2563EB] hover:underline"
+            className="mt-2 text-xs font-semibold text-[var(--c-primary)] hover:underline"
           >
             Réessayer
           </button>
@@ -203,7 +203,7 @@ export function DocxImport({ onImport, roster = [] }: DocxImportProps) {
         <div>
           {/* summary */}
           <div className="mb-3 flex flex-wrap items-center gap-2">
-            <span className="truncate rounded-lg bg-white px-2.5 py-1 text-xs font-medium text-[#475569] ring-1 ring-[#E2E8F0]">
+            <span className="truncate rounded-lg bg-[var(--c-surface)] px-2.5 py-1 text-xs font-medium text-[var(--c-muted2)] ring-1 ring-[var(--c-border)]">
               📄 {fileName}
             </span>
             <Chip tone="primary">{result.students.length} élève(s)</Chip>
@@ -215,14 +215,14 @@ export function DocxImport({ onImport, roster = [] }: DocxImportProps) {
           </div>
 
           {result.students.length === 0 ? (
-            <div className="flex items-center gap-2 rounded-xl border border-[#FDE68A] bg-[#FFFBEB] px-3 py-2.5 text-sm text-[#92400E]">
+            <div className="flex items-center gap-2 rounded-xl border border-[var(--c-warn-border)] bg-[var(--c-warn-bg)] px-3 py-2.5 text-sm text-[var(--c-warn-deep)]">
               <AlertTriangle className="h-4 w-4 shrink-0" />
               Aucun élève valide trouvé dans le document.
             </div>
           ) : (
-            <div className="max-h-64 overflow-auto rounded-xl border border-[#E2E8F0] bg-white">
+            <div className="max-h-64 overflow-auto rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)]">
               <table className="w-full border-collapse text-sm">
-                <thead className="sticky top-0 bg-[#F1F5F9] text-xs text-[#475569]">
+                <thead className="sticky top-0 bg-[var(--c-border2)] text-xs text-[var(--c-muted2)]">
                   <tr>
                     <th className="px-3 py-2 text-left font-semibold">Nom / Prénom</th>
                     {OBS.map((o) => (
@@ -235,13 +235,13 @@ export function DocxImport({ onImport, roster = [] }: DocxImportProps) {
                 </thead>
                 <tbody>
                   {result.students.map((s, i) => (
-                    <tr key={i} className="border-t border-[#F1F5F9]">
-                      <td className="px-3 py-1.5 font-medium text-[#0C1E3C]">{s.prenom}</td>
+                    <tr key={i} className="border-t border-[var(--c-border2)]">
+                      <td className="px-3 py-1.5 font-medium text-[var(--c-ink)]">{s.prenom}</td>
                       {s.vs.map((v, k) => (
                         <td
                           key={k}
                           className={`px-2 py-1.5 text-center tabular-nums ${
-                            v === null ? "text-[#F59E0B]" : "text-[#0C1E3C]"
+                            v === null ? "text-[var(--c-warn)]" : "text-[var(--c-ink)]"
                           }`}
                         >
                           {v === null ? "—" : v}
@@ -249,12 +249,12 @@ export function DocxImport({ onImport, roster = [] }: DocxImportProps) {
                       ))}
                       <td className="px-3 py-1.5">
                         {s.complete ? (
-                          <span className="inline-flex items-center gap-1 text-xs font-medium text-[#16A34A]">
+                          <span className="inline-flex items-center gap-1 text-xs font-medium text-[var(--c-success)]">
                             <CheckCircle2 className="h-3.5 w-3.5" /> Complet
                           </span>
                         ) : (
                           <span
-                            className="inline-flex items-center gap-1 text-xs font-medium text-[#B45309]"
+                            className="inline-flex items-center gap-1 text-xs font-medium text-[var(--c-warn-ink)]"
                             title={s.issues.join(", ")}
                           >
                             <AlertTriangle className="h-3.5 w-3.5" /> Partiel
@@ -274,7 +274,7 @@ export function DocxImport({ onImport, roster = [] }: DocxImportProps) {
               type="button"
               onClick={apply}
               disabled={result.students.length === 0}
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] px-4 py-2 text-sm font-bold text-white shadow-lg shadow-[#2563EB]/25 transition hover:brightness-105 disabled:opacity-40 disabled:shadow-none"
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[var(--c-primary)] to-[var(--c-primary2)] px-4 py-2 text-sm font-bold text-white shadow-lg shadow-[var(--c-primary)]/25 transition hover:brightness-105 disabled:opacity-40 disabled:shadow-none"
             >
               <Upload className="h-4 w-4" />
               Importer {result.students.length > 0 ? result.students.length : ""} élève
@@ -283,12 +283,12 @@ export function DocxImport({ onImport, roster = [] }: DocxImportProps) {
             <button
               type="button"
               onClick={reset}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-[#E2E8F0] bg-white px-3 py-2 text-sm font-semibold text-[#64748B] transition hover:bg-[#F1F5F9]"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] px-3 py-2 text-sm font-semibold text-[var(--c-muted)] transition hover:bg-[var(--c-border2)]"
             >
               <X className="h-4 w-4" /> Annuler
             </button>
           </div>
-          <p className="mt-2 text-xs text-[#64748B]">
+          <p className="mt-2 text-xs text-[var(--c-muted)]">
             Les élèves sont ajoutés à la liste ci-dessus. Les notes manquantes pourront être
             complétées à la main avant l&rsquo;analyse.
           </p>
@@ -306,10 +306,10 @@ function Chip({
   tone: "primary" | "green" | "amber" | "muted";
 }) {
   const styles: Record<typeof tone, string> = {
-    primary: "bg-[#EFF6FF] text-[#2563EB] ring-[#2563EB]/20",
-    green: "bg-[#ECFDF5] text-[#16A34A] ring-[#16A34A]/20",
-    amber: "bg-[#FFFBEB] text-[#B45309] ring-[#F59E0B]/25",
-    muted: "bg-[#F1F5F9] text-[#64748B] ring-[#E2E8F0]",
+    primary: "bg-[var(--c-soft)] text-[var(--c-primary)] ring-[var(--c-primary)]/20",
+    green: "bg-[var(--c-success-bg)] text-[var(--c-success)] ring-[var(--c-success)]/20",
+    amber: "bg-[var(--c-warn-bg)] text-[var(--c-warn-ink)] ring-[var(--c-warn)]/25",
+    muted: "bg-[var(--c-border2)] text-[var(--c-muted)] ring-[var(--c-border)]",
   };
   return (
     <span className={`rounded-lg px-2.5 py-1 text-xs font-semibold ring-1 ${styles[tone]}`}>

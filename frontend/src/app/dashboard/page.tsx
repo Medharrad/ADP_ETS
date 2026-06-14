@@ -138,12 +138,12 @@ export default function DashboardPage() {
   const totalCycles = classes.reduce((s, c) => s + c.cycles, 0);
 
   return (
-    <main className="min-h-screen bg-[#F8FAFC] text-[#0C1E3C]">
+    <main className="min-h-screen bg-[var(--c-bg)] text-[var(--c-ink)]">
       <AppHeader />
 
       <div className="mx-auto max-w-[1280px] px-4 py-7">
         <h1 className="text-2xl font-semibold tracking-tight">{t("dash.title")}</h1>
-        <p className="mt-1 text-sm text-[#64748B]">{t("dash.subtitle")}</p>
+        <p className="mt-1 text-sm text-[var(--c-muted)]">{t("dash.subtitle")}</p>
 
         {/* Stats */}
         <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -158,14 +158,14 @@ export default function DashboardPage() {
           <section>
             <h2 className="mb-4 text-lg font-semibold">{t("dash.myClasses")}</h2>
             {loading ? (
-              <p className="text-sm text-[#64748B]">{t("dash.loading")}</p>
+              <p className="text-sm text-[var(--c-muted)]">{t("dash.loading")}</p>
             ) : classes.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-[#2563EB]/30 bg-white p-8 text-center">
-                <p className="text-sm text-[#64748B]">{t("dash.noClasses")}</p>
+              <div className="rounded-2xl border border-dashed border-[var(--c-primary)]/30 bg-[var(--c-surface)] p-8 text-center">
+                <p className="text-sm text-[var(--c-muted)]">{t("dash.noClasses")}</p>
                 <button
                   type="button"
                   onClick={handleSeed}
-                  className="mt-4 inline-flex items-center gap-2 rounded-xl border border-[#2563EB]/30 bg-[#EFF6FF] px-4 py-2 text-sm font-semibold text-[#2563EB] transition hover:bg-[#2563EB] hover:text-white"
+                  className="mt-4 inline-flex items-center gap-2 rounded-xl border border-[var(--c-primary)]/30 bg-[var(--c-soft)] px-4 py-2 text-sm font-semibold text-[var(--c-primary)] transition hover:bg-[var(--c-primary)] hover:text-white"
                 >
                   <Sparkles className="h-4 w-4" />
                   {t("dash.demo")}
@@ -176,25 +176,25 @@ export default function DashboardPage() {
                 {classes.map((c) => (
                   <div
                     key={c.id}
-                    className="group relative overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-[0_1px_3px_rgba(15,23,42,0.06)] transition-all hover:-translate-y-0.5 hover:border-[#2563EB]/30 hover:shadow-[0_12px_30px_-12px_rgba(37,99,235,0.35)]"
+                    className="group relative overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] p-5 shadow-[0_1px_3px_rgba(15,23,42,0.06)] transition-all hover:-translate-y-0.5 hover:border-[var(--c-primary)]/30 hover:shadow-[0_12px_30px_-12px_rgba(37,99,235,0.35)]"
                   >
                     {/* top gradient accent on hover */}
-                    <span className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-gradient-to-r from-[#2563EB] to-[#0EA5E9] transition-transform duration-300 group-hover:scale-x-100" />
+                    <span className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-gradient-to-r from-[var(--c-primary)] to-[var(--c-accent)] transition-transform duration-300 group-hover:scale-x-100" />
                     <Link href={`/classes/${c.id}`} className="block">
                       <div className="flex items-start justify-between gap-2">
-                        <span className="text-lg font-semibold text-[#0C1E3C]">{c.nom}</span>
+                        <span className="text-lg font-semibold text-[var(--c-ink)]">{c.nom}</span>
                         {c.niveau && (
-                          <span className="rounded-full border border-[#2563EB]/20 bg-[#EFF6FF] px-2.5 py-0.5 text-xs font-semibold text-[#2563EB]">
+                          <span className="rounded-full border border-[var(--c-primary)]/20 bg-[var(--c-soft)] px-2.5 py-0.5 text-xs font-semibold text-[var(--c-primary)]">
                             {c.niveau}
                           </span>
                         )}
                       </div>
-                      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[#64748B]">
+                      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--c-muted)]">
                         <Pill>{c.students} élève(s)</Pill>
                         <Pill>{c.diagnostics} diagnostic(s)</Pill>
                         <Pill>{c.cycles} cycle(s)</Pill>
                       </div>
-                      <div className="mt-3 pe-9 text-xs text-[#64748B]">
+                      <div className="mt-3 pe-9 text-xs text-[var(--c-muted)]">
                         {t("dash.lastDiag")} : {c.last_diagnostic ?? "—"}
                       </div>
                     </Link>
@@ -205,7 +205,7 @@ export default function DashboardPage() {
                         e.stopPropagation();
                         setDeleteTarget(c);
                       }}
-                      className="absolute bottom-2.5 end-2.5 grid h-8 w-8 place-items-center rounded-lg text-[#94A3B8] opacity-70 transition hover:bg-[#FEF2F2] hover:text-[#DC2626] hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-[#DC2626]/30"
+                      className="absolute bottom-2.5 end-2.5 grid h-8 w-8 place-items-center rounded-lg text-[var(--c-faint)] opacity-70 transition hover:bg-[var(--c-danger-bg)] hover:text-[var(--c-danger)] hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-[var(--c-danger)]/30"
                       aria-label={`Supprimer la classe ${c.nom}`}
                       title="Supprimer la classe"
                     >
@@ -221,26 +221,26 @@ export default function DashboardPage() {
           <aside className="space-y-6">
             <form
               onSubmit={handleCreate}
-              className="rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-[0_1px_3px_rgba(15,23,42,0.06)]"
+              className="rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] p-5 shadow-[0_1px_3px_rgba(15,23,42,0.06)]"
             >
               <h2 className="mb-4 text-lg font-semibold">{t("dash.newClass")}</h2>
-              <label className="mb-1.5 block text-xs font-semibold text-[#64748B]">
+              <label className="mb-1.5 block text-xs font-semibold text-[var(--c-muted)]">
                 {t("dash.name")}
               </label>
               <input
                 value={nom}
                 onChange={(e) => setNom(e.target.value)}
                 placeholder="Ex : 3ème B"
-                className="mb-4 w-full rounded-xl border border-[#E2E8F0] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#2563EB]/12"
+                className="mb-4 w-full rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] px-3 py-2.5 text-sm outline-none transition focus:border-[var(--c-primary)] focus:ring-4 focus:ring-[var(--c-primary)]/12"
               />
               <div className="mb-1.5 flex items-center justify-between gap-2">
-                <label htmlFor="niveau-select" className="text-xs font-semibold text-[#64748B]">
+                <label htmlFor="niveau-select" className="text-xs font-semibold text-[var(--c-muted)]">
                   {t("dash.level")}
                 </label>
                 <button
                   type="button"
                   onClick={() => setNiveauManagerOpen(true)}
-                  className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-semibold text-[#2563EB] transition hover:bg-[#EFF6FF] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/30"
+                  className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-semibold text-[var(--c-primary)] transition hover:bg-[var(--c-soft)] focus:outline-none focus:ring-2 focus:ring-[var(--c-primary)]/30"
                 >
                   <SlidersHorizontal className="h-3.5 w-3.5" />
                   {t("niveau.manage")}
@@ -250,7 +250,7 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   onClick={() => setNiveauManagerOpen(true)}
-                  className="mb-5 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-[#2563EB]/30 bg-[#EFF6FF]/40 px-3 py-2.5 text-sm font-semibold text-[#2563EB] transition hover:border-[#2563EB] hover:bg-[#EFF6FF]"
+                  className="mb-5 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-[var(--c-primary)]/30 bg-[var(--c-soft)]/40 px-3 py-2.5 text-sm font-semibold text-[var(--c-primary)] transition hover:border-[var(--c-primary)] hover:bg-[var(--c-soft)]"
                 >
                   <Plus className="h-4 w-4" />
                   {t("niveau.createFirst")}
@@ -260,7 +260,7 @@ export default function DashboardPage() {
                   id="niveau-select"
                   value={niveau}
                   onChange={(e) => setNiveau(e.target.value)}
-                  className="mb-5 w-full rounded-xl border border-[#E2E8F0] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#2563EB]/12"
+                  className="mb-5 w-full rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] px-3 py-2.5 text-sm outline-none transition focus:border-[var(--c-primary)] focus:ring-4 focus:ring-[var(--c-primary)]/12"
                 >
                   {niveaux.map((n) => (
                     <option key={n.id}>{n.label}</option>
@@ -271,29 +271,29 @@ export default function DashboardPage() {
               <button
                 type="submit"
                 disabled={creating || !nom.trim()}
-                className="w-full rounded-xl bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#2563EB]/25 transition hover:shadow-xl hover:shadow-[#2563EB]/30 hover:brightness-105 disabled:opacity-40 disabled:shadow-none"
+                className="w-full rounded-xl bg-gradient-to-r from-[var(--c-primary)] to-[var(--c-primary2)] px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-[var(--c-primary)]/25 transition hover:shadow-xl hover:shadow-[var(--c-primary)]/30 hover:brightness-105 disabled:opacity-40 disabled:shadow-none"
               >
                 {creating ? t("dash.creating") : t("dash.create")}
               </button>
             </form>
 
-            <section className="rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-[0_1px_3px_rgba(15,23,42,0.06)]">
+            <section className="rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] p-5 shadow-[0_1px_3px_rgba(15,23,42,0.06)]">
               <h2 className="mb-4 text-lg font-semibold">{t("dash.recentCycles")}</h2>
               {cycles.length === 0 ? (
-                <p className="text-sm text-[#64748B]">{t("dash.noCycles")}</p>
+                <p className="text-sm text-[var(--c-muted)]">{t("dash.noCycles")}</p>
               ) : (
                 <ul className="space-y-2.5">
                   {cycles.map((cy) => (
                     <li key={cy.id}>
                       <Link
                         href={`/classes/${cy.class_id}/cycle/${cy.id}`}
-                        className="block rounded-xl border border-[#E2E8F0] px-3.5 py-2.5 text-sm transition hover:border-[#2563EB]/40 hover:bg-[#EFF6FF]/40"
+                        className="block rounded-xl border border-[var(--c-border)] px-3.5 py-2.5 text-sm transition hover:border-[var(--c-primary)]/40 hover:bg-[var(--c-soft)]/40"
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-semibold text-[#0C1E3C]">{cy.class_nom}</span>
-                          <span className="text-xs text-[#64748B]">{cy.n_seances} séances</span>
+                          <span className="font-semibold text-[var(--c-ink)]">{cy.class_nom}</span>
+                          <span className="text-xs text-[var(--c-muted)]">{cy.n_seances} séances</span>
                         </div>
-                        <div className="mt-0.5 text-xs text-[#64748B]">
+                        <div className="mt-0.5 text-xs text-[var(--c-muted)]">
                           {JSON.parse(cy.axes_json).length} axes
                           {cy.edited ? " · modifié" : ""}
                         </div>
@@ -321,7 +321,7 @@ export default function DashboardPage() {
         title="Supprimer la classe ?"
         message={
           <>
-            La classe <strong className="text-[#0C1E3C]">{deleteTarget?.nom}</strong> et toutes
+            La classe <strong className="text-[var(--c-ink)]">{deleteTarget?.nom}</strong> et toutes
             ses données (élèves, diagnostics, cycles) seront définitivement supprimées. Cette
             action est irréversible.
           </>
@@ -337,7 +337,7 @@ export default function DashboardPage() {
 
 function Pill({ children }: { children: React.ReactNode }) {
   return (
-    <span className="rounded-md bg-[#F1F5F9] px-2 py-0.5 font-medium text-[#475569]">
+    <span className="rounded-md bg-[var(--c-border2)] px-2 py-0.5 font-medium text-[var(--c-muted2)]">
       {children}
     </span>
   );
@@ -356,7 +356,7 @@ function Stat({
 }) {
   const c = tone === "primary" ? "#2563EB" : "#0EA5E9";
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-[0_1px_3px_rgba(15,23,42,0.06)]">
+    <div className="flex items-center gap-3 rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] p-4 shadow-[0_1px_3px_rgba(15,23,42,0.06)]">
       <span
         className="grid h-11 w-11 shrink-0 place-items-center rounded-xl"
         style={{ background: `${c}14`, color: c }}
@@ -364,8 +364,8 @@ function Stat({
         <Icon className="h-5 w-5" />
       </span>
       <div>
-        <div className="text-2xl font-bold leading-none text-[#0C1E3C]">{value}</div>
-        <div className="mt-1 text-xs font-medium uppercase tracking-wide text-[#64748B]">
+        <div className="text-2xl font-bold leading-none text-[var(--c-ink)]">{value}</div>
+        <div className="mt-1 text-xs font-medium uppercase tracking-wide text-[var(--c-muted)]">
           {label}
         </div>
       </div>

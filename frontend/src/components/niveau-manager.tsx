@@ -94,34 +94,34 @@ export function NiveauManager({ open, niveaux, onClose, onAdded, onDeleted }: Ni
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-[#0C1E3C]/40 backdrop-blur-sm animate-in fade-in-0"
+        className="absolute inset-0 bg-[var(--c-ink)]/40 backdrop-blur-sm animate-in fade-in-0"
         onClick={onClose}
       />
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="niveau-manager-title"
-        className="relative w-full max-w-md rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-2xl animate-in fade-in-0 zoom-in-95 duration-200"
+        className="relative w-full max-w-md rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] p-6 shadow-2xl animate-in fade-in-0 zoom-in-95 duration-200"
       >
         <button
           type="button"
           onClick={onClose}
           aria-label={t("niveau.close")}
-          className="absolute end-4 top-4 grid h-8 w-8 place-items-center rounded-lg text-[#94A3B8] transition hover:bg-[#F1F5F9] hover:text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/30"
+          className="absolute end-4 top-4 grid h-8 w-8 place-items-center rounded-lg text-[var(--c-faint)] transition hover:bg-[var(--c-border2)] hover:text-[var(--c-muted2)] focus:outline-none focus:ring-2 focus:ring-[var(--c-primary)]/30"
         >
           <X className="h-4 w-4" />
         </button>
 
         {/* Header */}
         <div className="flex items-start gap-3.5 pe-8">
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#EFF6FF] text-[#2563EB]">
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[var(--c-soft)] text-[var(--c-primary)]">
             <GraduationCap className="h-5 w-5" />
           </span>
           <div className="min-w-0">
-            <h3 id="niveau-manager-title" className="text-lg font-semibold text-[#0C1E3C]">
+            <h3 id="niveau-manager-title" className="text-lg font-semibold text-[var(--c-ink)]">
               {t("niveau.title")}
             </h3>
-            <p className="mt-1 text-sm leading-relaxed text-[#64748B]">{t("niveau.subtitle")}</p>
+            <p className="mt-1 text-sm leading-relaxed text-[var(--c-muted)]">{t("niveau.subtitle")}</p>
           </div>
         </div>
 
@@ -139,13 +139,13 @@ export function NiveauManager({ open, niveaux, onClose, onAdded, onDeleted }: Ni
             }}
             maxLength={40}
             placeholder={t("niveau.addPlaceholder")}
-            className="w-full rounded-xl border border-[#E2E8F0] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#2563EB]/12"
+            className="w-full rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] px-3 py-2.5 text-sm outline-none transition focus:border-[var(--c-primary)] focus:ring-4 focus:ring-[var(--c-primary)]/12"
           />
           <button
             type="button"
             onClick={handleAdd}
             disabled={adding || !canAdd}
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] px-4 text-sm font-semibold text-white shadow-lg shadow-[#2563EB]/25 transition hover:brightness-105 disabled:opacity-40 disabled:shadow-none"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-gradient-to-r from-[var(--c-primary)] to-[var(--c-primary2)] px-4 text-sm font-semibold text-white shadow-lg shadow-[var(--c-primary)]/25 transition hover:brightness-105 disabled:opacity-40 disabled:shadow-none"
           >
             {adding ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -157,11 +157,11 @@ export function NiveauManager({ open, niveaux, onClose, onAdded, onDeleted }: Ni
         </div>
 
         <div className="mt-5 max-h-72 overflow-y-auto pe-0.5">
-          <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#64748B]">
+          <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--c-muted)]">
             {t("niveau.mine")}
           </h4>
           {niveaux.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-[#E2E8F0] px-3 py-6 text-center text-xs text-[#94A3B8]">
+            <p className="rounded-xl border border-dashed border-[var(--c-border)] px-3 py-6 text-center text-xs text-[var(--c-faint)]">
               {t("niveau.empty")}
             </p>
           ) : (
@@ -169,15 +169,15 @@ export function NiveauManager({ open, niveaux, onClose, onAdded, onDeleted }: Ni
               {niveaux.map((n) => (
                 <li
                   key={n.id}
-                  className="flex items-center justify-between gap-2 rounded-xl border border-[#E2E8F0] bg-white px-3.5 py-2.5"
+                  className="flex items-center justify-between gap-2 rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] px-3.5 py-2.5"
                 >
-                  <span className="truncate text-sm font-medium text-[#0C1E3C]">{n.label}</span>
+                  <span className="truncate text-sm font-medium text-[var(--c-ink)]">{n.label}</span>
                   <button
                     type="button"
                     onClick={() => handleDelete(n)}
                     disabled={deletingId !== null}
                     aria-label={`${t("niveau.deleted")} — ${n.label}`}
-                    className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-[#94A3B8] transition hover:bg-[#FEF2F2] hover:text-[#DC2626] disabled:opacity-40 focus:outline-none focus:ring-2 focus:ring-[#DC2626]/30"
+                    className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-[var(--c-faint)] transition hover:bg-[var(--c-danger-bg)] hover:text-[var(--c-danger)] disabled:opacity-40 focus:outline-none focus:ring-2 focus:ring-[var(--c-danger)]/30"
                   >
                     {deletingId === n.id ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -195,7 +195,7 @@ export function NiveauManager({ open, niveaux, onClose, onAdded, onDeleted }: Ni
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl bg-[#0C1E3C] px-4 py-2 text-sm font-bold text-white transition hover:brightness-125 focus:outline-none focus:ring-2 focus:ring-[#0C1E3C]/30"
+            className="rounded-xl bg-[var(--c-ink)] px-4 py-2 text-sm font-bold text-white transition hover:brightness-125 focus:outline-none focus:ring-2 focus:ring-[var(--c-ink)]/30"
           >
             {t("niveau.done")}
           </button>
