@@ -31,17 +31,17 @@ export function ExerciseList({
           const id = videoForExercise(ex);
           return (
             <li key={i}>
+              <span className="min-w-0">{ex}</span>
               {id && (
                 <button
                   type="button"
                   onClick={() => setActive({ id, title: ex })}
-                  className="mr-1.5 inline-flex items-center gap-1 rounded-md bg-[#0D2B5E] px-1.5 py-0.5 align-middle text-[0.62rem] font-bold text-white transition hover:brightness-125 print:hidden"
+                  className="inline-flex shrink-0 items-center gap-1 rounded-md bg-[var(--c-primary)] px-2 py-1 text-[0.62rem] font-bold text-white shadow-sm transition hover:brightness-125 print:hidden"
                   title={`Voir la vidéo : ${ex}`}
                 >
                   <Play className="h-2.5 w-2.5 fill-white" /> vidéo
                 </button>
               )}
-              {ex}
             </li>
           );
         })}
@@ -74,15 +74,15 @@ function VideoModal({ id, title, onClose }: { id: string; title: string; onClose
       aria-modal="true"
     >
       <div
-        className="w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl"
+        className="w-full max-w-3xl overflow-hidden rounded-2xl bg-[var(--c-surface)] shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between gap-3 border-b border-[#E2E8F0] px-4 py-2.5">
-          <h3 className="truncate text-sm font-bold text-[#0C1E3C]">🎬 {title}</h3>
+        <div className="flex items-center justify-between gap-3 border-b border-[var(--c-border)] px-4 py-2.5">
+          <h3 className="truncate text-sm font-bold text-[var(--c-ink)]">🎬 {title}</h3>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1 text-[#64748B] transition hover:bg-[#F1F5F9] hover:text-[#0C1E3C]"
+            className="rounded-lg p-1 text-[var(--c-muted)] transition hover:bg-[var(--c-border2)] hover:text-[var(--c-ink)]"
             aria-label="Fermer"
           >
             <X className="h-5 w-5" />

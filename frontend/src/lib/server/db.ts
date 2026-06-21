@@ -71,6 +71,12 @@ CREATE INDEX IF NOT EXISTS idx_scores_diag ON scores(diagnostic_id);
 CREATE INDEX IF NOT EXISTS idx_cycles_class ON cycles(class_id);
 `;
 
+// Additive migrations applied after the base schema. Each is best-effort: a
+// "duplicate column" error simply means it already ran, so we swallow it.
+const MIGRATIONS = [
+  "ALTER TABLE students ADD COLUMN genre TEXT", // 'G' | 'F' | null
+];
+
 const g = globalThis as unknown as { __adpClient?: Client; __adpInit?: Promise<void> };
 
 function rawClient(): Client {
@@ -95,10 +101,19 @@ function rawClient(): Client {
 export async function getDb(): Promise<Client> {
   const c = rawClient();
   if (!g.__adpInit) {
-    g.__adpInit = c.executeMultiple(SCHEMA).catch((e) => {
-      g.__adpInit = undefined;
-      throw e;
-    });
+    g.__adpInit = c
+      .executeMultiple(SCHEMA)
+      .then(async () => {
+        for (const sql of MIGRATIONS) {
+          await c.execute(sql).catch(() => {
+            /* already applied (duplicate column) — ignore */
+          });
+        }
+      })
+      .catch((e) => {
+        g.__adpInit = undefined;
+        throw e;
+      });
   }
   await g.__adpInit;
   return c;

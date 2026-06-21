@@ -22,23 +22,23 @@ export default function SettingsPage() {
 
   if (!ready || loading) {
     return (
-      <main className="min-h-screen bg-[#F8FAFC]">
+      <main className="min-h-screen bg-[var(--c-bg)]">
         <AppHeader />
-        <p className="mx-auto max-w-[1280px] px-4 py-6 text-sm text-[#64748B]">Chargement…</p>
+        <p className="mx-auto max-w-[1280px] px-4 py-6 text-sm text-[var(--c-muted)]">Chargement…</p>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[#F8FAFC] text-[#0C1E3C]">
+    <main className="min-h-screen bg-[var(--c-bg)] text-[var(--c-ink)]">
       <AppHeader />
       <div className="mx-auto max-w-[720px] px-4 py-6">
         <h1 className="font-serif text-2xl">Paramètres</h1>
 
-        <section className="mt-5 rounded-xl border border-[#2563EB]/20 bg-white p-5 shadow-sm">
+        <section className="mt-5 rounded-xl border border-[var(--c-primary)]/20 bg-[var(--c-surface)] p-5 shadow-sm">
           <h2 className="font-serif text-lg">Compte</h2>
-          <p className="mt-1 text-sm text-[#64748B]">
-            Connecté en tant que <span className="font-medium text-[#0C1E3C]">{email}</span>
+          <p className="mt-1 text-sm text-[var(--c-muted)]">
+            Connecté en tant que <span className="font-medium text-[var(--c-ink)]">{email}</span>
           </p>
         </section>
       </div>

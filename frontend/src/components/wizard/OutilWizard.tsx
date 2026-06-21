@@ -8,6 +8,7 @@
 // =============================================================================
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 
 import styles from "./wizard.module.css";
@@ -321,17 +322,16 @@ export function OutilWizard({
   return (
     <div className={cx("root")}>
       {/* Header */}
-      <div className={cx("hdr")}>
+      <header className={cx("hdr")}>
         <div className={cx("hdrTop")}>
-          <div>
-            <h1>Outil d&rsquo;aide à la décision pédagogique — EPS</h1>
-            <div className={cx("sub")}>
-              Renforcement Musculaire &amp; Souplesse · ADP 2026 · CRMEF Inezgane · BOUARGANE
-            </div>
+          <div className={cx("hdrLead")}>
+            <span className={cx("eyebrow")}>ADP 2026 · EPS · CRMEF Inezgane · BOUARGANE</span>
+            <h1>Outil d&rsquo;aide à la décision pédagogique</h1>
+            <p className={cx("sub")}>Renforcement Musculaire &amp; Souplesse</p>
             <div className={cx("hdrB")}>
               <span className={cx("hb hbg")}>RM-01 → RM-06</span>
               {classMeta ? (
-                <span className={cx("hb hbg")}>
+                <span className={cx("hb hbo")}>
                   {classMeta.nom}
                   {classMeta.niveau ? ` · ${classMeta.niveau}` : ""}
                 </span>
@@ -342,28 +342,31 @@ export function OutilWizard({
               <span className={cx("hb hbo")}>coll1 DI 08</span>
             </div>
           </div>
-          <div className={cx("nn")}>🚫 Outil sans note — Décision : l&rsquo;enseignant</div>
+          <div className={cx("nn")}>Outil sans note — décision&nbsp;: l&rsquo;enseignant</div>
         </div>
-      </div>
+      </header>
 
       {/* Stepper */}
-      <div className={cx("stpWrap", "noPrint")}>
+      <nav className={cx("stpWrap", "noPrint")}>
         {STEPS.map((s, i) => {
           const state = s.n === step ? "active" : s.n < step ? "done" : "";
           return (
-            <span key={s.n} style={{ display: "contents" }}>
+            <span key={s.n} className={cx("stpSeg")}>
               <button
                 type="button"
                 className={cx("stp", state)}
                 onClick={() => (state ? goStep(s.n) : undefined)}
               >
-                <span className={cx("sn")}>{s.n}</span> {s.label}
+                <span className={cx("sn")}>{s.n < step ? "✓" : s.n}</span>
+                <span className={cx("sl")}>{s.label}</span>
               </button>
-              {i < STEPS.length - 1 && <span className={cx("sarr")}>›</span>}
+              {i < STEPS.length - 1 && (
+                <span className={cx("sarr", s.n < step && "sfill")} aria-hidden />
+              )}
             </span>
           );
         })}
-      </div>
+      </nav>
 
       <div className={cx("main")}>
         {step === 1 && (
@@ -435,10 +438,10 @@ const TEST_SHORT: Record<string, string> = {
 };
 
 function noteCol(note: number | null): string {
-  if (note === null) return "text-[#94A3B8]";
-  if (note >= 8) return "text-[#15803D]";
-  if (note >= 5) return "text-[#B45309]";
-  return "text-[#B91C1C]";
+  if (note === null) return "text-[var(--sl)]";
+  if (note >= 8) return "text-[var(--gt)]";
+  if (note >= 5) return "text-[var(--ot)]";
+  return "text-[var(--rt)]";
 }
 
 // =============================================================================
@@ -491,33 +494,33 @@ function Step1(props: {
         </div>
 
         {/* Saisie — 6 tests physiques (résultat brut → note /10 automatique) */}
-        <div className="mt-2 overflow-x-auto rounded-xl border border-[#0D2B5E]/15">
+        <div className="mt-2 overflow-x-auto rounded-xl border border-[var(--bd)]">
           <table className="w-full border-collapse text-sm">
             <thead>
-              <tr className="bg-[#0D2B5E] text-white">
-                <th className="w-8 border border-[#1E3A6E] px-1 py-2 text-center text-[11px]">N°</th>
-                <th className="min-w-[150px] border border-[#1E3A6E] px-2 py-2 text-left text-[11px]">
+              <tr className="bg-[var(--ink)] text-white">
+                <th className="w-8 border border-white/10 px-1 py-2 text-center text-[11px]">N°</th>
+                <th className="min-w-[150px] border border-white/10 px-2 py-2 text-left text-[11px]">
                   Prénom *
                 </th>
                 {TESTS.map((t) => (
                   <th
                     key={t.code}
-                    className="min-w-[86px] border border-[#1E3A6E] px-1 py-2 text-center text-[10px] leading-tight"
+                    className="min-w-[86px] border border-white/10 px-1 py-2 text-center text-[10px] leading-tight"
                   >
                     <div className="font-bold">{t.code}</div>
                     <div className="font-semibold">{TEST_SHORT[t.code]}</div>
                     <div className="font-normal text-white/70">({t.unite})</div>
                   </th>
                 ))}
-                <th className="w-14 border border-[#1E3A6E] px-1 py-2 text-center text-[10px]">
+                <th className="w-14 border border-white/10 px-1 py-2 text-center text-[10px]">
                   TOTAL
                   <br />/{TOTAL_MAX}
                 </th>
-                <th className="w-14 border border-[#1E3A6E] px-1 py-2 text-center text-[10px]">
+                <th className="w-14 border border-white/10 px-1 py-2 text-center text-[10px]">
                   NOTE
                   <br />/20
                 </th>
-                <th className="w-8 border border-[#1E3A6E]" />
+                <th className="w-8 border border-white/10" />
               </tr>
             </thead>
             <tbody>
@@ -525,28 +528,28 @@ function Step1(props: {
                 const res = calculerLigne(r.vs.map(parseRaw));
                 const filled = res.notes.some((n) => n !== null);
                 return (
-                  <tr key={r.id} className="even:bg-[#F8FAFC]">
-                    <td className="border border-[#E2E8F0] px-1 py-1 text-center text-[#64748B]">
+                  <tr key={r.id} className="even:bg-[var(--soft)]">
+                    <td className="border border-[var(--cream2)] px-1 py-1 text-center text-[var(--sl)]">
                       {idx + 1}
                     </td>
-                    <td className="border border-[#E2E8F0] px-1 py-1">
+                    <td className="border border-[var(--cream2)] px-1 py-1">
                       <input
                         type="text"
                         placeholder="Prénom"
                         value={r.prenom}
                         onChange={(e) => props.setPrenom(r.id, e.target.value)}
-                        className="w-full rounded-md border border-transparent bg-transparent px-1.5 py-1 text-sm font-medium outline-none focus:border-[#0D2B5E] focus:bg-white"
+                        className="w-full rounded-md border border-transparent bg-transparent px-1.5 py-1 text-sm font-medium outline-none focus:border-[var(--gold)] focus:bg-[var(--surface)]"
                       />
                     </td>
                     {TESTS.map((t, i) => (
-                      <td key={t.code} className="border border-[#E2E8F0] px-1 py-1 text-center">
+                      <td key={t.code} className="border border-[var(--cream2)] px-1 py-1 text-center">
                         <input
                           inputMode="decimal"
                           placeholder={t.direct ? "/10" : "brut"}
                           value={r.vs[i]}
                           onChange={(e) => props.setScore(r.id, i, e.target.value)}
-                          className={`w-full rounded-md border bg-transparent px-1 py-1 text-center text-sm outline-none focus:bg-white ${
-                            r.errs[i] ? "border-[#EF4444]" : "border-transparent focus:border-[#0D2B5E]"
+                          className={`w-full rounded-md border bg-transparent px-1 py-1 text-center text-sm outline-none focus:bg-[var(--surface)] ${
+                            r.errs[i] ? "border-[var(--rt)]" : "border-transparent focus:border-[var(--gold)]"
                           }`}
                         />
                         <div className={`text-[10px] font-bold ${noteCol(res.notes[i])}`}>
@@ -554,13 +557,13 @@ function Step1(props: {
                         </div>
                       </td>
                     ))}
-                    <td className="border border-[#E2E8F0] px-1 py-1 text-center font-bold">
+                    <td className="border border-[var(--cream2)] px-1 py-1 text-center font-bold">
                       {filled ? res.total : "—"}
                     </td>
-                    <td className="border border-[#E2E8F0] px-1 py-1 text-center font-bold text-[#0D2B5E]">
+                    <td className="border border-[var(--cream2)] px-1 py-1 text-center font-bold text-[var(--gold)]">
                       {filled ? res.note20.toFixed(1) : "—"}
                     </td>
-                    <td className="border border-[#E2E8F0] text-center">
+                    <td className="border border-[var(--cream2)] text-center">
                       <button
                         type="button"
                         className={cx("btn bo bsm")}
@@ -955,6 +958,12 @@ function Step3(props: {
 // =============================================================================
 // STEP 4 — Planification dynamique
 // =============================================================================
+const GROUP_META: Record<Niveau, { label: string; cls: string }> = {
+  A: { label: "Groupe A — Débutants", cls: "grpA" },
+  B: { label: "Groupe B — Intermédiaires", cls: "grpB" },
+  C: { label: "Groupe C — Avancés", cls: "grpC" },
+};
+
 function Step4(props: {
   plan: CyclePlan | null;
   goStep: (n: number) => void;
@@ -964,6 +973,16 @@ function Step4(props: {
   saveCycle: () => void;
 }) {
   const plan = props.plan;
+  // Accordion state: first sequence open by default; séances collapsed.
+  const [openSeq, setOpenSeq] = useState<number[]>(() =>
+    plan && plan.sequences.length ? [plan.sequences[0].index] : [],
+  );
+  const [openSeance, setOpenSeance] = useState<string[]>([]);
+  const toggleSeq = (idx: number) =>
+    setOpenSeq((o) => (o.includes(idx) ? o.filter((x) => x !== idx) : [...o, idx]));
+  const toggleSeance = (k: string) =>
+    setOpenSeance((o) => (o.includes(k) ? o.filter((x) => x !== k) : [...o, k]));
+
   return (
     <div className={cx("card")}>
       <h2>📅 Planification dynamique du cycle</h2>
@@ -972,48 +991,81 @@ function Step4(props: {
         <div className={cx("al ale")}>Aucune planification — revenez à l&rsquo;étape 3.</div>
       ) : (
         <>
-          <div>
-            {plan.sequences.map((seq) => (
-              <div key={seq.index} className={cx("sqb")}>
-                <div className={cx("sqh")}>
-                  <h3>
-                    Séquence {seq.index + 1} — {seq.axe.titre}
-                  </h3>
-                  <span className={cx("sqt")}>
-                    Séances {seq.seanceStart} à {seq.seanceEnd}
-                  </span>
+          <div className={cx("seqList")}>
+            {plan.sequences.map((seq) => {
+              const seqOpen = openSeq.includes(seq.index);
+              return (
+                <div key={seq.index} className={cx("seqAcc")}>
+                  <button
+                    type="button"
+                    className={cx("sqh", "sqhBtn")}
+                    aria-expanded={seqOpen}
+                    onClick={() => toggleSeq(seq.index)}
+                  >
+                    <span className={cx("sqhMain")}>
+                      <h3>
+                        Séquence {seq.index + 1} — {seq.axe.titre}
+                      </h3>
+                    </span>
+                    <span className={cx("sqt")}>
+                      Séances {seq.seanceStart} à {seq.seanceEnd}
+                    </span>
+                    <ChevronDown className={cx("chev", seqOpen && "chevOpen")} />
+                  </button>
+
+                  {seqOpen && (
+                    <div className={cx("seqBody")}>
+                      {seq.seances.map((s) => {
+                        const key = `${seq.index}-${s.numero}`;
+                        const sOpen = openSeance.includes(key);
+                        return (
+                          <div key={s.numero} className={cx("seanceAcc", sOpen && "seanceOpen")}>
+                            <button
+                              type="button"
+                              className={cx("seanceHead")}
+                              aria-expanded={sOpen}
+                              onClick={() => toggleSeance(key)}
+                            >
+                              <span className={cx("seanceNum")}>{s.numero}</span>
+                              <span className={cx("seanceObj")}>{s.objectif}</span>
+                              <span className={cx("seanceAxe")}>Axe {seq.axe.id}</span>
+                              <ChevronDown className={cx("chev", sOpen && "chevOpen")} />
+                            </button>
+
+                            {sOpen && (
+                              <div className={cx("seanceBody")}>
+                                <div className={cx("grpGrid")}>
+                                  {(["A", "B", "C"] as Niveau[]).map((g) => (
+                                    <div key={g} className={cx("grpCard", GROUP_META[g].cls)}>
+                                      <span className={cx("grpTag")}>{GROUP_META[g].label}</span>
+                                      <span className={cx("grpSa")}>{s.groupes[g].sa}</span>
+                                      <span className={cx("grpConsigne")}>{s.groupes[g].c}</span>
+                                      <span className={cx("grpCrit")}>✓ {s.groupes[g].cr}</span>
+                                    </div>
+                                  ))}
+                                </div>
+
+                                <ExercisePanel axe={seq.axe} />
+
+                                {s.indicateur && (
+                                  <div className={cx("ind")}>
+                                    📋 À observer avant la séance suivante —{" "}
+                                    <em>{s.indicateur}</em>{" "}
+                                    <span style={{ color: "var(--sl)", fontSize: ".62rem" }}>
+                                      (Indicatif — décision de progression : vous)
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
-                <table className={cx("pt")}>
-                  <thead>
-                    <tr>
-                      <th>N°</th>
-                      <th>Axe</th>
-                      <th>Objectif</th>
-                      <th className={cx("ga")}>
-                        Groupe A — Débutants
-                        <br />
-                        <small>{seq.axe.csg.A.sa}</small>
-                      </th>
-                      <th className={cx("gb")}>
-                        Groupe B — Intermédiaires
-                        <br />
-                        <small>{seq.axe.csg.B.sa}</small>
-                      </th>
-                      <th className={cx("gc")}>
-                        Groupe C — Avancés
-                        <br />
-                        <small>{seq.axe.csg.C.sa}</small>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {seq.seances.map((s) => (
-                      <GroupRows key={s.numero} seq={seq} s={s} />
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className={cx("cycs")}>
@@ -1050,56 +1102,6 @@ function Step4(props: {
         )}
       </div>
     </div>
-  );
-}
-
-function GroupRows({
-  seq,
-  s,
-}: {
-  seq: CyclePlan["sequences"][number];
-  s: CyclePlan["sequences"][number]["seances"][number];
-}) {
-  const tints: Record<Niveau, string> = { A: "var(--rt)", B: "var(--ot)", C: "var(--gt)" };
-  return (
-    <>
-      <tr>
-        <td>
-          <strong>{s.numero}</strong>
-        </td>
-        <td style={{ fontSize: ".67rem" }}>Axe {seq.axe.id}</td>
-        <td style={{ fontSize: ".69rem" }}>{s.objectif}</td>
-        {(["A", "B", "C"] as Niveau[]).map((g) => (
-          <td key={g} className={cx("g" + g.toLowerCase())}>
-            <strong>{s.groupes[g].sa}</strong>
-            <br />
-            {s.groupes[g].c}
-            <br />
-            <em style={{ fontSize: ".63rem", color: tints[g] }}>✓ {s.groupes[g].cr}</em>
-          </td>
-        ))}
-      </tr>
-      <tr>
-        <td colSpan={6} style={{ background: "#fff" }}>
-          <div style={{ fontSize: ".7rem", fontWeight: 700, color: "var(--sl)", marginBottom: 4 }}>
-            🏋 Exercices — Séance {s.numero}
-          </div>
-          <ExercisePanel axe={seq.axe} />
-        </td>
-      </tr>
-      {s.indicateur && (
-        <tr>
-          <td colSpan={6}>
-            <div className={cx("ind")}>
-              📋 À observer avant la séance suivante — <em>{s.indicateur}</em>{" "}
-              <span style={{ color: "var(--sl)", fontSize: ".62rem" }}>
-                (Indicatif — décision de progression : vous)
-              </span>
-            </div>
-          </td>
-        </tr>
-      )}
-    </>
   );
 }
 

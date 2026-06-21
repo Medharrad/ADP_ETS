@@ -32,18 +32,18 @@ export default function GrillePage() {
 
   if (!ready || loading || !data) {
     return (
-      <main className="min-h-screen bg-[#F8FAFC]">
+      <main className="min-h-screen bg-[var(--c-bg)]">
         <AppHeader />
-        <p className="mx-auto max-w-[1280px] px-4 py-6 text-sm text-[#64748B]">Chargement…</p>
+        <p className="mx-auto max-w-[1280px] px-4 py-6 text-sm text-[var(--c-muted)]">Chargement…</p>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[#F8FAFC]">
+    <main className="min-h-screen bg-[var(--c-bg)]">
       <AppHeader />
       <div className="no-print mx-auto max-w-[1400px] px-4 pt-4">
-        <Link href={`/classes/${classId}`} className="text-xs text-[#64748B] hover:underline">
+        <Link href={`/classes/${classId}`} className="text-xs text-[var(--c-muted)] hover:underline">
           ← {data.class.nom}
         </Link>
       </div>

@@ -65,9 +65,9 @@ export function MassarImport({ onImport }: MassarImportProps) {
       </button>
 
       {open && (
-        <div className="mt-3 rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-4">
+        <div className="mt-3 rounded-2xl border border-[var(--c-border)] bg-[var(--c-bg)] p-4">
           <div className="mb-3 flex items-center justify-between gap-3">
-            <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-[#475569]">
+            <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-[var(--c-muted2)]">
               <FileSpreadsheet className="h-4 w-4 text-[#0D9488]" />
               Importer la liste des élèves (Massar)
             </h3>
@@ -77,7 +77,7 @@ export function MassarImport({ onImport }: MassarImportProps) {
                 reset();
                 setOpen(false);
               }}
-              className="rounded-lg p-1 text-[#64748B] transition hover:bg-[#F1F5F9]"
+              className="rounded-lg p-1 text-[var(--c-muted)] transition hover:bg-[var(--c-border2)]"
             >
               <X className="h-4 w-4" />
             </button>
@@ -111,14 +111,14 @@ export function MassarImport({ onImport }: MassarImportProps) {
               }}
               className={`flex cursor-pointer flex-col items-center rounded-xl border-2 border-dashed px-4 py-7 text-center transition ${
                 dragOver
-                  ? "border-[#0D9488] bg-[#F0FDFA]"
-                  : "border-[#CBD5E1] bg-white hover:border-[#0D9488] hover:bg-[#F0FDFA]/60"
+                  ? "border-[#0D9488] bg-[#0D9488]/10"
+                  : "border-[var(--c-border3)] bg-[var(--c-surface)] hover:border-[#0D9488] hover:bg-[#0D9488]/10"
               }`}
             >
-              <span className="grid h-11 w-11 place-items-center rounded-full bg-[#F0FDFA] text-[#0D9488]">
+              <span className="grid h-11 w-11 place-items-center rounded-full bg-[#0D9488]/10 text-[#0D9488]">
                 <Upload className="h-5 w-5" />
               </span>
-              <p className="mt-3 text-sm font-medium text-[#0C1E3C]">
+              <p className="mt-3 text-sm font-medium text-[var(--c-ink)]">
                 {busy ? (
                   "Lecture du fichier…"
                 ) : (
@@ -130,7 +130,7 @@ export function MassarImport({ onImport }: MassarImportProps) {
                   </>
                 )}
               </p>
-              <p className="mt-1 text-xs text-[#64748B]">
+              <p className="mt-1 text-xs text-[var(--c-muted)]">
                 Excel (<strong>.xlsx</strong>, <strong>.xls</strong>) ou <strong>CSV</strong> exporté
                 depuis Massar — colonne « Nom » / « النسب » détectée automatiquement
               </p>
@@ -139,7 +139,7 @@ export function MassarImport({ onImport }: MassarImportProps) {
 
           {result?.error && (
             <div className="mt-1">
-              <div className="flex items-start gap-2 rounded-xl border border-[#FECACA] bg-[#FEF2F2] px-3 py-2.5 text-sm text-[#B91C1C]">
+              <div className="flex items-start gap-2 rounded-xl border border-[var(--c-danger-border)] bg-[var(--c-danger-bg)] px-3 py-2.5 text-sm text-[var(--c-danger)]">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
                 <span>{result.error}</span>
               </div>
@@ -156,30 +156,30 @@ export function MassarImport({ onImport }: MassarImportProps) {
           {result && !result.error && (
             <div>
               <div className="mb-3 flex flex-wrap items-center gap-2">
-                <span className="truncate rounded-lg bg-white px-2.5 py-1 text-xs font-medium text-[#475569] ring-1 ring-[#E2E8F0]">
+                <span className="truncate rounded-lg bg-[var(--c-surface)] px-2.5 py-1 text-xs font-medium text-[var(--c-muted2)] ring-1 ring-[var(--c-border)]">
                   📄 {fileName}
                 </span>
-                <span className="rounded-lg bg-[#F0FDFA] px-2.5 py-1 text-xs font-semibold text-[#0D9488] ring-1 ring-[#0D9488]/20">
+                <span className="rounded-lg bg-[#0D9488]/10 px-2.5 py-1 text-xs font-semibold text-[#0D9488] ring-1 ring-[#0D9488]/20">
                   {result.names.length} élève(s)
                 </span>
                 {result.colonnes.length > 0 && (
-                  <span className="rounded-lg bg-[#F1F5F9] px-2.5 py-1 text-xs font-medium text-[#64748B] ring-1 ring-[#E2E8F0]">
+                  <span className="rounded-lg bg-[var(--c-border2)] px-2.5 py-1 text-xs font-medium text-[var(--c-muted)] ring-1 ring-[var(--c-border)]">
                     colonne : {result.colonnes.join(" + ")}
                   </span>
                 )}
                 {result.ignored > 0 && (
-                  <span className="rounded-lg bg-[#F1F5F9] px-2.5 py-1 text-xs font-medium text-[#64748B] ring-1 ring-[#E2E8F0]">
+                  <span className="rounded-lg bg-[var(--c-border2)] px-2.5 py-1 text-xs font-medium text-[var(--c-muted)] ring-1 ring-[var(--c-border)]">
                     {result.ignored} ignorée(s)
                   </span>
                 )}
               </div>
 
-              <div className="max-h-56 overflow-auto rounded-xl border border-[#E2E8F0] bg-white">
-                <ol className="divide-y divide-[#F1F5F9] text-sm">
+              <div className="max-h-56 overflow-auto rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)]">
+                <ol className="divide-y divide-[var(--c-border2)] text-sm">
                   {result.names.map((n, i) => (
                     <li key={i} className="flex gap-2 px-3 py-1.5">
-                      <span className="w-6 text-right text-[#94A3B8]">{i + 1}.</span>
-                      <span className="font-medium text-[#0C1E3C]">{n}</span>
+                      <span className="w-6 text-right text-[var(--c-faint)]">{i + 1}.</span>
+                      <span className="font-medium text-[var(--c-ink)]">{n}</span>
                     </li>
                   ))}
                 </ol>
@@ -197,12 +197,12 @@ export function MassarImport({ onImport }: MassarImportProps) {
                 <button
                   type="button"
                   onClick={reset}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-[#E2E8F0] bg-white px-3 py-2 text-sm font-semibold text-[#64748B] transition hover:bg-[#F1F5F9]"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] px-3 py-2 text-sm font-semibold text-[var(--c-muted)] transition hover:bg-[var(--c-border2)]"
                 >
                   <X className="h-4 w-4" /> Annuler
                 </button>
               </div>
-              <p className="mt-2 text-xs text-[#64748B]">
+              <p className="mt-2 text-xs text-[var(--c-muted)]">
                 Les noms remplacent la liste actuelle. Les résultats des 6 tests se saisissent
                 ensuite directement dans la grille.
               </p>

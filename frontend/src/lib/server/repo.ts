@@ -18,6 +18,7 @@ export interface ClassRow {
 export interface StudentRow {
   id: number;
   prenom: string;
+  genre: string | null;
   ordre: number;
 }
 
@@ -118,9 +119,74 @@ export async function deleteClass(userId: number, classId: number) {
 
 export function getStudents(classId: number) {
   return query<StudentRow>(
-    "SELECT id, prenom, ordre FROM students WHERE class_id = ? ORDER BY ordre, id",
+    "SELECT id, prenom, genre, ordre FROM students WHERE class_id = ? ORDER BY ordre, id",
     [classId],
   );
+}
+
+export interface RosterInput {
+  /** present for existing students (preserves their scores); omitted for new ones */
+  id?: number;
+  prenom: string;
+  genre: string | null;
+}
+
+/**
+ * Replace a class roster in one transaction. Existing students are matched by
+ * id and updated in place (so their diagnostic scores survive); rows with no id
+ * are inserted; existing students absent from the payload are deleted (their
+ * scores cascade). Order follows the payload.
+ */
+export async function setRoster(classId: number, students: RosterInput[]) {
+  const db = await getDb();
+  const tx = await db.transaction("write");
+  try {
+    const existing = await tx.execute({
+      sql: "SELECT id FROM students WHERE class_id = ?",
+      args: [classId],
+    });
+    const existingIds = new Set(
+      existing.rows.map((r) => Number((r as unknown as { id: number }).id)),
+    );
+    const keptIds = new Set<number>();
+
+    for (let i = 0; i < students.length; i++) {
+      const s = students[i];
+      const prenom = s.prenom.trim();
+      if (!prenom) continue;
+      const genre = s.genre === "G" || s.genre === "F" ? s.genre : null;
+
+      if (s.id && existingIds.has(s.id)) {
+        await tx.execute({
+          sql: "UPDATE students SET prenom = ?, genre = ?, ordre = ? WHERE id = ? AND class_id = ?",
+          args: [prenom, genre, i, s.id, classId],
+        });
+        keptIds.add(s.id);
+      } else {
+        await tx.execute({
+          sql: "INSERT INTO students (class_id, prenom, genre, ordre) VALUES (?, ?, ?, ?)",
+          args: [classId, prenom, genre, i],
+        });
+      }
+    }
+
+    // Delete students that were removed from the roster (scores cascade).
+    for (const id of existingIds) {
+      if (!keptIds.has(id)) {
+        await tx.execute({
+          sql: "DELETE FROM scores WHERE student_id = ?",
+          args: [id],
+        });
+        await tx.execute({ sql: "DELETE FROM students WHERE id = ?", args: [id] });
+      }
+    }
+
+    await tx.commit();
+  } catch (e) {
+    await tx.rollback();
+    throw e;
+  }
+  return getStudents(classId);
 }
 
 // -- niveaux (custom grade levels, per teacher) -------------------------------
