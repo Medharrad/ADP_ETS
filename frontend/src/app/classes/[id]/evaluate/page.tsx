@@ -11,7 +11,6 @@ import {
   createCycle,
   createDiagnostic,
   getClass,
-  getMe,
   type ClassDetail,
   type DiagnosticInput,
 } from "@/lib/api";
@@ -23,15 +22,11 @@ export default function EvaluatePage() {
   const classId = Number(params.id);
 
   const [data, setData] = useState<ClassDetail | null>(null);
-  const [aiEnabled, setAiEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
   const lastDiagId = useRef<number | null>(null);
 
   useEffect(() => {
     if (!ready) return;
-    getMe()
-      .then(({ user }) => setAiEnabled(!!user.hasApiKey))
-      .catch(() => setAiEnabled(false));
     getClass(classId)
       .then(setData)
       .catch((e) => {
@@ -79,7 +74,6 @@ export default function EvaluatePage() {
         initialRoster={data.students.map((s) => ({ prenom: s.prenom }))}
         onSaveDiagnostic={handleSaveDiagnostic}
         onSaveCycle={handleSaveCycle}
-        enableAi={aiEnabled}
       />
     </>
   );

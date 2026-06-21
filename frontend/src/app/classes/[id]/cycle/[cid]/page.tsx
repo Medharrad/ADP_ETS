@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import styles from "@/components/wizard/wizard.module.css";
 import { AppHeader } from "@/components/app-header";
+import { ExerciseList } from "@/components/exercise-videos";
 import { useRequireAuth } from "@/lib/use-require-auth";
 import type { CyclePlan } from "@/lib/calc";
 import type { Niveau } from "@/lib/referentiel";
@@ -162,7 +163,8 @@ export default function CyclePage() {
                     </thead>
                     <tbody>
                       {seq.seances.map((s, sj) => (
-                        <tr key={s.numero}>
+                        <Fragment key={s.numero}>
+                        <tr>
                           <td>
                             <strong>{s.numero}</strong>
                           </td>
@@ -222,36 +224,49 @@ export default function CyclePage() {
                             </td>
                           ))}
                         </tr>
+                        {((seq.axe.exG?.length ?? 0) > 0 || (seq.axe.exF?.length ?? 0) > 0) && (
+                          <tr>
+                            <td colSpan={5} style={{ background: "#fff" }}>
+                              <div
+                                style={{
+                                  fontSize: ".7rem",
+                                  fontWeight: 700,
+                                  color: "var(--sl)",
+                                  marginBottom: 4,
+                                }}
+                              >
+                                🏋 Exercices — Séance {s.numero}
+                              </div>
+                              <div className={styles.exPanel}>
+                                <div className={styles.exGrid}>
+                                  <div className={`${styles.exCol} ${styles.exBoys}`}>
+                                    <ExerciseList
+                                      icon="🧒"
+                                      title="Exercices Garçons"
+                                      items={seq.axe.exG ?? []}
+                                    />
+                                  </div>
+                                  <div className={`${styles.exCol} ${styles.exGirls}`}>
+                                    <ExerciseList
+                                      icon="👧"
+                                      title="Exercices Filles"
+                                      items={seq.axe.exF ?? []}
+                                    />
+                                  </div>
+                                </div>
+                                {seq.axe.prog && (
+                                  <div className={styles.exProg}>
+                                    <strong>Programme :</strong> {seq.axe.prog}
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                        </Fragment>
                       ))}
                     </tbody>
                   </table>
-                  {((seq.axe.exG?.length ?? 0) > 0 || (seq.axe.exF?.length ?? 0) > 0) && (
-                    <div className={styles.exPanel}>
-                      <div className={styles.exGrid}>
-                        <div className={`${styles.exCol} ${styles.exBoys}`}>
-                          <h4>🧒 Exercices Garçons</h4>
-                          <ul>
-                            {(seq.axe.exG ?? []).map((ex, i) => (
-                              <li key={i}>{ex}</li>
-                            ))}
-                          </ul>
-                        </div>
-                        <div className={`${styles.exCol} ${styles.exGirls}`}>
-                          <h4>👧 Exercices Filles</h4>
-                          <ul>
-                            {(seq.axe.exF ?? []).map((ex, i) => (
-                              <li key={i}>{ex}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                      {seq.axe.prog && (
-                        <div className={styles.exProg}>
-                          <strong>Programme :</strong> {seq.axe.prog}
-                        </div>
-                      )}
-                    </div>
-                  )}
                 </div>
               ))}
 

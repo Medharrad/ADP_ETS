@@ -8,7 +8,6 @@ export interface User {
   id: number;
   email: string;
   created_at?: string;
-  hasApiKey?: boolean;
 }
 
 interface AuthResponse {
@@ -230,57 +229,3 @@ export function seedDemo() {
   });
 }
 
-// -- settings (Anthropic API key) ---------------------------------------------
-
-export function setApiKey(apiKey: string) {
-  return apiFetch<{ ok: true; hasApiKey: boolean }>("/api/settings/key", {
-    method: "POST",
-    body: JSON.stringify({ apiKey }),
-  });
-}
-
-export function deleteApiKey() {
-  return apiFetch<{ ok: true; hasApiKey: boolean }>("/api/settings/key", {
-    method: "DELETE",
-  });
-}
-
-// -- AI assist ----------------------------------------------------------------
-
-export function aiSummary(payload: {
-  classe?: string;
-  niveau?: string | null;
-  total: number;
-  counts: { A: number; B: number; C: number };
-  moyClasse: number;
-  moyObservables: [number, number, number];
-  decision: string;
-}) {
-  return apiFetch<{ text: string }>("/api/ai/summary", {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
-}
-
-export function aiJustify(payload: {
-  axes: { id: number; titre: string; pertinence: number }[];
-  counts: { A: number; B: number; C: number };
-  total: number;
-}) {
-  return apiFetch<{ text: string }>("/api/ai/justify", {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
-}
-
-export function aiEnrich(payload: {
-  axeTitre: string;
-  niveau: "A" | "B" | "C";
-  consigne: string;
-  critere: string;
-}) {
-  return apiFetch<{ text: string }>("/api/ai/enrich", {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
-}

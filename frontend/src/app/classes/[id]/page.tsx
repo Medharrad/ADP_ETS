@@ -93,12 +93,20 @@ export default function ClassDetailPage() {
               {cycles.length} cycle(s)
             </p>
           </div>
-          <Link
-            href={`/classes/${classId}/evaluate`}
-            className="rounded-xl bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] px-4 py-2 text-sm font-bold text-white shadow-lg shadow-[#2563EB]/25 transition hover:brightness-105"
-          >
-            {hasRoster ? "+ Nouvelle évaluation" : "+ Premier diagnostic"}
-          </Link>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href={`/classes/${classId}/evaluate`}
+              className="rounded-xl bg-gradient-to-r from-[#0D2B5E] to-[#173E7C] px-4 py-2 text-sm font-bold text-white shadow-lg shadow-[#0D2B5E]/25 transition hover:brightness-105"
+            >
+              {hasRoster ? "📋 Nouvelle évaluation — 6 tests" : "📋 Premier diagnostic — 6 tests"}
+            </Link>
+            <Link
+              href={`/classes/${classId}/grille`}
+              className="rounded-xl border border-[#0D2B5E]/30 bg-white px-4 py-2 text-sm font-semibold text-[#0D2B5E] transition hover:border-[#0D2B5E] hover:bg-[#EFF4FB]"
+            >
+              🖨 Fiche imprimable
+            </Link>
+          </div>
         </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_300px]">

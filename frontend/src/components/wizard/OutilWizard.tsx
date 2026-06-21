@@ -22,8 +22,9 @@ import {
   type CyclePlan,
   type StudentInput,
 } from "@/lib/calc";
-import { aiEnrich, aiJustify, aiSummary } from "@/lib/api";
-import { CsvImport } from "./CsvImport";
+import { TESTS, TOTAL_MAX, calculerLigne, notes6ToObs3, parseRaw } from "@/lib/grille6";
+import { ExerciseList } from "@/components/exercise-videos";
+import { MassarImport } from "@/components/grille/MassarImport";
 
 // -- helpers ------------------------------------------------------------------
 
@@ -40,9 +41,13 @@ function cx(...tokens: Array<string | false | undefined>): string {
 interface Row {
   id: number;
   prenom: string;
-  vs: [string, string, string];
-  errs: [boolean, boolean, boolean];
+  /** résultat brut saisi pour chacun des 6 tests (texte). */
+  vs: string[];
+  /** drapeau d'erreur par test. */
+  errs: boolean[];
 }
+
+const NT = TESTS.length; // 6
 
 const STEPS = [
   { n: 1, label: "Diagnostic" },
@@ -52,17 +57,13 @@ const STEPS = [
 ] as const;
 
 function emptyRow(id: number): Row {
-  return { id, prenom: "", vs: ["", "", ""], errs: [false, false, false] };
+  return { id, prenom: "", vs: Array(NT).fill(""), errs: Array(NT).fill(false) };
 }
 
-/**
- * Clamp a typed score into the valid 0–10 range as the teacher types. Empty and
- * partial entries (e.g. "" or "9.") pass through untouched so decimals can still
- * be keyed in; only a parseable number outside the range is corrected.
- */
-function clampScore(raw: string): string {
+/** Clamp une saisie /10 (test direct T6) dans [0,10]. Vide / partiel : inchangé. */
+function clamp10(raw: string): string {
   if (raw === "") return raw;
-  const n = parseFloat(raw);
+  const n = parseFloat(raw.replace(",", "."));
   if (isNaN(n)) return raw;
   if (n > 10) return "10";
   if (n < 0) return "0";
@@ -72,42 +73,6 @@ function clampScore(raw: string): string {
 const badge = (level: Niveau) => (
   <span className={cx("b" + level.toLowerCase())}>{level}</span>
 );
-
-/** On-demand AI helper: a button that runs `run()` and shows the returned text. */
-function AiPanel({ label, run }: { label: string; run: () => Promise<string> }) {
-  const [loading, setLoading] = useState(false);
-  const [text, setText] = useState<string | null>(null);
-  async function go() {
-    setLoading(true);
-    try {
-      setText(await run());
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Échec de la génération IA");
-    } finally {
-      setLoading(false);
-    }
-  }
-  return (
-    <div className={cx("axmsg")} style={{ marginTop: 8 }}>
-      <button type="button" className={cx("btn bo bsm")} onClick={go} disabled={loading}>
-        {loading ? "✨ Génération…" : label}
-      </button>
-      {text && (
-        <div
-          style={{
-            whiteSpace: "pre-wrap",
-            marginTop: 7,
-            fontSize: ".78rem",
-            lineHeight: 1.55,
-            color: "var(--ink)",
-          }}
-        >
-          {text}
-        </div>
-      )}
-    </div>
-  );
-}
 
 // =============================================================================
 
@@ -124,8 +89,6 @@ export interface OutilWizardProps {
     nseances: number;
     plan: CyclePlan;
   }) => Promise<void>;
-  /** Enables the optional AI-assist buttons (requires auth + a saved API key). */
-  enableAi?: boolean;
 }
 
 export function OutilWizard({
@@ -133,7 +96,6 @@ export function OutilWizard({
   classMeta,
   onSaveDiagnostic,
   onSaveCycle,
-  enableAi = false,
 }: OutilWizardProps = {}) {
   const idRef = useRef(0);
   const nextId = () => ++idRef.current;
@@ -173,9 +135,10 @@ export function OutilWizard({
     setRows((rs) =>
       rs.map((r) => {
         if (r.id !== id) return r;
-        const vs = [...r.vs] as [string, string, string];
-        vs[i] = clampScore(v);
-        const errs = [...r.errs] as [boolean, boolean, boolean];
+        const vs = [...r.vs];
+        // T6 est une note directe /10 ; les autres tests acceptent un brut libre (sec / reps).
+        vs[i] = TESTS[i].direct ? clamp10(v) : v;
+        const errs = [...r.errs];
         errs[i] = false;
         return { ...r, vs, errs };
       }),
@@ -184,26 +147,26 @@ export function OutilWizard({
   // -- analyse ----------------------------------------------------------------
   function runAnalyse() {
     const students: StudentInput[] = [];
-    const nextRows = rows.map((r) => ({ ...r, errs: [false, false, false] as [boolean, boolean, boolean] }));
+    const nextRows = rows.map((r) => ({ ...r, errs: Array(NT).fill(false) as boolean[] }));
     let anyError = false;
 
     for (const r of nextRows) {
       const prenom = r.prenom.trim();
       if (!prenom) continue;
-      const vals: number[] = [];
-      let ok = true;
-      r.vs.forEach((raw, i) => {
-        const v = parseFloat(raw);
-        if (isNaN(v) || v < 0 || v > 10) {
+      // Chaque test doit être renseigné par un brut numérique valide.
+      const raws: (number | null)[] = r.vs.map((raw, i) => {
+        const v = parseRaw(raw);
+        if (v === null || v < 0) {
           r.errs[i] = true;
-          ok = false;
           anyError = true;
-        } else {
-          vals.push(v);
+          return null;
         }
+        return v;
       });
-      if (ok && vals.length === 3) {
-        students.push({ prenom, vs: [vals[0], vals[1], vals[2]] });
+      if (raws.every((v) => v !== null)) {
+        const { notes } = calculerLigne(raws);
+        // Conversion des 6 notes /10 en 3 familles pour le moteur pédagogique.
+        students.push({ prenom, vs: notes6ToObs3(notes) });
       }
     }
 
@@ -213,8 +176,8 @@ export function OutilWizard({
       setAnalysis(null);
       setS1error(
         anyError
-          ? "Certaines saisies sont invalides (scores 0–10 requis)."
-          : "Aucun élève valide. Vérifiez les saisies.",
+          ? "Certaines saisies sont invalides — renseignez les 6 tests (résultat brut) pour chaque élève."
+          : "Aucun élève valide. Renseignez les prénoms et les 6 tests.",
       );
       return;
     }
@@ -266,35 +229,6 @@ export function OutilWizard({
   useEffect(() => setDiagSaved(false), [analysis]);
   useEffect(() => setCycleSaved(false), [plan]);
 
-  // -- AI run closures (only when enabled + data present) ---------------------
-  const summaryRun =
-    enableAi && analysis
-      ? () =>
-          aiSummary({
-            classe,
-            niveau: classMeta?.niveau ?? null,
-            total: analysis.total,
-            counts: analysis.counts,
-            moyClasse: analysis.moyClasse,
-            moyObservables: analysis.moyObservables,
-            decision: analysis.decision,
-          }).then((r) => r.text)
-      : undefined;
-
-  const justifyRun =
-    enableAi && analysis && axsel.length
-      ? () =>
-          aiJustify({
-            axes: axsel.map((id) => {
-              const a = AX.find((x) => x.id === id)!;
-              const sc = rankedAxes.find((s) => s.axe.id === id);
-              return { id, titre: a.titre, pertinence: sc?.pertinence ?? 0 };
-            }),
-            counts: analysis.counts,
-            total: analysis.total,
-          }).then((r) => r.text)
-      : undefined;
-
   async function saveDiagnostic() {
     if (!analysis || !onSaveDiagnostic) return;
     setSavingDiag(true);
@@ -333,19 +267,12 @@ export function OutilWizard({
     }
   }
 
-  // -- CSV import -------------------------------------------------------------
-  /** Apply a CSV-parsed roster: drop empty placeholder rows, append imported. */
-  function applyCsvImport(students: { prenom: string; vs: [string, string, string] }[]) {
-    setRows((rs) => {
-      const kept = rs.filter((r) => r.prenom.trim() || r.vs.some((v) => v.trim()));
-      const imported: Row[] = students.map((s) => ({
-        id: nextId(),
-        prenom: s.prenom,
-        vs: s.vs,
-        errs: [false, false, false],
-      }));
-      return [...kept, ...imported];
-    });
+  // -- import Massar (noms) ---------------------------------------------------
+  /** Remplace la liste par les noms importés depuis Massar (résultats à saisir ensuite). */
+  function importMassarNames(names: string[]) {
+    setRows(() =>
+      (names.length ? names : [""]).map((prenom) => ({ ...emptyRow(nextId()), prenom })),
+    );
   }
 
   // -- CSV export -------------------------------------------------------------
@@ -453,14 +380,13 @@ export function OutilWizard({
             runAnalyse={runAnalyse}
             analysis={analysis}
             s1error={s1error}
-            applyCsvImport={applyCsvImport}
+            importMassarNames={importMassarNames}
             exportCsv={exportCsv}
             goStep={goStep}
             canSave={!!onSaveDiagnostic}
             savingDiag={savingDiag}
             diagSaved={diagSaved}
             saveDiagnostic={saveDiagnostic}
-            summaryRun={summaryRun}
           />
         )}
 
@@ -471,7 +397,6 @@ export function OutilWizard({
             axsel={axsel}
             toggleAxe={toggleAxe}
             goStep={goStep}
-            justifyRun={justifyRun}
           />
         )}
 
@@ -492,12 +417,28 @@ export function OutilWizard({
             savingCycle={savingCycle}
             cycleSaved={cycleSaved}
             saveCycle={saveCycle}
-            enableAi={enableAi}
           />
         )}
       </div>
     </div>
   );
+}
+
+// -- 6-test entry helpers -----------------------------------------------------
+const TEST_SHORT: Record<string, string> = {
+  T1: "GAINAGE",
+  T2: "MAINTIEN ATR",
+  T3: "FERMETURE CARPÉE",
+  T4: "MONTER / DESCENDRE",
+  T5: "POMPES",
+  T6: "SOUPLESSE FERM.",
+};
+
+function noteCol(note: number | null): string {
+  if (note === null) return "text-[#94A3B8]";
+  if (note >= 8) return "text-[#15803D]";
+  if (note >= 5) return "text-[#B45309]";
+  return "text-[#B91C1C]";
 }
 
 // =============================================================================
@@ -516,14 +457,13 @@ function Step1(props: {
   runAnalyse: () => void;
   analysis: ClassAnalysis | null;
   s1error: string | null;
-  applyCsvImport: (students: { prenom: string; vs: [string, string, string] }[]) => void;
+  importMassarNames: (names: string[]) => void;
   exportCsv: () => void;
   goStep: (n: number) => void;
   canSave: boolean;
   savingDiag: boolean;
   diagSaved: boolean;
   saveDiagnostic: () => void;
-  summaryRun?: () => Promise<string>;
 }) {
   const a = props.analysis;
   return (
@@ -550,54 +490,91 @@ function Step1(props: {
           </div>
         </div>
 
-        <div className={cx("fg")} style={{ marginBottom: 2 }}>
-          <span className={cx("fgh")} style={{ textAlign: "left" }}>
-            Prénom *
-          </span>
-          {OBS.map((o, i) => (
-            <span key={o.id} className={cx("fgh")}>
-              {["Force", "Souplesse", "Équilibre"][i]}
-              <br />
-              <small style={{ fontWeight: 400, fontSize: ".62rem" }}>
-                {["planche·pompes·squats /10", "doigts-sol·pont /10", "unipodal /10"][i]}
-              </small>
-            </span>
-          ))}
-          <span />
-        </div>
-
-        <div>
-          {props.rows.map((r) => (
-            <div key={r.id} className={cx("fg")}>
-              <input
-                type="text"
-                placeholder="Prénom"
-                value={r.prenom}
-                onChange={(e) => props.setPrenom(r.id, e.target.value)}
-              />
-              {[0, 1, 2].map((i) => (
-                <input
-                  key={i}
-                  type="number"
-                  min={0}
-                  max={10}
-                  step={0.5}
-                  placeholder="0-10"
-                  className={r.errs[i] ? "err" : undefined}
-                  value={r.vs[i]}
-                  onChange={(e) => props.setScore(r.id, i, e.target.value)}
-                />
-              ))}
-              <button
-                type="button"
-                className={cx("btn bo bsm")}
-                style={{ padding: "2px 7px" }}
-                onClick={() => props.removeRow(r.id)}
-              >
-                ✕
-              </button>
-            </div>
-          ))}
+        {/* Saisie — 6 tests physiques (résultat brut → note /10 automatique) */}
+        <div className="mt-2 overflow-x-auto rounded-xl border border-[#0D2B5E]/15">
+          <table className="w-full border-collapse text-sm">
+            <thead>
+              <tr className="bg-[#0D2B5E] text-white">
+                <th className="w-8 border border-[#1E3A6E] px-1 py-2 text-center text-[11px]">N°</th>
+                <th className="min-w-[150px] border border-[#1E3A6E] px-2 py-2 text-left text-[11px]">
+                  Prénom *
+                </th>
+                {TESTS.map((t) => (
+                  <th
+                    key={t.code}
+                    className="min-w-[86px] border border-[#1E3A6E] px-1 py-2 text-center text-[10px] leading-tight"
+                  >
+                    <div className="font-bold">{t.code}</div>
+                    <div className="font-semibold">{TEST_SHORT[t.code]}</div>
+                    <div className="font-normal text-white/70">({t.unite})</div>
+                  </th>
+                ))}
+                <th className="w-14 border border-[#1E3A6E] px-1 py-2 text-center text-[10px]">
+                  TOTAL
+                  <br />/{TOTAL_MAX}
+                </th>
+                <th className="w-14 border border-[#1E3A6E] px-1 py-2 text-center text-[10px]">
+                  NOTE
+                  <br />/20
+                </th>
+                <th className="w-8 border border-[#1E3A6E]" />
+              </tr>
+            </thead>
+            <tbody>
+              {props.rows.map((r, idx) => {
+                const res = calculerLigne(r.vs.map(parseRaw));
+                const filled = res.notes.some((n) => n !== null);
+                return (
+                  <tr key={r.id} className="even:bg-[#F8FAFC]">
+                    <td className="border border-[#E2E8F0] px-1 py-1 text-center text-[#64748B]">
+                      {idx + 1}
+                    </td>
+                    <td className="border border-[#E2E8F0] px-1 py-1">
+                      <input
+                        type="text"
+                        placeholder="Prénom"
+                        value={r.prenom}
+                        onChange={(e) => props.setPrenom(r.id, e.target.value)}
+                        className="w-full rounded-md border border-transparent bg-transparent px-1.5 py-1 text-sm font-medium outline-none focus:border-[#0D2B5E] focus:bg-white"
+                      />
+                    </td>
+                    {TESTS.map((t, i) => (
+                      <td key={t.code} className="border border-[#E2E8F0] px-1 py-1 text-center">
+                        <input
+                          inputMode="decimal"
+                          placeholder={t.direct ? "/10" : "brut"}
+                          value={r.vs[i]}
+                          onChange={(e) => props.setScore(r.id, i, e.target.value)}
+                          className={`w-full rounded-md border bg-transparent px-1 py-1 text-center text-sm outline-none focus:bg-white ${
+                            r.errs[i] ? "border-[#EF4444]" : "border-transparent focus:border-[#0D2B5E]"
+                          }`}
+                        />
+                        <div className={`text-[10px] font-bold ${noteCol(res.notes[i])}`}>
+                          {res.notes[i] === null ? "—" : `${res.notes[i]}/10`}
+                        </div>
+                      </td>
+                    ))}
+                    <td className="border border-[#E2E8F0] px-1 py-1 text-center font-bold">
+                      {filled ? res.total : "—"}
+                    </td>
+                    <td className="border border-[#E2E8F0] px-1 py-1 text-center font-bold text-[#0D2B5E]">
+                      {filled ? res.note20.toFixed(1) : "—"}
+                    </td>
+                    <td className="border border-[#E2E8F0] text-center">
+                      <button
+                        type="button"
+                        className={cx("btn bo bsm")}
+                        style={{ padding: "2px 7px" }}
+                        onClick={() => props.removeRow(r.id)}
+                      >
+                        ✕
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
 
         <div style={{ display: "flex", gap: 6, marginTop: 7, flexWrap: "wrap" }}>
@@ -612,9 +589,9 @@ function Step1(props: {
           </button>
         </div>
 
-        {/* CSV import */}
+        {/* Import Massar (noms d'élèves) */}
         <div style={{ marginTop: 14, paddingTop: 12, borderTop: "1px solid var(--bd)" }}>
-          <CsvImport onImport={props.applyCsvImport} />
+          <MassarImport onImport={props.importMassarNames} />
         </div>
 
         {props.s1error && <div className={cx("al ale")}>{props.s1error}</div>}
@@ -710,13 +687,6 @@ function Step1(props: {
           </div>
 
           <ClassBilan a={a} />
-
-          {props.summaryRun && (
-            <div className={cx("card", "noPrint")}>
-              <h3>Assistance IA</h3>
-              <AiPanel label="✨ Générer un résumé de classe (IA)" run={props.summaryRun} />
-            </div>
-          )}
 
           <div
             className={cx("brow", "noPrint")}
@@ -854,7 +824,6 @@ function Step2(props: {
   axsel: number[];
   toggleAxe: (id: number) => void;
   goStep: (n: number) => void;
-  justifyRun?: () => Promise<string>;
 }) {
   const n = props.axsel.length;
   const msg =
@@ -913,10 +882,6 @@ function Step2(props: {
           );
         })}
       </div>
-
-      {props.justifyRun && n >= AXES_RANGE.min && (
-        <AiPanel label="✨ Justifier les axes choisis (IA)" run={props.justifyRun} />
-      )}
 
       <div className={cx("brow")}>
         <button type="button" className={cx("btn bo")} onClick={() => props.goStep(1)}>
@@ -997,7 +962,6 @@ function Step4(props: {
   savingCycle: boolean;
   cycleSaved: boolean;
   saveCycle: () => void;
-  enableAi: boolean;
 }) {
   const plan = props.plan;
   return (
@@ -1048,22 +1012,6 @@ function Step4(props: {
                     ))}
                   </tbody>
                 </table>
-                <ExercisePanel axe={seq.axe} />
-                {props.enableAi && (
-                  <div className="noPrint">
-                    <AiPanel
-                      label={`✨ Enrichir le groupe A — Axe ${seq.axe.id} (IA)`}
-                      run={() =>
-                        aiEnrich({
-                          axeTitre: seq.axe.titre,
-                          niveau: "A",
-                          consigne: seq.axe.csg.A.c,
-                          critere: seq.axe.csg.A.cr,
-                        }).then((r) => r.text)
-                      }
-                    />
-                  </div>
-                )}
               </div>
             ))}
           </div>
@@ -1131,6 +1079,14 @@ function GroupRows({
           </td>
         ))}
       </tr>
+      <tr>
+        <td colSpan={6} style={{ background: "#fff" }}>
+          <div style={{ fontSize: ".7rem", fontWeight: 700, color: "var(--sl)", marginBottom: 4 }}>
+            🏋 Exercices — Séance {s.numero}
+          </div>
+          <ExercisePanel axe={seq.axe} />
+        </td>
+      </tr>
       {s.indicateur && (
         <tr>
           <td colSpan={6}>
@@ -1153,20 +1109,10 @@ function ExercisePanel({ axe }: { axe: Axe }) {
     <div className={cx("exPanel")}>
       <div className={cx("exGrid")}>
         <div className={cx("exCol", "exBoys")}>
-          <h4>🧒 Exercices Garçons</h4>
-          <ul>
-            {axe.exG.map((ex, i) => (
-              <li key={i}>{ex}</li>
-            ))}
-          </ul>
+          <ExerciseList icon="🧒" title="Exercices Garçons" items={axe.exG} />
         </div>
         <div className={cx("exCol", "exGirls")}>
-          <h4>👧 Exercices Filles</h4>
-          <ul>
-            {axe.exF.map((ex, i) => (
-              <li key={i}>{ex}</li>
-            ))}
-          </ul>
+          <ExerciseList icon="👧" title="Exercices Filles" items={axe.exF} />
         </div>
       </div>
       <div className={cx("exProg")}>

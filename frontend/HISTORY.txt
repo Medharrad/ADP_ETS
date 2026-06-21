@@ -1,0 +1,37 @@
+ADP 2026 — Production History
+=============================
+
+A Next.js (16) + React (19) web app for the ADP-GYM tool: training-level
+management with a setup wizard, auth, dashboard, and AI assistance.
+
+Timeline
+--------
+
+2026-06-02  Project kicked off. Initial commits and a code-structure
+            refactor for readability and maintainability.
+
+2026-06-02  Built the Next.js frontend: the ADP-GYM app — setup wizard,
+            authentication, dashboard, AI assist, and the "Royal Sky" theme.
+
+2026-06-02  Moved the data layer to libSQL (Turso) so it can run
+            serverless on Vercel.
+
+2026-06-02  Added CSV import, plus revalidation hooks to keep the
+            dashboard up to date after changes.
+
+2026-06-08  Fixed the resources handling.
+
+2026-06-08  Added custom "niveaux" (levels) management — create, list,
+            and delete.
+
+2026-06-10  Added the NiveauManager component to manage custom levels
+            from the dashboard.
+
+2026-06-10  Added offline functionality and the initial files for the
+            ADP 2026 tool.
+
+Stack
+-----
+- Next.js 16.2.7 / React 19.2.4
+- @base-ui/react, lucide-react (icons)
+- libSQL / Turso (data), deployed on Vercel

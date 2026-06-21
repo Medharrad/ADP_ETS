@@ -7,8 +7,8 @@ export async function GET(request: Request) {
   const auth = getAuthUser(request);
   if (!auth) return unauthorized();
 
-  const row = await get<{ id: number; email: string; created_at: string; has_key: number }>(
-    "SELECT id, email, created_at, (anthropic_key_enc IS NOT NULL) AS has_key FROM users WHERE id = ?",
+  const row = await get<{ id: number; email: string; created_at: string }>(
+    "SELECT id, email, created_at FROM users WHERE id = ?",
     [auth.id],
   );
 
@@ -18,7 +18,6 @@ export async function GET(request: Request) {
       id: row.id,
       email: row.email,
       created_at: row.created_at,
-      hasApiKey: !!row.has_key,
     },
   });
 }

@@ -19,6 +19,7 @@ import {
 import { setToken } from "@/lib/auth";
 import { login, register } from "@/lib/api";
 import { useI18n } from "@/lib/i18n";
+import { DemoWalkthrough } from "@/components/demo-walkthrough";
 
 const FEATURES = [
   { icon: Target, tkey: "auth.feat1" },
@@ -263,6 +264,11 @@ export function AdpAuth({ initialMode = "sign-in" }: { initialMode?: "sign-in" |
               {isSignUp ? t("auth.signin") : t("auth.signup")}
             </button>
           </p>
+
+          {/* Démo guidée — accessible avant connexion */}
+          <div className="mt-4">
+            <DemoWalkthrough />
+          </div>
         </div>
       </section>
     </main>
